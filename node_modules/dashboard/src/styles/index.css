@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .chart-gradient-green {
+    background: linear-gradient(180deg, rgba(0, 214, 171, 0.2) 0%, rgba(0, 214, 171, 0) 100%);
+  }
+  .chart-gradient-red {
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0) 100%);
+  }
+  .glass-card {
+    background: rgba(15, 35, 31, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 214, 171, 0.2);
+  }
+  .gradient-bg {
+    background: radial-gradient(circle at 0% 0%, #0f231f 0%, #0a1815 50%, #00d6ab22 100%);
+  }
+  .glass-modal {
+    background: rgba(15, 35, 31, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 214, 171, 0.2);
+  }
+  .bg-dim {
+    background: rgba(5, 12, 10, 0.6);
+    backdrop-filter: blur(4px);
+  }
+}
+
+@layer components {
+  .custom-scrollbar::-webkit-scrollbar { 
+    width: 6px; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-track { 
+    background: transparent; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb { 
+    background: rgba(0, 214, 171, 0.2); 
+    border-radius: 10px; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+    @apply bg-primary;
+  }
+}
