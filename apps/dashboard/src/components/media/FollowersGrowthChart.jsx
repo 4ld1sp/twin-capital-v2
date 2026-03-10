@@ -2,7 +2,7 @@ import React from 'react';
 
 const FollowersGrowthChart = () => {
   return (
-    <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-bold">Followers Growth</h3>
         <div className="flex gap-4 text-xs font-medium">

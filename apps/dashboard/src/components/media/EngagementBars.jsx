@@ -2,7 +2,7 @@ import React from 'react';
 
 const EngagementBars = () => {
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full flex flex-col">
       <h3 className="text-lg font-bold mb-6">Engagement Rate</h3>
       <div className="space-y-6">
         <div className="space-y-2">
