@@ -19,7 +19,7 @@ export default function App() {
     <div className="flex flex-col lg:flex-row h-full min-h-screen w-full bg-background-light dark:bg-background-dark overflow-x-hidden text-slate-900 dark:text-slate-100">
       <div className="layout-container flex h-full grow flex-col">
         <Header currentView={currentView} onViewChange={setCurrentView} />
-        <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-10 py-8">
+        <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-10 py-8 pb-24 lg:pb-8">
           {currentView === 'dashboard' && <Dashboard />}
           {currentView === 'feed' && <Feed />}
           {currentView === 'trading' && <Trading />}

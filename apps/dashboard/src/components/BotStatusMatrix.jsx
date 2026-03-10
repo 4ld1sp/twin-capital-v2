@@ -130,7 +130,7 @@ const BotStatusMatrix = () => {
 
       {/* Table Area (Flex-1 allows it to grow if View All is clicked) */}
       <div className="overflow-x-auto flex-1 relative">
-        <table className="w-full text-sm text-left">
+        <table className="w-full min-w-[700px] text-sm text-left">
           <thead className="bg-slate-50 dark:bg-primary/5 text-slate-500 dark:text-slate-400 font-bold uppercase text-[10px] tracking-wider sticky top-0 z-10">
             <tr>
               <th className="px-6 py-3">Strategy Name</th>
