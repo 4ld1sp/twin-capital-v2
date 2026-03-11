@@ -5,6 +5,7 @@ import Trading from './pages/Trading'
 import Profile from './pages/Profile'
 import Media from './pages/Media'
 import Feed from './pages/Feed'
+import Settings from './pages/Settings'
 import Login from './pages/Login'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
           {currentView === 'trading' && <Trading />}
           {currentView === 'profile' && <Profile />}
           {currentView === 'media' && <Media />}
+          {currentView === 'settings' && <Settings />}
         </main>
       </div>
     </div>

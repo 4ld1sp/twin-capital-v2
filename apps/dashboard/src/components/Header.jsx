@@ -43,7 +43,9 @@ const Header = ({ currentView, onViewChange }) => {
           <button className="p-2 text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors flex items-center justify-center">
             <span className="material-symbols-outlined">notifications</span>
           </button>
-          <button className="hidden md:flex p-2 text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors items-center justify-center">
+          <button 
+            onClick={() => onViewChange('settings')}
+            className="hidden md:flex p-2 text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors items-center justify-center">
             <span className="material-symbols-outlined">settings</span>
           </button>
           <button

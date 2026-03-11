@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const settingsItems = [
+const getSettingsItems = (user) => [
   {
     icon: "person",
     title: "Personal Information",
-    description: "Alexander Twin, alex.twin@twincapital.com",
+    description: `${user.name}, ${user.email}`,
     action: "chevron_right",
     isToggle: false
   },
@@ -48,15 +48,15 @@ const securityItems = [
   }
 ];
 
-export const AccountSettingsList = () => {
+export const AccountSettingsList = ({ user }) => {
+  const items = getSettingsItems(user);
   return (
     <div className="bg-white dark:bg-primary/5 rounded-xl border border-slate-200 dark:border-primary/10 overflow-hidden">
       <div className="px-6 py-4 border-b border-slate-200 dark:border-primary/10 flex justify-between items-center">
         <h2 className="text-lg font-bold">Account Settings</h2>
-        <button className="text-sm text-primary hover:underline font-medium">Edit All</button>
       </div>
       <div className="divide-y divide-slate-100 dark:divide-primary/5">
-        {settingsItems.map((item, index) => (
+        {items.map((item, index) => (
           <div key={index} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors cursor-pointer group">
             <div className="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 w-12 h-12">
               <span className="material-symbols-outlined">{item.icon}</span>
@@ -74,6 +74,17 @@ export const AccountSettingsList = () => {
 };
 
 export const SecuritySettingsList = () => {
+  const [securityState, setSecurityState] = useState(
+    securityItems.reduce((acc, curr, index) => {
+      if (curr.isToggle) acc[index] = curr.toggled;
+      return acc;
+    }, {})
+  );
+
+  const toggleSecuritySetting = (index) => {
+    setSecurityState(prev => ({ ...prev, [index]: !prev[index] }));
+  };
+
   return (
     <div className="bg-white dark:bg-primary/5 rounded-xl border border-slate-200 dark:border-primary/10 overflow-hidden">
       <div className="px-6 py-4 border-b border-slate-200 dark:border-primary/10">
@@ -93,7 +104,12 @@ export const SecuritySettingsList = () => {
             </div>
             {item.isToggle && (
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked={item.toggled} />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={securityState[index]} 
+                  onChange={() => toggleSecuritySetting(index)} 
+                />
                 <div className="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             )}

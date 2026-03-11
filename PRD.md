@@ -85,10 +85,13 @@ Platform manajemen konten dan *personal branding* yang terintegrasi untuk menjal
 #### 3.5.7. Revenue Streams
 - Placeholder modul untuk agregasi pendapatan dari Adsense, Sponsorships, dan monetisasi langsung (coming soon).
 
-### 3.6. Profil Pengguna (Profile Page)
-- Kartu Nama dan avatar penyesuaian detail karyawan.
-- Pengaturan integrasi kata kunci kunci akses (API) pertukaran.
-- Modul pemberitahuan pengaturan sandi / privasi antarmuka.
+### 3.6. Profil Pengguna (Profile Page) & Pengaturan (Settings)
+- **Dynamic Profile State:** Halaman profil yang terpusat state-nya, memungkinkan pengeditan iteraktif untuk Nama, Peran, Email, dan Avatar melalui Modal Edit pop-up.
+- **API Connections Manager:** Antarmuka pengelola *API Keys* yang dinamis untuk Bursa Trading (Trading Exchanges), Media Sosial, dan AI Models.
+- **Generic Webhooks:** Integrasi *Custom Webhook* yang general (tidak hanya terbatas pada OpenClaw) untuk menerima sinyal/data eksternal.
+- **Security Check Gate (Test Connection):** Sebelum koneksi API baru (atau Webhook) dapat ditambahkan, pengguna diwajibkan melakukan *Test Connection* hingga status terverifikasi (Verified) untuk mencegah credential invalid.
+- **Edit Connection Data:** Kemampuan untuk mengubah (*update*) API Key, Secret, atau Password dari koneksi yang sudah ditambahkan dengan tombol konfirmasi Hapus (Delete Confirmation Modal) yang aman.
+- **Security Settings:** Modul pemberitahuan pengaturan sandi / privasi antarmuka, dilengkapi toggle fungsional seperti Two-Factor Authentication.
 
 ---
 
