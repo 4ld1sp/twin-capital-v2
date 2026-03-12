@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Shield, Smartphone, Laptop, Key, Monitor, Save, LogOut, User, Bell, ChevronRight, ChevronDown } from 'lucide-react';
 
 export const AccountSettingsList = () => {
-  const { user, updateUser, logActivity } = useAuth();
+  const { user, updateUser } = useAuth();
   
-  // Local form state
   const [formData, setFormData] = useState({
     name: user.name || '',
     email: user.email || '',
@@ -14,15 +13,17 @@ export const AccountSettingsList = () => {
     language: user.language || 'English (US)'
   });
 
-  const [tfaEnabled, setTfaEnabled] = useState(true);
   const [expandedSection, setExpandedSection] = useState(null);
 
-  // Mock Trusted Devices
-  const [trustedDevices, setTrustedDevices] = useState([
-    { id: 'dev-1', type: 'laptop', name: 'MacBook Pro 16"', browser: 'Chrome', location: 'Jakarta, ID', lastActive: 'Active now', isCurrent: true },
-    { id: 'dev-2', type: 'phone', name: 'iPhone 14 Pro', browser: 'Safari Mobile', location: 'Jakarta, ID', lastActive: '2 hours ago', isCurrent: false },
-    { id: 'dev-3', type: 'desktop', name: 'Windows Workstation', browser: 'Edge', location: 'Singapore, SG', lastActive: '3 days ago', isCurrent: false }
-  ]);
+  useEffect(() => {
+    setFormData({
+      name: user.name || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      timezone: user.timezone || 'UTC',
+      language: user.language || 'English (US)'
+    });
+  }, [user]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,44 +34,23 @@ export const AccountSettingsList = () => {
     setExpandedSection(null);
   };
 
-  const toggleTfa = () => {
-    setTfaEnabled(!tfaEnabled);
-    logActivity('Security Updated', `Two-Factor Auth turned ${!tfaEnabled ? 'ON' : 'OFF'}`, 'security');
-  };
-
-  const handleLogoutDevice = (deviceId, deviceName) => {
-    setTrustedDevices(prev => prev.filter(d => d.id !== deviceId));
-    logActivity('Device Removed', `Logged out from ${deviceName}`, 'security');
-  };
-
-  const getDeviceIcon = (type) => {
-    switch(type) {
-      case 'laptop': return <Laptop className="w-5 h-5 text-primary" />;
-      case 'phone': return <Smartphone className="w-5 h-5 text-primary" />;
-      default: return <Monitor className="w-5 h-5 text-primary" />;
-    }
-  };
-
-  const toggleAccordion = (sectionId) => {
-    setExpandedSection(expandedSection === sectionId ? null : sectionId);
-  };
-
   return (
-    <div className="glass-card rounded-3xl border border-glass p-6 shadow-sm mt-8">
+    <div className="glass-card rounded-3xl border border-glass p-6 shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-sm font-black text-main uppercase tracking-widest">Account & Security</h2>
+        <h2 className="text-sm font-black text-main uppercase tracking-widest">Account Information</h2>
       </div>
       
       <div className="flex flex-col gap-2">
-        
-        {/* SECTION 1: Personal Information */}
-        <div className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors" onClick={() => toggleAccordion('personal')}>
+        <div 
+          className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
+          onClick={() => setExpandedSection(expandedSection === 'personal' ? null : 'personal')}
+        >
           <div className="flex items-center gap-4">
             <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-main font-bold text-sm">{expandedSection === 'personal' ? 'Edit Personal Information' : 'Personal Information'}</p>
+              <p className="text-main font-bold text-sm">Personal Information</p>
               <p className="text-secondary text-xs mt-0.5">{user.name}, {user.email}</p>
             </div>
           </div>
@@ -80,7 +60,7 @@ export const AccountSettingsList = () => {
         </div>
         
         {expandedSection === 'personal' && (
-          <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2">
+          <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Full Name</label>
@@ -102,14 +82,6 @@ export const AccountSettingsList = () => {
                   <option>Spanish (ES)</option>
                 </select>
               </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Timezone</label>
-                <select name="timezone" value={formData.timezone} onChange={handleInputChange} className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all">
-                  <option>UTC - Coordinated Universal Time</option>
-                  <option>UTC+7 - Western Indonesia Time</option>
-                  <option>UTC-5 - Eastern Time</option>
-                </select>
-              </div>
             </div>
             <div className="mt-6 flex justify-end">
               <button onClick={handleSaveSettings} className="px-5 py-2.5 bg-primary text-black font-black text-[10px] uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
@@ -118,30 +90,52 @@ export const AccountSettingsList = () => {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
 
-        {/* SECTION 2: Notification Preferences */}
-        <div className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors" onClick={() => toggleAccordion('notifications')}>
-          <div className="flex items-center gap-4">
-             <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
-              <Bell className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-main font-bold text-sm">Notification Preferences</p>
-              <p className="text-secondary text-xs mt-0.5">Email and SMS alerts are enabled</p>
-            </div>
-          </div>
-          <div className="shrink-0 ml-4 group-hover:text-primary text-secondary transition-colors">
-            {expandedSection === 'notifications' ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-          </div>
-        </div>
+export const SecuritySettingsList = () => {
+  const { logActivity } = useAuth();
+  const [tfaEnabled, setTfaEnabled] = useState(true);
+  const [expandedSection, setExpandedSection] = useState(null);
 
-        {expandedSection === 'notifications' && (
-           <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2">
-            <p className="text-secondary text-xs font-bold">Notification toggles will be implemented in future upgrades.</p>
-           </div>
-        )}
+  const [trustedDevices, setTrustedDevices] = useState([
+    { id: 'dev-1', type: 'laptop', name: 'MacBook Pro 16"', browser: 'Chrome', location: 'Jakarta, ID', lastActive: 'Active now', isCurrent: true },
+    { id: 'dev-2', type: 'phone', name: 'iPhone 14 Pro', browser: 'Safari Mobile', location: 'Jakarta, ID', lastActive: '2 hours ago', isCurrent: false },
+    { id: 'dev-3', type: 'desktop', name: 'Windows Workstation', browser: 'Edge', location: 'Singapore, SG', lastActive: '3 days ago', isCurrent: false }
+  ]);
 
-        {/* SECTION 3: Two-Factor Authentication (Toggle, no accordion) */}
+  const toggleTfa = () => {
+    setTfaEnabled(!tfaEnabled);
+    if (logActivity) logActivity('Security Updated', `Two-Factor Auth turned ${!tfaEnabled ? 'ON' : 'OFF'}`, 'security');
+  };
+
+  const handleLogoutDevice = (deviceId, deviceName) => {
+    setTrustedDevices(prev => prev.filter(d => d.id !== deviceId));
+    if (logActivity) logActivity('Device Removed', `Logged out from ${deviceName}`, 'security');
+  };
+
+  const toggleAccordion = (sectionId) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
+
+  const getDeviceIcon = (type) => {
+    switch(type) {
+      case 'laptop': return <Laptop className="w-5 h-5 text-primary" />;
+      case 'phone': return <Smartphone className="w-5 h-5 text-primary" />;
+      default: return <Monitor className="w-5 h-5 text-primary" />;
+    }
+  };
+
+  return (
+    <div className="glass-card rounded-3xl border border-glass p-6 shadow-sm">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-sm font-black text-main uppercase tracking-widest">Security & Access</h2>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {/* TFA */}
         <div className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl transition-colors">
           <div className="flex items-center gap-4">
              <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
@@ -158,15 +152,18 @@ export const AccountSettingsList = () => {
           </label>
         </div>
 
-        {/* SECTION 4: Password Management */}
-        <div className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors" onClick={() => toggleAccordion('password')}>
+        {/* Password */}
+        <div 
+          className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
+          onClick={() => toggleAccordion('password')}
+        >
           <div className="flex items-center gap-4">
              <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
               <Key className="w-5 h-5 text-primary" />
             </div>
             <div>
               <p className="text-main font-bold text-sm">Password Management</p>
-              <p className="text-secondary text-xs mt-0.5">Last updated 45 days ago</p>
+              <p className="text-secondary text-xs mt-0.5">Update your security credentials</p>
             </div>
           </div>
           <div className="shrink-0 ml-4 group-hover:text-primary text-secondary transition-colors">
@@ -175,38 +172,29 @@ export const AccountSettingsList = () => {
         </div>
 
         {expandedSection === 'password' && (
-          <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-1.5 md:col-span-2">
-                  <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Current Password</label>
-                  <input type="password" placeholder="••••••••" className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-secondary uppercase tracking-widest">New Password</label>
-                  <input type="password" placeholder="••••••••" className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
-                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Confirm Password</label>
-                  <input type="password" placeholder="••••••••" className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
+          <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
+             <div className="space-y-4">
+               <div>
+                 <label className="text-[10px] font-black text-secondary uppercase tracking-widest">New Password</label>
+                 <input type="password" placeholder="••••••••" className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
+               </div>
+               <button className="w-full py-2.5 bg-primary/20 text-primary font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-primary/30 transition-all">Update Password</button>
              </div>
-             <div className="mt-6 flex justify-end">
-                <button onClick={() => setExpandedSection(null)} className="px-5 py-2.5 bg-primary text-black font-black text-[10px] uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
-                  <Key className="w-4 h-4" /> Update Password
-                </button>
-              </div>
           </div>
         )}
 
-        {/* SECTION 5: Trusted Devices */}
-        <div className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors" onClick={() => toggleAccordion('devices')}>
+        {/* Devices */}
+        <div 
+          className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
+          onClick={() => toggleAccordion('devices')}
+        >
           <div className="flex items-center gap-4">
              <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
               <Laptop className="w-5 h-5 text-primary" />
             </div>
             <div>
               <p className="text-main font-bold text-sm">Trusted Devices</p>
-              <p className="text-secondary text-xs mt-0.5">{trustedDevices.length} devices currently logged in</p>
+              <p className="text-secondary text-xs mt-0.5">{trustedDevices.length} active sessions</p>
             </div>
           </div>
           <div className="shrink-0 ml-4 group-hover:text-primary text-secondary transition-colors">
@@ -215,49 +203,24 @@ export const AccountSettingsList = () => {
         </div>
 
         {expandedSection === 'devices' && (
-          <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2">
-            <p className="text-xs text-secondary font-bold mb-6">Remove devices you don't recognize.</p>
-            
-            <div className="space-y-4">
-              {trustedDevices.length === 0 ? (
-                <div className="text-center py-6 text-xs text-secondary border border-dashed border-glass rounded-xl">No active devices found.</div>
-              ) : (
-                trustedDevices.map((device) => (
-                  <div key={device.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border border-glass hover:border-primary/20 transition-colors gap-4">
-                    <div className="flex items-start sm:items-center gap-4">
-                      <div className="p-3 bg-black/5 dark:bg-white/[0.03] rounded-xl border border-glass">
-                        {getDeviceIcon(device.type)}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-main font-black text-sm">{device.name}</p>
-                          {device.isCurrent && (
-                            <span className="px-2 py-0.5 rounded-lg text-[9px] font-black bg-primary text-black uppercase tracking-widest">Current</span>
-                          )}
-                        </div>
-                        <p className="text-secondary text-xs mt-0.5 font-bold">{device.browser} • {device.location}</p>
-                        <p className="text-secondary text-[10px] mt-1 opacity-60">Last active: {device.lastActive}</p>
-                      </div>
-                    </div>
-                    
-                    {!device.isCurrent && (
-                      <button 
-                        onClick={() => handleLogoutDevice(device.id, device.name)}
-                        className="group flex items-center gap-2 px-3 py-2 text-xs font-black uppercase tracking-widest text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors border border-transparent hover:border-rose-500/20 self-start sm:self-center"
-                      >
-                        <LogOut className="w-4 h-4 opacity-70 group-hover:opacity-100" />
-                        Log out
-                      </button>
-                    )}
+          <div className="p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            {trustedDevices.map(device => (
+              <div key={device.id} className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-glass transition-all hover:border-primary/20">
+                <div className="flex items-center gap-3">
+                  {getDeviceIcon(device.type)}
+                  <div>
+                    <p className="text-xs font-bold text-main">{device.name}</p>
+                    <p className="text-[10px] text-secondary">{device.location} • {device.lastActive}</p>
                   </div>
-                ))
-              )}
-            </div>
+                </div>
+                {!device.isCurrent && (
+                  <button onClick={() => handleLogoutDevice(device.id, device.name)} className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline">Revoke</button>
+                )}
+              </div>
+            ))}
           </div>
         )}
-
       </div>
     </div>
   );
 };
-

@@ -4,6 +4,8 @@ import FollowersGrowthChart from '../components/media/FollowersGrowthChart';
 import EngagementBars from '../components/media/EngagementBars';
 import ContentPipeline from '../components/media/ContentPipeline';
 import AffiliateFunnel from '../components/media/AffiliateFunnel';
+import AffiliateNetworkManager from '../components/media/AffiliateNetworkManager';
+import RevenueDashboard from '../components/media/RevenueDashboard';
 
 const tabs = [
   { id: 'overview', label: 'Overview', icon: 'dashboard' },
@@ -109,26 +111,16 @@ const Media = () => {
 
       {/* ─── Affiliates ──────────────────────────────────── */}
       {activeTab === 'affiliates' && (
-        <div className="w-full animate-fade-in">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <AffiliateFunnel />
-            <div className="bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-dashed border-slate-200 dark:border-primary/20 flex items-center justify-center p-8 text-center min-h-[300px]">
-              <div>
-                <span className="material-symbols-outlined text-4xl text-slate-400 mb-2">account_circle</span>
-                <h3 className="font-bold text-slate-600 dark:text-slate-300">Affiliate Network Management</h3>
-                <p className="text-sm text-slate-500 mt-2">Connecting to partner APIs...</p>
-              </div>
-            </div>
-          </div>
+        <div className="w-full animate-fade-in space-y-8">
+          <AffiliateFunnel />
+          <AffiliateNetworkManager />
         </div>
       )}
 
       {/* ─── Revenue ─────────────────────────────────────── */}
       {activeTab === 'revenue' && (
-        <div className="w-full bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-dashed border-slate-200 dark:border-primary/20 flex flex-col items-center justify-center p-12 text-center animate-fade-in min-h-[400px]">
-          <span className="material-symbols-outlined text-6xl text-primary/40 mb-4">payments</span>
-          <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">Revenue Tracking (Coming Soon)</h2>
-          <p className="text-slate-500 max-w-md mt-2">This module will aggregate Adsense, Sponsorships, and direct monetization streams into a single ledger.</p>
+        <div className="w-full animate-fade-in">
+          <RevenueDashboard />
         </div>
       )}
     </div>
