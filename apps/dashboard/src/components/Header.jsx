@@ -1,59 +1,75 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { Sun, Moon, Bell, Settings, LayoutDashboard, Rss, Laptop, PlayCircle } from 'lucide-react';
 
 const Header = ({ currentView, onViewChange }) => {
+  const { user } = useAuth();
+  const { theme, toggleTheme, isDark } = useTheme();
+
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-primary/10 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-[60] w-full">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-glass sticky top-0 bg-glass/80 backdrop-blur-xl z-[60] w-full transition-all duration-300">
         <div className="flex items-center gap-3">
-          <div className="bg-primary p-1.5 rounded-lg">
-            <span className="material-symbols-outlined text-background-dark text-2xl font-bold">query_stats</span>
+          <div className="bg-primary/20 p-2 rounded-xl border border-primary/20">
+             <LayoutDashboard className="w-5 h-5 text-primary" />
           </div>
-          <h1 className="text-lg font-bold leading-tight">Twin Capital</h1>
+          <h1 className="text-lg font-bold tracking-tight text-main">Twin Capital</h1>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden lg:flex items-center gap-2 absolute left-1/2 -translate-x-1/2 bg-black/5 dark:bg-white/5 p-1 rounded-2xl border border-glass">
           <button
             onClick={() => onViewChange('feed')}
-            className={`text-sm flex items-center gap-2 transition-colors ${currentView === 'feed' ? 'font-semibold text-primary' : 'font-medium text-slate-600 dark:text-slate-400 hover:text-primary'}`}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${currentView === 'feed' ? 'bg-primary text-[#000] font-bold shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            <span className="material-symbols-outlined text-lg">dynamic_feed</span> Feed
+            <Rss className="w-4 h-4" /> Feed
           </button>
           <button
             onClick={() => onViewChange('dashboard')}
-            className={`text-sm flex items-center gap-2 transition-colors ${currentView === 'dashboard' ? 'font-semibold text-primary' : 'font-medium text-slate-600 dark:text-slate-400 hover:text-primary'}`}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${currentView === 'dashboard' ? 'bg-primary text-[#000] font-bold shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            <span className="material-symbols-outlined text-lg">dashboard</span> Dashboard
+            <LayoutDashboard className="w-4 h-4" /> Dashboard
           </button>
           <button
             onClick={() => onViewChange('trading')}
-            className={`text-sm flex items-center gap-2 transition-colors ${currentView === 'trading' ? 'font-semibold text-primary' : 'font-medium text-slate-600 dark:text-slate-400 hover:text-primary'}`}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${currentView === 'trading' ? 'bg-primary text-[#000] font-bold shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            <span className="material-symbols-outlined text-lg">hub</span> Trading
+            <Laptop className="w-4 h-4" /> Trading
           </button>
           <button
             onClick={() => onViewChange('media')}
-            className={`text-sm flex items-center gap-2 transition-colors ${currentView === 'media' ? 'font-semibold text-primary' : 'font-medium text-slate-600 dark:text-slate-400 hover:text-primary'}`}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${currentView === 'media' ? 'bg-primary text-[#000] font-bold shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            <span className="material-symbols-outlined text-lg">play_circle</span> Media
+            <PlayCircle className="w-4 h-4" /> Media
           </button>
         </nav>
 
-        <div className="flex items-center gap-2 md:gap-4">
-          <button className="p-2 text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors flex items-center justify-center">
-            <span className="material-symbols-outlined">notifications</span>
+        <div className="flex items-center gap-2 md:gap-3">
+          <button 
+            onClick={toggleTheme}
+            className="p-2.5 text-main bg-glass hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-all border border-glass flex items-center justify-center shadow-sm"
+            title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+          >
+            {isDark ? <Sun className="w-5 h-5 text-primary" /> : <Moon className="w-5 h-5 text-primary" />}
           </button>
+          
+          <button className="p-2.5 text-main bg-glass hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-all border border-glass flex items-center justify-center shadow-sm">
+            <Bell className="w-5 h-5 opacity-70" />
+          </button>
+          
           <button 
             onClick={() => onViewChange('settings')}
-            className="hidden md:flex p-2 text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors items-center justify-center">
-            <span className="material-symbols-outlined">settings</span>
+            className="hidden md:flex p-2.5 text-main bg-glass hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-all border border-glass items-center justify-center shadow-sm">
+            <Settings className="w-5 h-5 opacity-70" />
           </button>
+          
           <button
             onClick={() => onViewChange('profile')}
-            className={`w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden border-2 transition-colors ${currentView === 'profile' ? 'border-primary' : 'border-primary cursor-pointer hover:border-primary/80'}`}
+            className={`w-10 h-10 rounded-full overflow-hidden border-2 transition-all shadow-md ${currentView === 'profile' ? 'border-primary ring-4 ring-primary/20 scale-105' : 'border-glass hover:border-primary/50'}`}
           >
             <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80"
+              src={user.avatar}
               alt="Profile Avatar"
               className="w-full h-full object-cover"
             />

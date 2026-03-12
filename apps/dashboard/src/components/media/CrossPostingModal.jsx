@@ -92,26 +92,26 @@ const CustomSelect = ({ value, onChange, disabled }) => {
                 type="button"
                 disabled={disabled}
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center justify-between gap-2 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/50 outline-none text-left transition-colors hover:border-primary/50 disabled:opacity-50"
+                className="w-full flex items-center justify-between gap-2 bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none text-left transition-all hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-50"
             >
                 <div className="flex items-center gap-2">
                     <span className={`material-symbols-outlined text-[18px] ${selected.color}`}>{selected.icon}</span>
-                    <span className="text-slate-700 dark:text-slate-200 font-medium">{selected.label}</span>
+                    <span className="text-main font-bold">{selected.label}</span>
                 </div>
-                <span className={`material-symbols-outlined text-slate-400 text-[18px] transition-transform ${open ? 'rotate-180' : ''}`}>expand_more</span>
+                <span className={`material-symbols-outlined text-secondary text-[18px] transition-transform ${open ? 'rotate-180' : ''}`}>expand_more</span>
             </button>
 
             {open && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-primary/20 rounded-xl shadow-2xl z-[60] overflow-hidden animate-fade-in-up">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-glass/95 backdrop-blur-3xl border border-glass rounded-2xl shadow-2xl z-[60] overflow-hidden animate-fade-in-up">
                     {statusOptions.map(option => (
                         <button
                             key={option.value}
                             type="button"
                             onClick={() => { onChange(option.value); setOpen(false); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-primary/10 ${value === option.value ? 'bg-primary/5 font-bold' : ''}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-all hover:bg-primary hover:text-black ${value === option.value ? 'bg-primary/10 font-black' : 'text-main'}`}
                         >
                             <span className={`material-symbols-outlined text-[18px] ${option.color}`}>{option.icon}</span>
-                            <span className="text-slate-700 dark:text-slate-200">{option.label}</span>
+                            <span className="flex-1 text-left">{option.label}</span>
                             {value === option.value && <span className="material-symbols-outlined text-primary text-[18px] ml-auto">check</span>}
                         </button>
                     ))}
@@ -150,6 +150,7 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
         { id: 'yt', name: 'YouTube Shorts', icon: 'play_arrow', color: 'bg-red-600 text-white hover:bg-red-700', active: false, status: 'idle' },
         { id: 'linkedin', name: 'LinkedIn', icon: 'work', color: 'bg-[#0077b5] text-white hover:bg-[#006097]', active: false, status: 'idle' },
         { id: 'telegram', name: 'Telegram', icon: 'send', color: 'bg-[#0088cc] text-white hover:bg-[#0070a8]', active: true, status: 'idle' },
+        { id: 'facebook', name: 'Facebook', icon: 'facebook', color: 'bg-[#1877F2] text-white hover:bg-[#0C63D4]', active: false, status: 'idle' },
     ];
     const [platforms, setPlatforms] = useState(defaultPlatforms);
 
@@ -312,58 +313,58 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-md" onClick={!isPublishing ? resetAndClose : undefined}></div>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={!isPublishing ? resetAndClose : undefined}></div>
 
             {/* Modal Content */}
-            <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-primary/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col xl:flex-row w-full max-w-5xl max-h-[90vh] animate-fade-in-up">
+            <div className="relative glass-card border border-glass rounded-3xl shadow-2xl overflow-hidden flex flex-col xl:flex-row w-full max-w-5xl max-h-[90vh] animate-fade-in-up transition-all duration-300">
 
                 {/* Left Column: Composer */}
-                <div className="flex-1 p-6 border-b xl:border-b-0 xl:border-r border-slate-200 dark:border-primary/10 flex flex-col overflow-y-auto">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-xl flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary text-2xl">{isEditMode ? 'edit_note' : 'edit_square'}</span>
+                <div className="flex-1 p-6 md:p-8 border-b xl:border-b-0 xl:border-r border-glass flex flex-col overflow-y-auto">
+                    <div className="flex justify-between items-center mb-8">
+                        <h3 className="font-black text-2xl flex items-center gap-2 text-main">
+                            <span className="material-symbols-outlined text-primary text-3xl">{isEditMode ? 'edit_note' : 'edit_square'}</span>
                             {isEditMode ? 'Edit Task' : 'Cross-Posting Studio'}
                         </h3>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             {isEditMode && (
-                                <button onClick={handleDelete} disabled={isPublishing} className="text-red-400 hover:text-red-500 transition-colors disabled:opacity-50" title="Delete Task">
+                                <button onClick={handleDelete} disabled={isPublishing} className="w-10 h-10 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all disabled:opacity-50" title="Delete Task">
                                     <span className="material-symbols-outlined">delete</span>
                                 </button>
                             )}
-                            <button onClick={resetAndClose} disabled={isPublishing} className="text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors disabled:opacity-50">
+                            <button onClick={resetAndClose} disabled={isPublishing} className="w-10 h-10 rounded-full flex items-center justify-center text-secondary hover:bg-black/10 dark:hover:bg-white/10 transition-all disabled:opacity-50">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Target Post Time</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-secondary uppercase tracking-widest pl-1">Target Post Time</label>
                             <input
                                 type="datetime-local"
                                 value={targetTime}
                                 onChange={(e) => setTargetTime(e.target.value)}
                                 disabled={isPublishing}
-                                className="bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/50 outline-none text-slate-700 dark:text-slate-200"
+                                className="bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none text-main font-bold transition-all"
                             />
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pipeline Status</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-secondary uppercase tracking-widest pl-1">Pipeline Status</label>
                             <CustomSelect value={taskStatus} onChange={setTaskStatus} disabled={isPublishing} />
                         </div>
                     </div>
 
-                    <div className="flex flex-col flex-1 gap-4">
-                        <div className="relative flex-1 min-h-[160px]">
+                    <div className="flex flex-col flex-1 gap-6">
+                        <div className="relative flex-1 min-h-[200px]">
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
                                 disabled={isPublishing}
                                 placeholder="Share an insights, signal, or portfolio update..."
-                                className="w-full h-full min-h-[160px] bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-800 rounded-xl p-4 resize-y focus:ring-2 focus:ring-primary/50 text-sm disabled:opacity-50"
+                                className="w-full h-full min-h-[200px] bg-black/5 dark:bg-white/5 border border-glass rounded-2xl p-6 resize-y focus:ring-2 focus:ring-primary/50 text-base text-main placeholder:text-secondary disabled:opacity-50 transition-all font-medium"
                             />
-                            <div className="absolute bottom-3 right-3 text-xs text-slate-400 font-mono">
-                                {content.length} chars
+                            <div className="absolute bottom-4 right-4 text-[10px] text-secondary font-black bg-black/10 dark:bg-white/10 px-2 py-1 rounded-lg border border-glass">
+                                {content.length} CHARS
                             </div>
                         </div>
 
@@ -405,26 +406,26 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                         )}
 
                         {/* ── AI Content Generator ────────────── */}
-                        <div className="border border-purple-500/20 rounded-xl overflow-hidden">
+                        <div className="glass-card border border-purple-500/30 rounded-2xl overflow-hidden shadow-lg shadow-purple-500/10">
                             <button
                                 type="button"
                                 onClick={() => setShowAiPanel(!showAiPanel)}
                                 disabled={isPublishing}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-purple-500/5 via-primary/5 to-blue-500/5 hover:from-purple-500/10 hover:via-primary/10 hover:to-blue-500/10 transition-all disabled:opacity-50"
+                                className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-purple-500/[0.05] via-primary/[0.05] to-blue-500/[0.05] hover:from-purple-500/[0.1] hover:via-primary/[0.1] hover:to-blue-500/[0.1] transition-all disabled:opacity-50"
                             >
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-purple-400 text-[20px]">auto_awesome</span>
-                                    <span className="text-sm font-bold text-purple-400">Generate Content with AI</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-purple-400 text-[24px]">auto_awesome</span>
+                                    <span className="text-sm font-black text-purple-400 uppercase tracking-widest">AI CONTENT STUDIO</span>
                                 </div>
-                                <span className={`material-symbols-outlined text-purple-400 text-[18px] transition-transform ${showAiPanel ? 'rotate-180' : ''}`}>expand_more</span>
+                                <span className={`material-symbols-outlined text-purple-400 text-[20px] transition-transform ${showAiPanel ? 'rotate-180' : ''}`}>expand_more</span>
                             </button>
 
                             {showAiPanel && (
-                                <div className="p-4 space-y-3 border-t border-purple-500/10 bg-purple-500/[0.02]">
+                                <div className="p-6 space-y-6 border-t border-purple-500/20 bg-purple-500/[0.02]">
                                     {/* Media Type Tabs */}
-                                    <div className="flex gap-1 bg-slate-100 dark:bg-black/30 rounded-lg p-1">
+                                    <div className="flex gap-2 bg-black/10 dark:bg-white/10 rounded-xl p-1.5 border border-glass">
                                         {[
-                                            { id: 'text', label: 'Text', icon: 'article' },
+                                            { id: 'text', label: 'Draft', icon: 'article' },
                                             { id: 'image', label: 'Image', icon: 'image' },
                                             { id: 'video', label: 'Video', icon: 'movie' },
                                         ].map(tab => (
@@ -433,16 +434,16 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                                                 type="button"
                                                 onClick={() => { setAiMediaType(tab.id); setAiGenerated(''); setAiGeneratedMedia(null); }}
                                                 disabled={isGenerating}
-                                                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-bold transition-all ${aiMediaType === tab.id ? 'bg-white dark:bg-slate-800 text-purple-500 shadow-sm' : 'text-slate-500 hover:text-purple-400'}`}
+                                                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${aiMediaType === tab.id ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
                                             >
-                                                <span className="material-symbols-outlined text-[14px]">{tab.icon}</span>
+                                                <span className="material-symbols-outlined text-[16px]">{tab.icon}</span>
                                                 {tab.label}
                                             </button>
                                         ))}
                                     </div>
 
                                     {/* Prompt Input */}
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-3">
                                         <input
                                             type="text"
                                             value={aiPrompt}
@@ -450,34 +451,34 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                                             onKeyDown={(e) => e.key === 'Enter' && !isGenerating && handleAiGenerate()}
                                             disabled={isGenerating}
                                             placeholder={aiMediaType === 'text' ? "Describe your topic, e.g. 'Bitcoin breakout analysis'..." : aiMediaType === 'image' ? "Describe the image, e.g. 'bullish crypto chart'..." : "Describe the video, e.g. 'market recap short'..."}
-                                            className="flex-1 bg-slate-50 dark:bg-black/30 border border-purple-500/20 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-purple-500/30 outline-none placeholder:text-slate-500 disabled:opacity-50"
+                                            className="flex-1 bg-black/5 dark:bg-white/5 border border-purple-500/30 rounded-xl px-5 py-3.5 text-sm focus:ring-2 focus:ring-purple-500/50 outline-none text-main placeholder:text-secondary disabled:opacity-50 font-medium"
                                         />
                                         <button
                                             onClick={handleAiGenerate}
                                             disabled={isGenerating || !aiPrompt.trim()}
-                                            className="px-4 py-2.5 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg text-sm font-bold flex items-center gap-1.5 hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-purple-500/20"
+                                            className="px-6 py-3.5 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-purple-500/20"
                                         >
                                             {isGenerating ? (
-                                                <><span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>{aiMediaType === 'text' ? 'Writing...' : 'Creating...'}</>
+                                                <><span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>{aiMediaType === 'text' ? 'WRITING...' : 'BUILDING...'}</>
                                             ) : (
-                                                <><span className="material-symbols-outlined text-[16px]">auto_awesome</span>Generate</>
+                                                <><span className="material-symbols-outlined text-[18px]">auto_awesome</span>GO</>
                                             )}
                                         </button>
                                     </div>
 
                                     {/* Generation Progress for Media */}
                                     {isGenerating && aiMediaType !== 'text' && (
-                                        <div className="bg-white dark:bg-slate-800/80 border border-purple-500/20 rounded-xl p-6 flex flex-col items-center gap-3">
-                                            <div className="relative w-20 h-20">
-                                                <div className="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
+                                        <div className="bg-black/10 dark:bg-white/10 border border-purple-500/30 rounded-2xl p-8 flex flex-col items-center gap-4">
+                                            <div className="relative w-24 h-24">
+                                                <div className="absolute inset-0 rounded-full border-4 border-glass"></div>
                                                 <div className="absolute inset-0 rounded-full border-4 border-purple-500 border-t-transparent animate-spin"></div>
                                                 <div className="absolute inset-0 flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-purple-400 text-2xl">{aiMediaType === 'image' ? 'image' : 'movie'}</span>
+                                                    <span className="material-symbols-outlined text-purple-400 text-3xl">{aiMediaType === 'image' ? 'image' : 'movie'}</span>
                                                 </div>
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-sm font-bold text-purple-400">Generating {aiMediaType === 'image' ? 'Image' : 'Video'}...</p>
-                                                <p className="text-[10px] text-slate-500 mt-1">AI is creating your {aiMediaType} based on "{aiPrompt}"</p>
+                                                <p className="text-sm font-black text-purple-400 uppercase tracking-widest leading-relaxed">Synthesizing {aiMediaType === 'image' ? 'Image' : 'Video'}</p>
+                                                <p className="text-[10px] text-secondary font-bold mt-1 uppercase tracking-wider">Dreaming up your {aiMediaType}...</p>
                                             </div>
                                         </div>
                                     )}
@@ -485,33 +486,31 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                                     {/* Text AI Preview */}
                                     {aiMediaType === 'text' && (aiGenerated || isGenerating) && (
                                         <div className="relative">
-                                            <div className="bg-white dark:bg-slate-800/80 border border-purple-500/20 rounded-xl p-4 space-y-3">
+                                            <div className="bg-black/10 dark:bg-white/10 border border-purple-500/30 rounded-2xl p-6 space-y-4">
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className="material-symbols-outlined text-purple-400 text-[16px]">auto_awesome</span>
-                                                        <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">AI Preview</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="material-symbols-outlined text-purple-400 text-[18px]">auto_awesome</span>
+                                                        <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest">AI Preview</span>
                                                     </div>
-                                                    {isGenerating && <span className="text-[10px] text-purple-400 font-mono animate-pulse">typing...</span>}
+                                                    {isGenerating && <span className="text-[10px] text-purple-400 font-black uppercase tracking-widest animate-pulse">typing...</span>}
                                                 </div>
-                                                <div className="text-sm whitespace-pre-wrap break-words leading-relaxed text-slate-700 dark:text-slate-200 min-h-[60px]">
+                                                <div className="text-sm text-main whitespace-pre-wrap break-words leading-relaxed min-h-[80px] font-medium">
                                                     {aiGenerated}
-                                                    {isGenerating && <span className="inline-block w-0.5 h-4 bg-purple-400 animate-pulse ml-0.5 align-text-bottom"></span>}
+                                                    {isGenerating && <span className="inline-block w-1 h-4 bg-purple-400 animate-pulse ml-0.5 align-text-bottom"></span>}
                                                 </div>
 
                                                 {/* Accept / Discard / Regenerate Buttons */}
                                                 {!isGenerating && aiGenerated && (
-                                                    <div className="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                                                        <button onClick={acceptAiContent} className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-primary/10 text-primary rounded-lg text-xs font-bold hover:bg-primary/20 transition-colors">
-                                                            <span className="material-symbols-outlined text-[16px]">check</span>
-                                                            Use This Content
+                                                    <div className="flex gap-3 pt-4 border-t border-glass">
+                                                        <button onClick={acceptAiContent} className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-black rounded-xl text-xs font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-primary/20 transition-all">
+                                                            <span className="material-symbols-outlined text-[18px]">check</span>
+                                                            Use Draft
                                                         </button>
-                                                        <button onClick={handleAiGenerate} className="flex items-center justify-center gap-1 px-3 py-2 bg-purple-500/10 text-purple-400 rounded-lg text-xs font-bold hover:bg-purple-500/20 transition-colors">
-                                                            <span className="material-symbols-outlined text-[14px]">refresh</span>
-                                                            Retry
+                                                        <button onClick={handleAiGenerate} className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-500/10 text-purple-400 rounded-xl text-xs font-black uppercase tracking-widest border border-purple-500/30 hover:bg-purple-500/20 transition-all">
+                                                            <span className="material-symbols-outlined text-[16px]">refresh</span>
                                                         </button>
-                                                        <button onClick={discardAiContent} className="flex items-center justify-center gap-1 px-3 py-2 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                                                            <span className="material-symbols-outlined text-[14px]">close</span>
-                                                            Discard
+                                                        <button onClick={discardAiContent} className="flex items-center justify-center gap-2 px-4 py-3 bg-black/10 dark:bg-white/10 text-secondary rounded-xl text-xs font-black uppercase tracking-widest border border-glass hover:bg-rose-500/10 hover:text-rose-500 transition-all">
+                                                            <span className="material-symbols-outlined text-[16px]">close</span>
                                                         </button>
                                                     </div>
                                                 )}
@@ -521,38 +520,37 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
 
                                     {/* Image / Video AI Preview */}
                                     {aiMediaType !== 'text' && aiGeneratedMedia && !isGenerating && (
-                                        <div className="bg-white dark:bg-slate-800/80 border border-purple-500/20 rounded-xl overflow-hidden space-y-0">
-                                            <div className="flex items-center justify-between px-4 pt-3">
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="material-symbols-outlined text-purple-400 text-[16px]">auto_awesome</span>
-                                                    <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">AI {aiGeneratedMedia.type} Preview</span>
+                                        <div className="bg-black/10 dark:bg-white/10 border border-purple-500/30 rounded-2xl overflow-hidden shadow-xl">
+                                            <div className="flex items-center justify-between px-6 pt-4">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-purple-400 text-[18px]">auto_awesome</span>
+                                                    <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest">AI {aiGeneratedMedia.type} Preview</span>
                                                 </div>
                                             </div>
-                                            <div className="p-3">
-                                                <div className="relative rounded-lg overflow-hidden">
-                                                    <img src={aiGeneratedMedia.url} alt={aiGeneratedMedia.desc} className="w-full h-52 object-cover" />
+                                            <div className="p-4">
+                                                <div className="relative rounded-xl overflow-hidden border border-glass shadow-2xl group">
+                                                    <img src={aiGeneratedMedia.url} alt={aiGeneratedMedia.desc} className="w-full h-64 object-cover" />
                                                     {aiGeneratedMedia.type === 'video' && (
-                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                                            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
-                                                                <span className="material-symbols-outlined text-slate-800 text-3xl ml-0.5">play_arrow</span>
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-all">
+                                                            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                                                                <span className="material-symbols-outlined text-slate-800 text-3xl ml-1">play_arrow</span>
                                                             </div>
-                                                            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] font-mono px-2 py-0.5 rounded">0:15</div>
+                                                            <div className="absolute bottom-3 right-3 bg-black/70 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg">0:15</div>
                                                         </div>
                                                     )}
                                                 </div>
-                                                <p className="text-xs text-slate-500 mt-2 italic">{aiGeneratedMedia.desc}</p>
+                                                <p className="text-[10px] text-secondary font-bold mt-4 italic uppercase tracking-wider">{aiGeneratedMedia.desc}</p>
                                             </div>
-                                            <div className="flex gap-2 p-3 pt-0">
-                                                <button onClick={acceptAiContent} className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-primary/10 text-primary rounded-lg text-xs font-bold hover:bg-primary/20 transition-colors">
-                                                    <span className="material-symbols-outlined text-[16px]">check</span>
-                                                    Use This {aiGeneratedMedia.type === 'video' ? 'Video' : 'Image'}
+                                            <div className="flex gap-3 p-4 pt-0">
+                                                <button onClick={acceptAiContent} className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-black rounded-xl text-xs font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-primary/20 transition-all">
+                                                    <span className="material-symbols-outlined text-[18px]">check</span>
+                                                    Use Result
                                                 </button>
-                                                <button onClick={handleAiGenerate} className="flex items-center justify-center gap-1 px-3 py-2 bg-purple-500/10 text-purple-400 rounded-lg text-xs font-bold hover:bg-purple-500/20 transition-colors">
-                                                    <span className="material-symbols-outlined text-[14px]">refresh</span>
-                                                    Retry
+                                                <button onClick={handleAiGenerate} className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-500/10 text-purple-400 rounded-xl text-xs font-black uppercase tracking-widest border border-purple-500/30 hover:bg-purple-500/20 transition-all">
+                                                    <span className="material-symbols-outlined text-[16px]">refresh</span>
                                                 </button>
-                                                <button onClick={discardAiContent} className="flex items-center justify-center gap-1 px-3 py-2 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                                                    <span className="material-symbols-outlined text-[14px]">close</span>
+                                                <button onClick={discardAiContent} className="flex items-center justify-center gap-2 px-4 py-3 bg-black/10 dark:bg-white/10 text-secondary rounded-xl text-xs font-black uppercase tracking-widest border border-glass hover:bg-rose-500/10 hover:text-rose-500 transition-all">
+                                                    <span className="material-symbols-outlined text-[16px]">close</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -562,29 +560,29 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 items-center">
-                            <button disabled={isPublishing} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50">
-                                <span className="material-symbols-outlined text-[18px]">imagesmode</span>
+                            <button disabled={isPublishing} className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 glass-card hover:bg-black/10 dark:hover:bg-white/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-glass disabled:opacity-50 text-main font-bold">
+                                <span className="material-symbols-outlined text-[20px]">imagesmode</span>
                                 Attach Media
                             </button>
 
-                            <div className="flex-1 w-full bg-primary/5 border border-primary/20 rounded-lg p-3 flex flex-col sm:flex-row justify-between items-center gap-2">
-                                <div className="flex items-center gap-2">
+                            <div className="flex-1 w-full bg-primary/5 border border-primary/30 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                                <div className="flex items-center gap-3">
                                     <input
                                         type="checkbox"
                                         id="affiliateToggleModal"
                                         checked={useAffiliate}
                                         onChange={() => setUseAffiliate(!useAffiliate)}
                                         disabled={isPublishing}
-                                        className="rounded border-primary/30 text-primary focus:ring-primary/50 w-4 h-4"
+                                        className="rounded-full border-primary/30 text-primary focus:ring-primary/50 w-5 h-5 transition-all"
                                     />
-                                    <label htmlFor="affiliateToggleModal" className="text-sm font-semibold cursor-pointer">Inject Affiliate Tag</label>
+                                    <label htmlFor="affiliateToggleModal" className="text-xs font-black uppercase tracking-widest cursor-pointer text-main">Affiliate Tag</label>
                                 </div>
                                 <input
                                     type="text"
                                     value={affiliateLink}
                                     onChange={(e) => setAffiliateLink(e.target.value)}
                                     disabled={!useAffiliate || isPublishing}
-                                    className="bg-transparent border-b border-primary/30 text-xs font-mono text-primary outline-none focus:border-primary w-full sm:w-48 disabled:opacity-30 disabled:cursor-not-allowed"
+                                    className="bg-transparent border-b border-primary/50 text-xs font-mono text-primary outline-none focus:border-primary w-full sm:w-48 disabled:opacity-30 disabled:cursor-not-allowed font-bold"
                                 />
                             </div>
                         </div>
@@ -601,80 +599,82 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                 </div>
 
                 {/* Right Column: Platform Selection & Execution */}
-                <div className="w-full xl:w-[350px] bg-slate-50 dark:bg-slate-800/30 p-6 flex flex-col border-t xl:border-t-0 border-slate-200 dark:border-slate-800 overflow-y-auto">
-                    <h4 className="font-bold text-sm text-slate-500 uppercase tracking-wider mb-4">Target Audience Networks</h4>
+                <div className="w-full xl:w-[350px] bg-black/5 dark:bg-white/[0.02] p-6 md:p-8 flex flex-col border-t xl:border-t-0 border-glass overflow-y-auto">
+                    <h4 className="font-black text-[10px] text-secondary uppercase tracking-widest mb-6 pl-1">TARGET AUDIENCE NETWORKS</h4>
 
-                    <div className="flex-1 flex flex-col gap-3">
+                    <div className="flex-1 flex flex-col gap-4">
                         {platforms.map(platform => (
                             <div
                                 key={platform.id}
                                 onClick={() => togglePlatform(platform.id)}
-                                className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${platform.active ? 'border-primary/50 bg-white dark:bg-background-dark shadow-sm' : 'border-slate-200 dark:border-slate-700/50 opacity-60 hover:opacity-100'} ${isPublishing ? 'pointer-events-none' : ''}`}
+                                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${platform.active ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/5' : 'border-glass opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'} ${isPublishing ? 'pointer-events-none' : ''}`}
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${platform.color}`}>
-                                        {platform.icon === 'X' ? '𝕏' : <span className="material-symbols-outlined text-[16px]">{platform.icon}</span>}
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-sm ${platform.color}`}>
+                                        {platform.icon === 'X' ? '𝕏' : <span className="material-symbols-outlined text-[18px]">{platform.icon}</span>}
                                     </div>
-                                    <span className={`text-sm font-bold ${platform.active ? 'text-slate-800 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400'}`}>{platform.name}</span>
+                                    <span className={`text-sm font-black uppercase tracking-widest ${platform.active ? 'text-main' : 'text-secondary font-bold'}`}>{platform.name}</span>
                                 </div>
 
                                 <div className="ml-auto flex items-center">
                                     {platform.status === 'idle' && (
-                                        <div className={`w-10 h-5 rounded-full transition-colors relative ${platform.active ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-700'}`}>
-                                            <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${platform.active ? 'right-0.5' : 'left-0.5'}`}></div>
+                                        <div className={`w-11 h-6 rounded-full transition-all relative p-1 ${platform.active ? 'bg-primary' : 'bg-black/20 dark:bg-white/20'}`}>
+                                            <div className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${platform.active ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                         </div>
                                     )}
                                     {platform.status === 'loading' && (
-                                        <span className="material-symbols-outlined text-primary animate-spin">progress_activity</span>
+                                        <span className="material-symbols-outlined text-primary animate-spin text-[20px]">progress_activity</span>
                                     )}
                                     {platform.status === 'success' && (
-                                        <span className="material-symbols-outlined text-emerald-500 font-bold">check_circle</span>
+                                        <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-emerald-500 font-black text-[18px]">check</span>
+                                        </div>
                                     )}
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700/50">
+                    <div className="mt-8 pt-6 border-t border-glass">
                         <button
                             onClick={handlePublish}
                             disabled={isPublishing || !platforms.some(p => p.active) || !content.trim()}
-                            className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${isPublishing ? 'bg-primary/50 text-background-dark/80 cursor-not-allowed' : 'bg-primary text-background-dark hover:shadow-primary/20 hover:-translate-y-0.5'}`}
+                            className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl ${isPublishing ? 'bg-primary/50 text-black/50 cursor-not-allowed' : 'bg-primary text-black hover:shadow-primary/30 hover:-translate-y-1 active:scale-95'}`}
                         >
                             {isPublishing ? (
                                 <>
-                                    <span className="material-symbols-outlined animate-spin text-[20px]">sync</span>
-                                    Broadcasting...
+                                    <span className="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>
+                                    BROADCASTING...
                                 </>
                             ) : (
                                 <>
                                     {taskStatus === 'go_live' ? (
-                                        <><span className="material-symbols-outlined text-[20px]">rocket_launch</span> Publish to {platforms.filter(p => p.active).length} Networks</>
+                                        <><span className="material-symbols-outlined text-[22px]">rocket_launch</span> PUBLISH NOW</>
                                     ) : (
-                                        <><span className="material-symbols-outlined text-[20px]">save</span> {isEditMode ? 'Update' : 'Save to'} {statusOptions.find(o => o.value === taskStatus)?.label}</>
+                                        <><span className="material-symbols-outlined text-[22px]">save</span> {isEditMode ? 'UPDATE' : 'SAVE TO'} {statusOptions.find(o => o.value === taskStatus)?.label.toUpperCase()}</>
                                     )}
                                 </>
                             )}
                         </button>
-                        <p className="text-center text-[10px] text-slate-500 mt-3 flex items-center justify-center gap-1">
-                            <span className="material-symbols-outlined text-[12px]">lock</span>
-                            OAuth 2.0 Secure Channel
+                        <p className="text-center text-[10px] text-secondary font-black uppercase tracking-widest mt-5 flex items-center justify-center gap-1.5 opacity-60">
+                            <span className="material-symbols-outlined text-[14px]">lock</span>
+                            OAUTH 2.0 SECURE CHANNEL
                         </p>
                     </div>
                 </div>
 
                 {/* ── Delete Confirmation Overlay ─────────────── */}
                 {showDeleteConfirm && (
-                    <div className="absolute inset-0 z-[110] flex items-center justify-center bg-background-dark/70 backdrop-blur-sm rounded-2xl">
-                        <div className="bg-white dark:bg-slate-900 border border-red-500/20 rounded-2xl p-8 shadow-2xl max-w-sm w-full mx-4 text-center animate-fade-in-up">
-                            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
-                                <span className="material-symbols-outlined text-red-500 text-3xl">delete_forever</span>
+                    <div className="absolute inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-md">
+                        <div className="glass-card border border-rose-500/30 rounded-3xl p-10 shadow-3xl max-w-sm w-full mx-4 text-center animate-fade-in-up">
+                            <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto mb-6">
+                                <span className="material-symbols-outlined text-rose-500 text-4xl">delete_forever</span>
                             </div>
-                            <h3 className="text-lg font-bold mb-2">Delete this task?</h3>
-                            <p className="text-sm text-slate-500 mb-6">This action cannot be undone. The task will be permanently removed from your pipeline.</p>
-                            <div className="flex gap-3">
-                                <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Cancel</button>
-                                <button onClick={confirmDelete} className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold text-sm transition-colors shadow-lg hover:shadow-red-500/20">Delete</button>
+                            <h3 className="text-xl font-black mb-3 text-main uppercase tracking-widest">Delete this task?</h3>
+                            <p className="text-sm text-secondary font-bold mb-8 uppercase tracking-wider leading-relaxed">This action cannot be undone. The task will be vanished from your pipeline.</p>
+                            <div className="flex gap-4">
+                                <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-3.5 rounded-2xl border border-glass font-black text-[10px] uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all text-main">Cancel</button>
+                                <button onClick={confirmDelete} className="flex-1 py-3.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-rose-500/20">Purge Task</button>
                             </div>
                         </div>
                     </div>
@@ -682,22 +682,22 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
 
                 {/* ── Video Player Overlay ───────────────────── */}
                 {videoPreview && (
-                    <div className="absolute inset-0 z-[120] flex items-center justify-center bg-black/90 backdrop-blur-md rounded-2xl">
-                        <div className="w-full max-w-lg mx-4 space-y-4">
-                            <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-white text-xl">movie</span>
-                                    <span className="text-white text-sm font-bold">Video Preview</span>
+                    <div className="absolute inset-0 z-[120] flex items-center justify-center bg-black/95 backdrop-blur-xl">
+                        <div className="w-full max-w-2xl mx-6 space-y-6">
+                            <div className="flex items-center justify-between px-2">
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-primary text-2xl">movie</span>
+                                    <span className="text-white text-sm font-black uppercase tracking-widest">Master Video Preview</span>
                                 </div>
-                                <button onClick={() => setVideoPreview(null)} className="text-white/60 hover:text-white transition-colors">
+                                <button onClick={() => setVideoPreview(null)} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all">
                                     <span className="material-symbols-outlined">close</span>
                                 </button>
                             </div>
-                            <div className="relative rounded-xl overflow-hidden bg-black border border-white/10 shadow-2xl">
-                                <img src={videoPreview.url} alt="Video preview" className="w-full aspect-video object-cover" />
+                            <div className="relative rounded-2xl overflow-hidden bg-black border border-white/10 shadow-3xl">
+                                <img src={videoPreview.url} alt="Video preview" className="w-full aspect-video object-cover opacity-80" />
                                 <VideoPlayerOverlay />
                             </div>
-                            <p className="text-white/50 text-xs text-center italic">{videoPreview.desc}</p>
+                            <p className="text-white/40 text-[10px] font-black uppercase tracking-widest text-center italic">{videoPreview.desc}</p>
                         </div>
                     </div>
                 )}

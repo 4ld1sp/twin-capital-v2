@@ -10,7 +10,7 @@
 
 ## 2. Arsitektur & Teknologi Utama
 - **Frontend Framework:** React + Vite (Aplikasi *Client-Side* berkinerja tinggi).
-- **Styling:** Tailwind CSS (Mode Gelap /*Dark Mode* bawaan, palet warna *Emerald/Teal* khusus perusahaan, *Glassmorphism/Frosty*).
+- **Styling:** Tailwind CSS dengan sistem tema ganda (*Dual Theme*). Mode Terang (*Light Mode*) menggunakan efek *Glassmorphism* (`backdrop-blur`) pada kartu transparan di atas latar `#f2f2f7`. Mode Gelap (*Dark Mode*) menggunakan kartu solid `#1c1c1e` di atas latar hitam `#000000`, terinspirasi dari desain iOS. Toggle tema tersimpan di `localStorage`.
 - **Routing:** React Router DOM (Mendukung perlindungan rute, dilarang masuk tanpa sesi berizin).
 - **Visualisasi Data:** Chart.js melalui antarmuka `react-chartjs-2`.
 - **Integrasi Pihak Ketiga (Data Real-Time):**
@@ -92,6 +92,40 @@ Platform manajemen konten dan *personal branding* yang terintegrasi untuk menjal
 - **Security Check Gate (Test Connection):** Sebelum koneksi API baru (atau Webhook) dapat ditambahkan, pengguna diwajibkan melakukan *Test Connection* hingga status terverifikasi (Verified) untuk mencegah credential invalid.
 - **Edit Connection Data:** Kemampuan untuk mengubah (*update*) API Key, Secret, atau Password dari koneksi yang sudah ditambahkan dengan tombol konfirmasi Hapus (Delete Confirmation Modal) yang aman.
 - **Security Settings:** Modul pemberitahuan pengaturan sandi / privasi antarmuka, dilengkapi toggle fungsional seperti Two-Factor Authentication.
+
+### 3.7. Sistem Tema iOS (*iOS Theme Overhaul*)
+Sistem tema visual menyeluruh yang terinspirasi dari desain iOS, diterapkan secara konsisten di **seluruh halaman** aplikasi.
+
+#### 3.7.1. Arsitektur Tema
+- **CSS Variables:** Variabel warna terpusat (`:root` untuk gelap, `[data-theme='light']` untuk terang) mencakup `--bg-main`, `--card-bg`, `--card-border`, `--text-primary`, `--text-secondary`, `--primary`, dan `--glass-blur`.
+- **Tailwind Mapping:** Variabel CSS dipetakan ke utilitas Tailwind (`text-main`, `text-secondary`, `bg-main`, `bg-glass`, `border-glass`, `glass-card`).
+- **ThemeContext (React):** Context provider dengan `localStorage` persistence, menyediakan toggle `toggleTheme()` yang dapat diakses seluruh komponen.
+
+#### 3.7.2. Mode Terang (*Light Mode*)
+- Latar belakang: `#f2f2f7` (abu-abu terang ala iOS).
+- Kartu: `rgba(255,255,255,0.7)` dengan `backdrop-blur(25px)` — efek kaca (*Glassmorphism*).
+- Border halus: `rgba(0,0,0,0.05)`.
+
+#### 3.7.3. Mode Gelap (*Dark Mode*)
+- Latar belakang: `#000000` (hitam murni).
+- Kartu: `#1c1c1e` solid (tanpa blur) — gaya iOS Dark Mode.
+- Border halus: `rgba(255,255,255,0.08)`.
+
+#### 3.7.4. Bahasa Desain
+- **Tipografi:** `font-black uppercase tracking-widest` untuk judul dan label, memberikan kesan premium dan konsisten.
+- **Warna Aksen:** `#00d6ab` (hijau *teal*) sebagai warna utama di kedua mode.
+- **Elemen Interaktif:** Tombol aktif menggunakan `bg-primary text-black shadow-primary/20`, dengan efek `hover:brightness-110` dan `active:scale-[0.98]`.
+- **Sudut:** `rounded-2xl` hingga `rounded-3xl` pada kartu dan tombol.
+- **Segmented Control:** Tab navigasi bergaya iOS menggunakan latar `bg-black/5 dark:bg-white/5` dengan pill aktif `bg-primary`.
+
+#### 3.7.5. Cakupan Halaman
+| Halaman | Komponen yang Di-tema |
+|---------|----------------------|
+| Header | Navbar glassmorphism, toggle tema (Sun/Moon) |
+| Feed | Panel, tabs, search, tabel data |
+| Dashboard | MetricCards, PerformanceAnalytics, EngagementBars, BotStatusMatrix |
+| Trading | 21 komponen + 4 modal (Optimization, Backtest, Logs) |
+| Profile | ProfileHeader, RecentActivityList, AccountSettingsList, DangerZone |
 
 ---
 

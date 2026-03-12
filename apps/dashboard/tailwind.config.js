@@ -8,17 +8,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#00d6ab",
-        "background-light": "#f5f8f8",
-        "background-dark": "#0f231f",
+        "primary": "var(--primary)",
+        "accent": "#00d6ab",
+      },
+      backgroundColor: {
+        "main": "var(--bg-main)",
+        "glass": "var(--card-bg)",
+      },
+      textColor: {
+        "main": "var(--text-primary)",
+        "secondary": "var(--text-secondary)",
+      },
+      borderColor: {
+        "glass": "var(--card-border)",
       },
       fontFamily: {
-        "display": ["Inter", "sans-serif"]
+        "display": ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Inter", "sans-serif"]
       },
       borderRadius: {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
+        "DEFAULT": "0.5rem",
+        "lg": "0.75rem",
+        "xl": "1rem",
+        "2xl": "1.5rem",
         "full": "9999px"
       },
     },

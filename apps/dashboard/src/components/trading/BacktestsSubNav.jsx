@@ -2,11 +2,11 @@ import React from 'react';
 
 const BacktestsSubNav = () => {
   return (
-    <div className="border-b border-slate-200 dark:border-slate-800 flex gap-8 mb-6">
-      <button className="border-b-2 border-primary text-primary pb-4 font-bold text-sm">Performance Analysis</button>
-      <button className="border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-4 font-bold text-sm hover:text-slate-300">Trade History</button>
-      <button className="border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-4 font-bold text-sm hover:text-slate-300">Parameters</button>
-      <button className="border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-4 font-bold text-sm hover:text-slate-300">Signals</button>
+    <div className="flex gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass mb-8 overflow-x-auto w-fit">
+      <button className="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all bg-primary text-black shadow-lg shadow-primary/20">Performance Analysis</button>
+      <button className="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-secondary hover:text-main">Trade History</button>
+      <button className="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-secondary hover:text-main">Parameters</button>
+      <button className="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-secondary hover:text-main">Signals</button>
     </div>
   );
 };

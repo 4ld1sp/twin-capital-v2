@@ -3,71 +3,71 @@ import React from 'react';
 const OptimizationHeader = ({ activeOptTab, onTabChange, onExportClick, onRunClick }) => {
   return (
     <>
-      <div className="flex flex-wrap justify-between items-end gap-4 mb-8">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-slate-900 dark:text-slate-100 text-3xl font-black leading-tight tracking-tight">Research & Optimization</h1>
-          <p className="text-slate-500 dark:text-primary/60 text-base font-normal">Analyze market regimes and optimize strategy parameters in real-time.</p>
+      <div className="flex flex-wrap justify-between items-end gap-6 mb-8 mt-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-main text-3xl font-black leading-tight tracking-tight uppercase">Research & Optimization</h1>
+          <p className="text-secondary text-base font-bold uppercase tracking-wider opacity-80">Analyze market regimes and optimize strategy parameters in real-time.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           <button 
             onClick={onExportClick}
-            className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 border border-primary/30 text-primary text-sm font-bold hover:bg-primary/5 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-xl h-11 px-6 border border-glass text-secondary text-xs font-black uppercase tracking-widest hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           >
-            <span className="material-symbols-outlined text-lg">download</span>
+            <span className="material-symbols-outlined text-xl">download</span>
             <span>Export Report</span>
           </button>
           <button 
             onClick={onRunClick}
-            className="flex items-center justify-center gap-2 rounded-lg h-10 px-6 bg-primary text-background-dark text-sm font-bold hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center gap-2 rounded-xl h-11 px-8 bg-primary text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-primary/20"
           >
-            <span className="material-symbols-outlined text-lg">play_arrow</span>
+            <span className="material-symbols-outlined text-xl">play_arrow</span>
             <span>Run New Optimization</span>
           </button>
         </div>
       </div>
 
-      <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
-        <div className="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/10 border border-primary/20 px-4">
-          <span className="material-symbols-outlined text-primary text-lg">trending_up</span>
-          <p className="text-primary text-sm font-bold">Regime: Bullish</p>
+      <div className="flex gap-3 mb-8 overflow-x-auto pb-4">
+        <div className="flex h-10 shrink-0 items-center justify-center gap-x-2.5 rounded-xl bg-primary/10 border border-primary/20 px-5 shadow-sm">
+          <span className="material-symbols-outlined text-primary text-xl">trending_up</span>
+          <p className="text-primary text-[10px] font-black uppercase tracking-widest">Regime: Bullish</p>
         </div>
-        <div className="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-amber-500/10 border border-amber-500/20 px-4">
-          <span className="material-symbols-outlined text-amber-500 text-lg">bolt</span>
-          <p className="text-amber-500 text-sm font-bold">Volatility: High</p>
+        <div className="flex h-10 shrink-0 items-center justify-center gap-x-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 px-5 shadow-sm">
+          <span className="material-symbols-outlined text-amber-500 text-xl">bolt</span>
+          <p className="text-amber-500 text-[10px] font-black uppercase tracking-widest">Volatility: High</p>
         </div>
-        <div className="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-blue-500/10 border border-blue-500/20 px-4">
-          <span className="material-symbols-outlined text-blue-500 text-lg">database</span>
-          <p className="text-blue-500 text-sm font-bold">Data: 15m Binance</p>
+        <div className="flex h-10 shrink-0 items-center justify-center gap-x-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 px-5 shadow-sm">
+          <span className="material-symbols-outlined text-blue-500 text-xl">database</span>
+          <p className="text-blue-500 text-[10px] font-black uppercase tracking-widest">Data: 15m Binance</p>
         </div>
       </div>
 
-      <div className="border-b border-primary/10 mb-6 flex overflow-x-auto">
-        <div className="flex gap-8 whitespace-nowrap">
+      <div className="mb-8 border-b border-glass">
+        <nav className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-full sm:w-auto">
           <button 
             onClick={() => onTabChange('logs')}
-            className={`pb-3 text-sm font-bold transition-colors border-b-2 ${activeOptTab === 'logs' ? 'border-primary text-primary' : 'border-transparent text-primary/60 hover:text-primary hover:border-primary/50'}`}
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeOptTab === 'logs' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
           >
             Parameter Logs
           </button>
           <button 
             onClick={() => onTabChange('equity')}
-            className={`pb-3 text-sm font-bold transition-colors border-b-2 ${activeOptTab === 'equity' ? 'border-primary text-primary' : 'border-transparent text-primary/60 hover:text-primary hover:border-primary/50'}`}
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeOptTab === 'equity' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
           >
             Equity Curve
           </button>
           <button 
             onClick={() => onTabChange('ab_testing')}
-            className={`pb-3 text-sm font-bold transition-colors border-b-2 ${activeOptTab === 'ab_testing' ? 'border-primary text-primary' : 'border-transparent text-primary/60 hover:text-primary hover:border-primary/50'}`}
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeOptTab === 'ab_testing' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
           >
             A/B Testing
           </button>
           <button 
             onClick={() => onTabChange('correlations')}
-            className={`pb-3 text-sm font-bold transition-colors border-b-2 ${activeOptTab === 'correlations' ? 'border-primary text-primary' : 'border-transparent text-primary/60 hover:text-primary hover:border-primary/50'}`}
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeOptTab === 'correlations' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
           >
             Correlations
           </button>
-        </div>
+        </nav>
       </div>
     </>
   );

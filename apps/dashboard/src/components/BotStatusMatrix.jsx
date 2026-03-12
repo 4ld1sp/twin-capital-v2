@@ -103,11 +103,11 @@ const BotStatusMatrix = () => {
   const paginatedBots = viewAll ? bots : bots.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-primary/10 rounded-xl shadow-sm overflow-hidden mt-6 flex flex-col h-full min-h-[400px]">
+    <div className="glass-card rounded-2xl shadow-sm overflow-hidden mt-6 flex flex-col h-full min-h-[400px] transition-all duration-300">
 
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-primary/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-transparent">
-        <h3 className="text-lg font-bold flex items-center gap-2">
+      <div className="px-6 py-4 border-b border-glass flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-black/5 dark:bg-white/5">
+        <h3 className="text-lg font-bold flex items-center gap-2 text-main">
           <span className="material-symbols-outlined text-primary">robot_2</span>
           Bot Status Matrix
         </h3>
@@ -117,13 +117,13 @@ const BotStatusMatrix = () => {
               setViewAll(!viewAll);
               setCurrentPage(1); // Reset page when toggling
             }}
-            className={`text-sm font-semibold transition-colors px-3 py-1.5 rounded-lg border ${viewAll ? 'bg-primary/10 text-primary border-primary/20' : 'text-slate-500 border-transparent hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-slate-700 dark:hover:text-primary'}`}
+            className={`text-xs font-black transition-all px-4 py-2 rounded-xl border ${viewAll ? 'bg-primary text-black border-primary shadow-lg shadow-primary/20' : 'text-secondary border-glass hover:text-main hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-widest'}`}
           >
-            {viewAll ? 'View Paginated' : 'View All Algorithms'}
+            {viewAll ? 'PAGINATED VIEW' : 'VIEW ALL ALGORITHMS'}
           </button>
-          <div className="flex items-center gap-2 bg-background-dark/50 dark:bg-black/20 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-primary/10">
-            <span className="text-[10px] sm:text-xs font-mono font-semibold text-slate-500 tracking-wider uppercase">Auto-refresh 5s</span>
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] shadow-[0_0_5px_rgba(16,185,129,0.5)]"></div>
+          <div className="flex items-center gap-2 bg-black/10 dark:bg-white/5 px-4 py-2 rounded-xl border border-glass">
+            <span className="text-[10px] sm:text-[11px] font-black text-secondary tracking-widest uppercase">AUTO-REFRESH 5S</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
           </div>
         </div>
       </div>
@@ -131,17 +131,17 @@ const BotStatusMatrix = () => {
       {/* Table Area (Flex-1 allows it to grow if View All is clicked) */}
       <div className="overflow-x-auto flex-1 relative">
         <table className="w-full min-w-[700px] text-sm text-left">
-          <thead className="bg-slate-50 dark:bg-primary/5 text-slate-500 dark:text-slate-400 font-bold uppercase text-[10px] tracking-wider sticky top-0 z-10">
+          <thead className="bg-glass text-secondary font-black uppercase text-[10px] tracking-widest sticky top-0 z-10 border-b border-glass">
             <tr>
-              <th className="px-6 py-3">Strategy Name</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Asset Pair</th>
-              <th className="px-6 py-3">Current PnL</th>
-              <th className="px-6 py-3">Runtime</th>
-              <th className="px-6 py-3 text-right">Actions</th>
+              <th className="px-6 py-4">Strategy Name</th>
+              <th className="px-6 py-4">Status</th>
+              <th className="px-6 py-4">Asset Pair</th>
+              <th className="px-6 py-4">Current PnL</th>
+              <th className="px-6 py-4">Runtime</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-primary/10">
+          <tbody className="divide-y divide-glass/30">
             {paginatedBots.length === 0 ? (
               <tr>
                 <td colSpan="6" className="px-6 py-12 text-center text-slate-500 font-medium h-[256px]">
@@ -153,19 +153,19 @@ const BotStatusMatrix = () => {
                 const formattedPnl = formatPnl(bot.pnlValue);
 
                 return (
-                  <tr key={bot.id} className="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group relative">
-                    <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{bot.name}</td>
+                  <tr key={bot.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-all group relative">
+                    <td className="px-6 py-4 font-bold text-main">{bot.name}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold border transition-colors duration-300 ${bot.statusBg}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${bot.statusDot} ${bot.status === 'Active' ? 'animate-pulse' : ''}`}></span> {bot.status}
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${bot.statusBg}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${bot.statusDot} ${bot.status === 'Active' ? 'animate-pulse shadow-[0_0_8px_currentColor]' : ''}`}></span> {bot.status}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${bot.pairBg}`}>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border border-glass shadow-sm ${bot.pairBg}`}>
                           {bot.pairInitial}
                         </div>
-                        <span className="font-mono text-xs font-semibold">{bot.pairName}</span>
+                        <span className="font-mono text-xs font-bold text-main">{bot.pairName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -174,7 +174,7 @@ const BotStatusMatrix = () => {
                         {formattedPnl.text}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500 font-mono text-xs">{bot.runtime}</td>
+                    <td className="px-6 py-4 text-secondary font-mono text-[11px] font-bold uppercase">{bot.runtime}</td>
                     <td className="px-6 py-4 text-right relative">
 
                       {/* Action Menu Button */}
@@ -183,7 +183,7 @@ const BotStatusMatrix = () => {
                           e.stopPropagation();
                           setOpenMenuId(openMenuId === bot.id ? null : bot.id);
                         }}
-                        className={`p-1.5 rounded-lg transition-colors ${openMenuId === bot.id ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:text-primary hover:bg-primary/10'}`}
+                        className={`p-2 rounded-xl transition-all border ${openMenuId === bot.id ? 'bg-primary text-black border-primary' : 'text-secondary border-glass hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
                       >
                         <span className="material-symbols-outlined text-[20px]">more_vert</span>
                       </button>
@@ -192,39 +192,37 @@ const BotStatusMatrix = () => {
                       {openMenuId === bot.id && (
                         <div
                           ref={menuRef}
-                          className="absolute right-8 top-10 w-48 bg-background-dark/95 backdrop-blur-md border border-primary/20 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col py-1 animate-fade-in origin-top-right text-left"
+                          className="absolute right-8 top-12 w-56 bg-glass/95 backdrop-blur-3xl border border-glass rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col py-1.5 animate-fade-in origin-top-right text-left"
                         >
-                          <div className="px-3 py-2 border-b border-primary/10 mb-1">
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">{bot.name}</p>
+                          <div className="px-4 py-3 border-b border-glass mb-1 bg-black/5 dark:bg-white/5">
+                            <p className="text-[10px] text-secondary font-black uppercase tracking-widest truncate">{bot.name}</p>
                           </div>
 
                           <button
                             onClick={() => toggleBotStatus(bot.id)}
-                            className="px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-primary/20 flex items-center gap-2 text-left transition-colors"
+                            className="px-4 py-2.5 text-sm text-main font-semibold hover:bg-primary hover:text-black flex items-center gap-2 transition-all"
                           >
-                            <span className="material-symbols-outlined text-[16px]">{bot.status === 'Active' ? 'pause_circle' : 'play_circle'}</span>
+                            <span className="material-symbols-outlined text-[18px]">{bot.status === 'Active' ? 'pause_circle' : 'play_circle'}</span>
                             {bot.status === 'Active' ? 'Pause Strategy' : 'Resume Strategy'}
                           </button>
 
                           <button
                             onClick={() => { setOpenMenuId(null); alert('Routing to detailed logs for ' + bot.name); }}
-                            className="px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700/50 flex items-center gap-2 text-left transition-colors"
+                            className="px-4 py-2.5 text-sm text-main font-semibold hover:bg-black/10 dark:hover:bg-white/10 flex items-center gap-2 transition-all"
                           >
-                            <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+                            <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                             View Detailed Logs
                           </button>
 
-                          <div className="h-px bg-primary/10 my-1 mx-2"></div>
+                          <div className="h-px bg-glass my-1 mx-2"></div>
 
                           <button
                             onClick={() => removeBot(bot.id)}
-                            disabled={bot.status === 'Active'} // Prevent closing active bots
-                            className="px-4 py-2 text-sm text-rose-500/80 hover:text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 text-left transition-colors disabled:opacity-30 disabled:cursor-not-allowed group/btn"
-                            title={bot.status === 'Active' ? "You must pause the strategy before liquidating." : "Liquidate positions and close bot"}
+                            disabled={bot.status === 'Active'}
+                            className="px-4 py-2.5 text-sm text-rose-500 font-bold hover:bg-rose-500 hover:text-white flex items-center gap-2 transition-all disabled:opacity-20 disabled:cursor-not-allowed group/btn"
                           >
-                            <span className="material-symbols-outlined text-[16px]">cancel</span>
+                            <span className="material-symbols-outlined text-[18px]">cancel</span>
                             Force Close Bot
-                            {bot.status === 'Active' && <span className="absolute right-2 opacity-0 group-hover/btn:opacity-100 text-[10px] bg-background-dark px-1 rounded">Pause First</span>}
                           </button>
                         </div>
                       )}
@@ -239,25 +237,27 @@ const BotStatusMatrix = () => {
 
       {/* Pagination Footer */}
       {!viewAll && bots.length > 0 && (
-        <div className="px-6 py-4 bg-slate-50 dark:bg-primary/5 border-t border-slate-200 dark:border-primary/10 flex flex-col sm:flex-row justify-between items-center gap-4 mt-auto">
-          <p className="text-xs text-slate-500 font-semibold">
-            Showing <span className="text-slate-800 dark:text-slate-300">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-slate-800 dark:text-slate-300">{Math.min(currentPage * ITEMS_PER_PAGE, bots.length)}</span> of <span className="text-primary">{bots.length}</span> strategies
+        <div className="px-6 py-4 bg-black/5 dark:bg-white/5 border-t border-glass flex flex-col sm:flex-row justify-between items-center gap-4 mt-auto transition-all">
+          <p className="text-xs text-secondary font-black uppercase tracking-widest">
+            Showing <span className="text-main">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span>-
+            <span className="text-main">{Math.min(currentPage * ITEMS_PER_PAGE, bots.length)}</span> of 
+            <span className="text-primary ml-1">{bots.length}</span> strategies
           </p>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-3 items-center">
 
-            <span className="text-[10px] font-mono text-slate-500 mr-2 hidden sm:inline-block">PAGE {currentPage} / {totalPages}</span>
+            <span className="text-[10px] font-black text-secondary tracking-widest uppercase mr-2 hidden sm:inline-block">PAGE {currentPage} / {totalPages}</span>
 
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 px-3 border border-slate-200 dark:border-primary/20 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-primary/20 hover:text-primary dark:disabled:hover:bg-transparent"
+              className="px-5 py-2 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 disabled:cursor-not-allowed text-main hover:bg-primary hover:text-black border border-glass"
             >
-              <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">chevron_left</span> Prev</span>
+              <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">chevron_left</span> Previous</span>
             </button>
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 px-3 border border-slate-200 dark:border-primary/20 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed bg-white dark:bg-primary/10 text-slate-800 dark:text-primary hover:bg-slate-100 dark:hover:bg-primary/20 dark:disabled:bg-transparent dark:disabled:border-primary/20"
+              className="px-5 py-2 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 disabled:cursor-not-allowed shadow-lg shadow-primary/20 hover:brightness-110"
             >
               <span className="flex items-center gap-1">Next <span className="material-symbols-outlined text-[14px]">chevron_right</span></span>
             </button>

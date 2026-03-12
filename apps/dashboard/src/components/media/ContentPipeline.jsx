@@ -76,10 +76,10 @@ const ContentPipeline = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold">Content Pipeline</h3>
-        <button onClick={openCreateModal} className="flex items-center gap-1.5 text-sm font-bold text-background-dark bg-primary hover:bg-primary/90 transition-colors px-4 py-2 rounded-lg shadow-md hover:shadow-primary/20">
+        <h3 className="text-xl font-bold text-main">Content Pipeline</h3>
+        <button onClick={openCreateModal} className="flex items-center gap-1.5 text-xs font-black text-black bg-primary hover:brightness-110 transition-all px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 uppercase tracking-widest">
           <span className="material-symbols-outlined text-[18px]">add</span>
           Add Task
         </button>
@@ -91,14 +91,14 @@ const ContentPipeline = () => {
           return (
             <div
               key={column.id}
-              className="bg-slate-100/50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col transition-colors min-h-[300px]"
+              className="bg-black/5 dark:bg-white/5 p-4 rounded-2xl border border-glass flex flex-col transition-all min-h-[400px]"
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, column.id)}
             >
               {/* Column Header */}
-              <div className="flex items-center justify-between mb-4">
-                <span className={`text-xs font-bold uppercase tracking-wider ${column.titleColor}`}>{column.title}</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${column.badgeClass}`}>{columnTasks.length}</span>
+              <div className="flex items-center justify-between mb-4 px-1">
+                <span className={`text-[10px] font-black uppercase tracking-widest ${column.titleColor}`}>{column.title}</span>
+                <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black ${column.badgeClass}`}>{columnTasks.length}</span>
               </div>
 
               {/* Task List */}
@@ -110,34 +110,34 @@ const ContentPipeline = () => {
                     onDragStart={(e) => handleDragStart(e, task.id)}
                     onDragEnd={handleDragEnd}
                     onClick={() => openEditModal(task)}
-                    className={`bg-white dark:bg-slate-800 p-3 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all group ${column.borderHighlight || ''} ${draggedTaskId === task.id ? 'ring-2 ring-primary border-transparent opacity-50 relative z-50' : ''}`}
+                    className={`glass-card p-4 rounded-xl shadow-sm border border-glass cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all group ${column.borderHighlight || ''} ${draggedTaskId === task.id ? 'ring-2 ring-primary border-transparent opacity-50 relative z-50' : ''}`}
                   >
-                    <div className="flex justify-between items-start mb-1.5">
-                      <p className="text-sm font-medium flex-1 pr-2">{task.title}</p>
-                      <span className="material-symbols-outlined text-[14px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+                    <div className="flex justify-between items-start mb-2">
+                      <p className="text-sm font-bold text-main flex-1 pr-2 leading-tight">{task.title}</p>
+                      <span className="material-symbols-outlined text-[16px] text-secondary opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
                     </div>
 
                     {task.targetTime && (
-                      <div className={`flex items-center gap-1 text-[10px] font-mono mb-2 p-1 rounded ${isOverdue(task.targetTime) && task.status !== 'go_live' ? 'bg-red-50 dark:bg-red-900/20 text-red-500' : 'bg-slate-50 dark:bg-black/20 text-slate-500'}`}>
-                        <span className="material-symbols-outlined text-[12px]">{isOverdue(task.targetTime) && task.status !== 'go_live' ? 'warning' : 'schedule'}</span>
+                      <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider mb-3 p-1.5 rounded-lg border ${isOverdue(task.targetTime) && task.status !== 'go_live' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-black/5 dark:bg-white/5 text-secondary border-glass'}`}>
+                        <span className="material-symbols-outlined text-[14px]">{isOverdue(task.targetTime) && task.status !== 'go_live' ? 'warning' : 'schedule'}</span>
                         {new Date(task.targetTime).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                       </div>
                     )}
 
                     <div className="flex justify-between items-center">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${task.platformColor}`}>{task.platform}</span>
-                      <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-[10px] font-bold text-slate-500 overflow-hidden">A</div>
+                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-glass shadow-sm ${task.platformColor}`}>{task.platform}</span>
+                      <div className="w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-[10px] font-black shadow-sm">A</div>
                     </div>
                   </div>
                 ))}
 
                 {draggedTaskId && columnTasks.length === 0 && (
-                  <div className="h-24 border-2 border-dashed border-primary/30 rounded-lg flex items-center justify-center pointer-events-none transition-all">
-                    <span className="text-primary/40 text-xs font-bold uppercase tracking-wider">Drop Here</span>
+                  <div className="h-32 border-2 border-dashed border-primary/30 rounded-2xl flex items-center justify-center pointer-events-none transition-all">
+                    <span className="text-primary/40 text-[10px] font-black uppercase tracking-widest">Drop Here</span>
                   </div>
                 )}
                 {columnTasks.length === 0 && !draggedTaskId && (
-                  <div className="text-slate-400 dark:text-slate-600 text-xs text-center py-6 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg flex-1 flex items-center justify-center">
+                  <div className="text-secondary opacity-40 text-[10px] font-black uppercase tracking-widest text-center py-12 border-2 border-dashed border-glass rounded-2xl flex-1 flex items-center justify-center">
                     No tasks
                   </div>
                 )}

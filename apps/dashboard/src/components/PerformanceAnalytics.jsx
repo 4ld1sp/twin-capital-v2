@@ -135,18 +135,18 @@ const PerformanceAnalytics = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-primary/10 rounded-xl p-6 shadow-sm h-full flex flex-col relative">
+    <div className="glass-card rounded-2xl p-6 shadow-sm h-full flex flex-col relative transition-all duration-300">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
-          <h3 className="text-lg font-bold">Performance Analytics</h3>
+          <h3 className="text-lg font-bold text-main">Performance Analytics</h3>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-xs text-slate-500">PnL over</p>
-            <div className="flex bg-slate-100 dark:bg-primary/5 rounded-md p-0.5 border border-slate-200 dark:border-primary/10">
+            <p className="text-xs text-secondary font-bold uppercase tracking-wider">PnL over</p>
+            <div className="flex bg-black/5 dark:bg-white/5 rounded-xl p-1 border border-glass">
               {['1W', '1M', '3M', '1Y'].map(tf => (
                 <button
                   key={tf}
                   onClick={() => setTimeframe(tf)}
-                  className={`px-2 py-0.5 text-[10px] font-bold rounded-sm transition-colors ${timeframe === tf ? 'bg-white dark:bg-primary text-background-dark shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-primary/70'}`}
+                  className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${timeframe === tf ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
                 >
                   {tf}
                 </button>
@@ -154,17 +154,17 @@ const PerformanceAnalytics = () => {
             </div>
           </div>
         </div>
-        <div className="flex bg-slate-100 dark:bg-primary/5 p-1 rounded-lg border border-slate-200 dark:border-primary/10">
+        <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-glass">
           <button
             onClick={() => setChartType('line')}
-            className={`px-3 py-1.5 text-xs font-bold rounded flex items-center gap-1 transition-all ${chartType === 'line' ? 'bg-white dark:bg-primary text-background-dark shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-primary/70'}`}
+            className={`px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${chartType === 'line' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
           >
             <span className="material-symbols-outlined text-[14px]">show_chart</span>
             Line
           </button>
           <button
             onClick={() => setChartType('bar')}
-            className={`px-3 py-1.5 text-xs font-bold rounded flex items-center gap-1 transition-all ${chartType === 'bar' ? 'bg-white dark:bg-primary text-background-dark shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-primary/70'}`}
+            className={`px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${chartType === 'bar' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main'}`}
           >
             <span className="material-symbols-outlined text-[14px]">bar_chart</span>
             Bar
@@ -205,7 +205,7 @@ const PerformanceAnalytics = () => {
               )}
 
               {/* X-Axis Labels (Shared) */}
-              <span className={`absolute bottom-0 text-[10px] font-bold uppercase transition-colors ${hoverIndex === i ? (d.isLoss ? 'text-rose-400' : 'text-primary') : 'text-slate-500'}`}>
+              <span className={`absolute bottom-0 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${hoverIndex === i ? (d.isLoss ? 'text-rose-500' : 'text-primary scale-110') : 'text-secondary opacity-60'}`}>
                 {d.label}
               </span>
             </div>
@@ -213,7 +213,7 @@ const PerformanceAnalytics = () => {
         })}
 
         {/* Baseline (0 value marker) */}
-        <div className="absolute bottom-6 left-0 right-0 h-px bg-slate-200 dark:bg-primary/20 z-0 border-b border-dashed border-primary/10"></div>
+        <div className="absolute bottom-6 left-0 right-0 h-px bg-glass z-0 border-b border-dashed border-glass"></div>
       </div>
     </div>
   );

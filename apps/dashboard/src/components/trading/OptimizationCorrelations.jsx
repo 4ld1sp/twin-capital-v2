@@ -48,28 +48,28 @@ const OptimizationCorrelations = () => {
   };
 
   const getColor = (value) => {
-    if (value >= 0.99) return 'bg-primary/40 text-primary';
-    if (value > 0.8) return 'bg-primary/30 text-primary/90';
-    if (value > 0.65) return 'bg-primary/20 text-primary/80';
-    if (value > 0.5) return 'bg-primary/10 text-primary/70';
-    return 'bg-primary/5 text-primary/50';
+    if (value >= 0.99) return 'bg-primary/50 text-black border-primary shadow-[0_0_10px_rgba(202,255,0,0.3)]Scale-105';
+    if (value > 0.8) return 'bg-primary/30 text-primary border-primary/40';
+    if (value > 0.65) return 'bg-primary/20 text-primary/80 border-primary/20';
+    if (value > 0.5) return 'bg-primary/10 text-primary/60 border-primary/10';
+    return 'bg-black/5 dark:bg-white/5 text-secondary border-glass';
   };
 
   return (
-    <div className="bg-background-light dark:bg-primary/5 rounded-xl border border-primary/10 p-6 w-full overflow-hidden relative">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary">grid_view</span>
-          Asset Strategy Correlations
+    <div className="glass-card rounded-3xl border border-glass p-8 w-full overflow-hidden relative shadow-sm">
+      <div className="flex justify-between items-center mb-8">
+        <h3 className="text-sm font-black flex items-center gap-3 text-main uppercase tracking-widest">
+          <span className="material-symbols-outlined text-primary text-2xl">grid_view</span>
+          Correlation Matrix
         </h3>
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md hidden sm:inline-block">30-Day Rolling</span>
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-black px-4 py-1.5 bg-primary/10 text-primary rounded-xl border border-primary/20 uppercase tracking-widest hidden sm:inline-block">30-Day Rolling</span>
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="flex items-center justify-center p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-colors"
+            className="flex items-center justify-center w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-secondary border border-glass transition-all"
             title="Edit Asset Configuration"
           >
-            <span className="material-symbols-outlined text-[18px]">edit</span>
+            <span className="material-symbols-outlined text-xl">settings</span>
           </button>
         </div>
       </div>
@@ -77,10 +77,10 @@ const OptimizationCorrelations = () => {
       <div className="overflow-x-auto">
         <div style={{ minWidth: `${(assets.length + 1) * 60}px` }} className={`transition-opacity duration-300 ${isLoading ? 'opacity-30' : 'opacity-100'}`}>
           {/* Header Row */}
-          <div className="flex mb-2">
-            <div className="w-16 shrink-0"></div> {/* Empty top-left cell */}
+          <div className="flex mb-3">
+            <div className="w-20 shrink-0"></div>
             {assets.map(asset => (
-              <div key={asset} className="flex-1 text-center font-bold text-xs text-primary/70 py-2 truncate px-1">
+              <div key={asset} className="flex-1 text-center font-black text-[10px] text-secondary uppercase tracking-widest py-3 truncate px-1 border-b border-glass">
                 {asset}
               </div>
             ))}
@@ -88,8 +88,8 @@ const OptimizationCorrelations = () => {
 
           {/* Data Rows */}
           {data.length > 0 && data.map((row, i) => (
-            <div key={assets[i]} className="flex mb-2">
-              <div className="w-16 shrink-0 flex items-center justify-end pr-4 font-bold text-xs text-primary/70 truncate">
+            <div key={assets[i]} className="flex mb-3">
+              <div className="w-20 shrink-0 flex items-center justify-end pr-5 font-black text-[10px] text-secondary uppercase tracking-widest truncate">
                 {assets[i]}
               </div>
               {row.map((val, j) => (
@@ -98,7 +98,7 @@ const OptimizationCorrelations = () => {
                   className="flex-1 px-1"
                 >
                   <div
-                    className={`flex justify-center items-center w-full h-10 rounded-lg text-xs sm:text-sm font-mono font-bold transition-all hover:scale-105 cursor-pointer ${getColor(val)}`}
+                    className={`flex justify-center items-center w-full h-12 rounded-xl text-xs font-black transition-all hover:scale-110 cursor-pointer border ${getColor(val)}`}
                     title={`${assets[i]} vs ${assets[j]}: ${val.toFixed(2)}`}
                   >
                     {val.toFixed(2)}
@@ -119,12 +119,12 @@ const OptimizationCorrelations = () => {
         </div>
       )}
 
-      <div className="mt-6 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-primary/5"></div> Low Value</span>
-          <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-primary/40"></div> High Value</span>
+      <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-black uppercase tracking-widest">
+        <div className="flex items-center gap-6">
+          <span className="flex items-center gap-2 text-secondary opacity-60"><div className="w-3 h-3 rounded-full bg-black/5 dark:bg-white/5 border border-glass"></div> Neutral</span>
+          <span className="flex items-center gap-2 text-primary"><div className="w-3 h-3 rounded-full bg-primary/40 border border-primary/20"></div> Correlated</span>
         </div>
-        <span className="text-[10px] uppercase font-bold text-primary/40 font-mono tracking-wider">Source: Bybit API</span>
+        <span className="text-[10px] text-secondary opacity-40 font-mono tracking-tighter">Powered by Bybit Institutional API</span>
       </div>
 
       <EditAssetsModal

@@ -9,8 +9,8 @@ const Dashboard = () => {
   return (
     <div className="space-y-6 flex flex-col w-full">
       <div className="mb-2">
-        <h1 className="text-2xl font-bold">Executive Overview</h1>
-        <p className="text-sm text-slate-500">Combined insights across trading and media operations</p>
+        <h1 className="text-2xl font-bold text-main">Executive Overview</h1>
+        <p className="text-sm text-secondary">Combined insights across trading and media operations</p>
       </div>
       
       {/* Top Metrics Row - Combined */}
@@ -23,8 +23,8 @@ const Dashboard = () => {
           change="+2.1%"
           changeColor="text-emerald-500"
           visual={
-            <div className="w-full bg-slate-100 dark:bg-primary/5 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-primary h-full rounded-full" style={{ width: '68.5%' }}></div>
+            <div className="w-full bg-black/5 dark:bg-white/5 h-2 rounded-full overflow-hidden border border-glass">
+              <div className="bg-primary h-full rounded-full shadow-[0_0_10px_rgba(0,214,171,0.5)]" style={{ width: '68.5%' }}></div>
             </div>
           }
         />

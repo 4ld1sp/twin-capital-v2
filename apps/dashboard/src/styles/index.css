@@ -2,9 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Dark Theme (Default) — solid dark cards on black */
+  --bg-main: #000000;
+  --card-bg: #1c1c1e;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.55);
+  --primary: #00d6ab;
+  --glass-blur: blur(0px);
+}
+
+[data-theme='light'] {
+  --bg-main: #f2f2f7;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(0, 0, 0, 0.05);
+  --text-primary: #1c1c1e;
+  --text-secondary: rgba(60, 60, 67, 0.6);
+  --primary: #00d6ab;
+  --glass-blur: blur(25px);
+}
+
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    @apply transition-colors duration-300;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
   }
 }
 
@@ -16,22 +40,22 @@
     background: linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0) 100%);
   }
   .glass-card {
-    background: rgba(15, 35, 31, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 214, 171, 0.2);
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
   }
   .gradient-bg {
-    background: radial-gradient(circle at 0% 0%, #0f231f 0%, #0a1815 50%, #00d6ab22 100%);
+    background: radial-gradient(circle at 0% 0%, var(--bg-main) 0%, var(--bg-main) 50%, var(--primary) 0.05%);
   }
   .glass-modal {
-    background: rgba(15, 35, 31, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 214, 171, 0.2);
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
   }
   .bg-dim {
-    background: rgba(5, 12, 10, 0.6);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
   }
 }
