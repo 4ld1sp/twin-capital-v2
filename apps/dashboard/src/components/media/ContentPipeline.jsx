@@ -124,6 +124,26 @@ const ContentPipeline = () => {
                       </div>
                     )}
 
+                    {task.media && task.media.length > 0 && (
+                      <div className="mb-3 rounded-lg overflow-hidden border border-glass relative aspect-video bg-black/5 dark:bg-white/5 group-hover:border-primary/30 transition-all">
+                        {task.media[0].type === 'video' ? (
+                          <div className="w-full h-full flex items-center justify-center relative">
+                            <img src={task.media[0].url} alt="" className="w-full h-full object-cover opacity-60" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/0 transition-all">
+                              <span className="material-symbols-outlined text-white text-3xl drop-shadow-lg">play_circle</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <img src={task.media[0].url} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        )}
+                        {task.media.length > 1 && (
+                          <div className="absolute bottom-1.5 right-1.5 bg-black/70 backdrop-blur-md text-white text-[9px] font-black px-2 py-0.5 rounded-md border border-white/10 shadow-lg">
+                            +{task.media.length - 1} MEDIA
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-center">
                       <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-glass shadow-sm ${task.platformColor}`}>{task.platform}</span>
                       <div className="w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-[10px] font-black shadow-sm">A</div>

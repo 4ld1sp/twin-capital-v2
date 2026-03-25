@@ -26,17 +26,17 @@ export default function Login({ onLogin }) {
         {/* Login Card */}
         <main className="flex-1 flex flex-col items-center justify-center w-full">
           <div className="glass-card w-full max-w-[480px] rounded-xl p-8 shadow-2xl relative">
-            <div className="mb-8">
-              <h1 className="text-3xl font-black text-white mb-2 leading-tight">Welcome to Command Center</h1>
-              <p className="text-slate-400 text-base">Secure access to your capital management dashboard</p>
+            <div className="mb-8 items-center text-center">
+              <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2 leading-tight">Welcome to Command Center</h1>
+              <p className="text-slate-600 dark:text-slate-400 text-base">Secure access to your capital management dashboard</p>
             </div>
             
             <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); if(onLogin) onLogin(); }}>
               {/* Email Field */}
               <div className="flex flex-col gap-2">
-                <label className="text-slate-200 text-sm font-semibold uppercase tracking-wider">Corporate Email</label>
+                <label className="text-slate-700 dark:text-slate-200 text-sm font-semibold uppercase tracking-wider">Corporate Email</label>
                 <div className="relative">
-                  <input className="w-full h-14 bg-background-dark/50 border border-slate-700/50 rounded-lg px-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="name@twincapital.com" type="email" required />
+                  <input className="w-full h-14 bg-black/5 dark:bg-black/40 border border-slate-300 dark:border-slate-700/50 rounded-lg px-4 text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="name@twincapital.com" type="email" required />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 flex items-center">
                     <span className="material-symbols-outlined">alternate_email</span>
                   </div>
@@ -46,11 +46,11 @@ export default function Login({ onLogin }) {
               {/* Password Field */}
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-end">
-                  <label className="text-slate-200 text-sm font-semibold uppercase tracking-wider">Password</label>
+                  <label className="text-slate-700 dark:text-slate-200 text-sm font-semibold uppercase tracking-wider">Password</label>
                   <a className="text-primary text-xs font-medium hover:underline" href="#">Forgot?</a>
                 </div>
                 <div className="relative">
-                  <input className="w-full h-14 bg-background-dark/50 border border-slate-700/50 rounded-lg px-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="••••••••••••" type="password" required />
+                  <input className="w-full h-14 bg-black/5 dark:bg-black/40 border border-slate-300 dark:border-slate-700/50 rounded-lg px-4 text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="••••••••••••" type="password" required />
                   <button className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary transition-colors flex items-center" type="button">
                     <span className="material-symbols-outlined">visibility</span>
                   </button>
@@ -59,8 +59,8 @@ export default function Login({ onLogin }) {
               
               {/* Remember Me */}
               <div className="flex items-center gap-3">
-                <input className="w-5 h-5 rounded border-slate-700 bg-background-dark text-primary focus:ring-primary focus:ring-offset-background-dark outline-none" id="remember" type="checkbox" />
-                <label className="text-slate-300 text-sm select-none cursor-pointer" htmlFor="remember">Remember this device for 30 days</label>
+                <input className="w-5 h-5 rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-background-dark text-primary focus:ring-primary focus:ring-offset-2 outline-none" id="remember" type="checkbox" />
+                <label className="text-slate-600 dark:text-slate-300 text-sm select-none cursor-pointer" htmlFor="remember">Remember this device for 30 days</label>
               </div>
               
               {/* Submit Button */}
@@ -70,8 +70,8 @@ export default function Login({ onLogin }) {
               </button>
             </form>
             
-            <div className="mt-8 pt-6 border-t border-slate-700/30 flex flex-col items-center gap-4">
-              <p className="text-slate-500 text-xs text-center uppercase tracking-[0.2em]">Authorized Personnel Only</p>
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700/30 flex flex-col items-center gap-4">
+              <p className="text-slate-600 dark:text-slate-500 text-xs text-center uppercase tracking-[0.2em]">Authorized Personnel Only</p>
               <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-lg bg-slate-800/50 flex items-center justify-center border border-slate-700/50 grayscale hover:grayscale-0 transition-all cursor-pointer" title="SSO Login">
                   <span className="material-symbols-outlined text-slate-300">key</span>

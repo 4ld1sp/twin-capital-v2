@@ -48,11 +48,11 @@ const OptimizationCorrelations = () => {
   };
 
   const getColor = (value) => {
-    if (value >= 0.99) return 'bg-primary/50 text-black border-primary shadow-[0_0_10px_rgba(202,255,0,0.3)]Scale-105';
-    if (value > 0.8) return 'bg-primary/30 text-primary border-primary/40';
-    if (value > 0.65) return 'bg-primary/20 text-primary/80 border-primary/20';
-    if (value > 0.5) return 'bg-primary/10 text-primary/60 border-primary/10';
-    return 'bg-black/5 dark:bg-white/5 text-secondary border-glass';
+    if (value >= 0.99) return 'bg-primary/20 text-primary border-primary/30 shadow-sm scale-[1.02] z-10';
+    if (value > 0.8) return 'bg-primary/15 text-main border-primary/20';
+    if (value > 0.65) return 'bg-primary/10 text-main/80 border-primary/10';
+    if (value > 0.5) return 'bg-primary/5 text-secondary border-primary/5';
+    return 'bg-black/5 dark:bg-white/5 text-secondary/40 border-glass';
   };
 
   return (

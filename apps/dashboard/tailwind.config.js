@@ -14,6 +14,8 @@ export default {
       backgroundColor: {
         "main": "var(--bg-main)",
         "glass": "var(--card-bg)",
+        "background-dark": "#000000",
+        "background-light": "#f2f2f7",
       },
       textColor: {
         "main": "var(--text-primary)",

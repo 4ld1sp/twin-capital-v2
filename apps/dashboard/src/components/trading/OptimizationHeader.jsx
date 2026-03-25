@@ -41,7 +41,7 @@ const OptimizationHeader = ({ activeOptTab, onTabChange, onExportClick, onRunCli
         </div>
       </div>
 
-      <div className="mb-8 border-b border-glass">
+      <div className="mb-8">
         <nav className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-full sm:w-auto">
           <button 
             onClick={() => onTabChange('logs')}

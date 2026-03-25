@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Save, Trash2, CheckCircle2, AlertCircle, Plus, Key, Webhook, X, Edit2, Loader2 } from 'lucide-react';
+import { useApp, availablePlatforms } from '../context/AppContext';
 
 const apiCategories = [
   { id: 'trading', label: 'Trading Exchanges', icon: 'currency_exchange' },
@@ -8,33 +9,7 @@ const apiCategories = [
   { id: 'webhooks', label: 'Webhooks', icon: 'webhook' }
 ];
 
-const availablePlatforms = {
-  trading: [
-    { id: 'binance', name: 'Binance', fields: ['key', 'secret'] },
-    { id: 'bybit', name: 'Bybit', fields: ['key', 'secret'] },
-    { id: 'exness', name: 'Exness', fields: ['key', 'secret', 'password'] },
-    { id: 'okx', name: 'OKX', fields: ['key', 'secret', 'passphrase'] }
-  ],
-  social: [
-    { id: 'x', name: 'X / Twitter', fields: ['key', 'secret'] },
-    { id: 'telegram', name: 'Telegram Bot', fields: ['token'] },
-    { id: 'tiktok', name: 'TikTok', fields: ['access_token', 'client_secret'] },
-    { id: 'instagram', name: 'Instagram', fields: ['access_token'] },
-    { id: 'youtube', name: 'YouTube Shorts', fields: ['api_key', 'client_id'] },
-    { id: 'linkedin', name: 'LinkedIn', fields: ['client_id', 'client_secret'] },
-    { id: 'facebook', name: 'Facebook', fields: ['access_token'] }
-  ],
-  ai: [
-    { id: 'openai', name: 'OpenAI', fields: ['key'] },
-    { id: 'anthropic', name: 'Anthropic', fields: ['key'] },
-    { id: 'midjourney', name: 'Midjourney API', fields: ['key'] }
-  ],
-  webhooks: [
-    { id: 'openclaw', name: 'OpenClaw System', fields: ['endpoint', 'webhook_secret'] },
-    { id: 'tradingview', name: 'TradingView Alerts', fields: ['endpoint', 'webhook_secret'] },
-    { id: 'custom', name: 'Custom Webhook', fields: ['endpoint', 'webhook_secret'] }
-  ]
-};
+
 
 const formatFieldLabel = (field) => {
   return field.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -44,22 +19,10 @@ export default function ApiKeysManager() {
   const [activeTab, setActiveTab] = useState('trading');
   const [showSecrets, setShowSecrets] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [customPlatformName, setCustomPlatformName] = useState('');
   
-  // Dynamic User Connections Data
-  const [userConnections, setUserConnections] = useState({
-    trading: [
-      { id: 'conn-1', platformId: 'binance', name: 'Binance', connected: true, lastSynced: '5 mins ago', fields: { key: 'sk-binance-xxx', secret: 'abc-def-ghi' } }
-    ],
-    social: [
-      { id: 'conn-2', platformId: 'x', name: 'X / Twitter', connected: true, lastSynced: '1 hour ago', fields: { key: 'sk-x-1234', secret: 'oauth-token-xxx' } }
-    ],
-    ai: [
-      { id: 'conn-3', platformId: 'openai', name: 'OpenAI', connected: true, lastSynced: 'Just now', fields: { key: 'sk-proj-xyz...' } }
-    ],
-    webhooks: [
-      { id: 'conn-4', platformId: 'openclaw', name: 'OpenClaw System', connected: true, lastSynced: 'Live', fields: { endpoint: 'https://api.twincapital.com/webhook/openclaw', webhook_secret: 'whsec_1234567890' } }
-    ]
-  });
+  const { userConnections, setUserConnections } = useApp();
 
   // Add Form State
   const [newConnPlatform, setNewConnPlatform] = useState('');
@@ -126,7 +89,7 @@ export default function ApiKeysManager() {
     const newConnection = {
       id: `conn-${Date.now()}`,
       platformId: platformDef.id,
-      name: platformDef.name,
+      name: platformDef.id === 'other' ? customPlatformName : platformDef.name,
       connected: false,
       lastSynced: 'Never',
       fields: { ...newConnFields }
@@ -138,7 +101,9 @@ export default function ApiKeysManager() {
     }));
 
     setShowAddModal(false);
+    setIsDropdownOpen(false);
     setNewConnPlatform('');
+    setCustomPlatformName('');
     setNewConnFields({});
     setTestStatus('idle');
   };
@@ -157,7 +122,7 @@ export default function ApiKeysManager() {
 
     return (
       <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700">
           <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
             <h3 className="font-bold text-lg text-slate-900 dark:text-white">Add {apiCategories.find(c => c.id === activeTab)?.label}</h3>
             <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
@@ -167,21 +132,84 @@ export default function ApiKeysManager() {
           <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Select Platform</label>
-              <select 
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                value={newConnPlatform}
-                onChange={e => {
-                  setNewConnPlatform(e.target.value);
-                  setNewConnFields({});
-                  setTestStatus('idle');
-                }}
-              >
-                <option value="" disabled>-- Choose a platform --</option>
-                {platformsMenu.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-300 ${
+                    isDropdownOpen 
+                      ? 'border-primary ring-2 ring-primary/20 bg-white dark:bg-slate-900 shadow-lg' 
+                      : 'border-slate-200 dark:border-primary/10 bg-black/5 dark:bg-black/40 hover:bg-black/10 dark:hover:bg-primary/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {selectedPlatformDef ? (
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${selectedPlatformDef.color}`}>
+                        <span className="material-symbols-outlined text-[18px]">{selectedPlatformDef.icon}</span>
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                        <span className="material-symbols-outlined text-[18px]">category</span>
+                      </div>
+                    )}
+                    <span className={`text-sm font-medium ${selectedPlatformDef ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
+                      {selectedPlatformDef ? selectedPlatformDef.name : 'Choose a platform'}
+                    </span>
+                  </div>
+                  <span className={`material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-primary' : ''}`}>
+                    expand_more
+                  </span>
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-2 z-[110] bg-white/90 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200 dark:border-primary/20 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 origin-top">
+                    <div className="max-h-60 overflow-y-auto p-1.5 custom-scrollbar">
+                      {platformsMenu.map(p => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            setNewConnPlatform(p.id);
+                            setNewConnFields({});
+                            setTestStatus('idle');
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+                            newConnPlatform === p.id 
+                              ? 'bg-primary/10 text-primary font-bold' 
+                              : 'text-slate-700 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5 hover:translate-x-1'
+                          }`}
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform ${p.color}`}>
+                            <span className="material-symbols-outlined text-[18px]">{p.icon}</span>
+                          </div>
+                          <span className="text-sm">{p.name}</span>
+                          {newConnPlatform === p.id && (
+                            <span className="material-symbols-outlined text-[18px] ml-auto">check_circle</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
+            
+            {newConnPlatform === 'other' && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">What's the platform name?</label>
+                <input 
+                  type="text"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner"
+                  placeholder="e.g. Mexc Exchange, DeepSeek, etc."
+                  value={customPlatformName}
+                  onChange={e => {
+                    setCustomPlatformName(e.target.value);
+                    setTestStatus('idle');
+                  }}
+                />
+              </div>
+            )}
 
             {selectedPlatformDef && selectedPlatformDef.fields.map(field => (
               <div key={field}>
@@ -276,7 +304,7 @@ export default function ApiKeysManager() {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {currentList.map((item) => (
-          <div key={item.id} className="bg-slate-50 dark:bg-primary/5 rounded-xl p-5 border border-slate-200 dark:border-primary/10 hover:border-primary/30 transition-colors group relative">
+          <div key={item.id} className="glass-card rounded-xl p-5 hover:border-primary/30 transition-colors group relative">
             
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
@@ -325,7 +353,7 @@ export default function ApiKeysManager() {
                     <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       {formatFieldLabel(fieldKey)}
                     </label>
-                    <div className="relative flex rounded-lg overflow-hidden border border-slate-200 dark:border-primary/20 bg-white dark:bg-black/20 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+                    <div className="relative flex rounded-lg overflow-hidden border border-slate-200 dark:border-primary/10 bg-black/5 dark:bg-black/40 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
                       <input 
                         type={fieldType}
                         value={editingConnectionId === item.id ? editFields[fieldKey] || '' : fieldValue}
@@ -390,8 +418,8 @@ export default function ApiKeysManager() {
 
   return (
     <>
-      <div className="bg-white dark:bg-primary/5 rounded-2xl border border-slate-200 dark:border-primary/20 overflow-hidden shadow-sm">
-        <div className="px-6 py-5 border-b border-slate-200 dark:border-primary/10 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+      <div className="glass-card rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-6 py-5 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Key className="w-5 h-5 text-primary" />
@@ -406,22 +434,24 @@ export default function ApiKeysManager() {
           )}
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-slate-200 dark:border-primary/10 overflow-x-auto no-scrollbar bg-slate-50/50 dark:bg-black/10 px-4">
-          {apiCategories.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveTab(cat.id)}
-              className={`flex items-center gap-2 px-4 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === cat.id 
-                  ? 'border-primary text-primary' 
-                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[18px]">{cat.icon}</span>
-              {cat.label}
-            </button>
-          ))}
+        {/* Sub-Navigation (Matching Trading & Media Pages) */}
+        <div className="px-6 py-2 bg-slate-50/30 dark:bg-black/20">
+          <nav className="flex items-center gap-2 p-1 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-fit">
+            {apiCategories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveTab(cat.id)}
+                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                  activeTab === cat.id 
+                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
+                    : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
+                {cat.label}
+              </button>
+            ))}
+          </nav>
         </div>
 
         {/* Content */}

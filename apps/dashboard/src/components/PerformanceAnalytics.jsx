@@ -187,11 +187,11 @@ const PerformanceAnalytics = () => {
 
               {chartType === 'bar' && (
                 <div
-                  className={`w-full rounded-t-sm transition-all duration-500 ease-out cursor-pointer ${d.isLoss
-                      ? 'bg-rose-500/30 group-hover/bar:bg-rose-500 hover:!bg-rose-400'
-                      : 'bg-primary/30 group-hover/bar:bg-primary hover:!bg-primary/80'
+                  className={`w-full rounded-t-lg transition-all duration-500 ease-out cursor-pointer border border-glass ${d.isLoss
+                      ? 'bg-rose-500/20 group-hover/bar:bg-rose-500/40 hover:!bg-rose-500/60 shadow-sm'
+                      : 'bg-primary/20 group-hover/bar:bg-primary/40 hover:!bg-primary/60 shadow-sm'
                     }`}
-                  style={{ height: `${heightPercent}%`, minHeight: '4px' }}
+                  style={{ height: `${heightPercent}%`, minHeight: '6px' }}
                   onMouseEnter={() => setHoverIndex(i)}
                   onMouseLeave={() => setHoverIndex(null)}
                 >

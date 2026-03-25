@@ -224,7 +224,7 @@ const Feed = () => {
                 </div>
 
                 {/* Navigation Tabs */}
-                <div className="border-b border-glass px-4 md:px-6">
+                <div className="px-4 md:px-6">
                     <div className="flex gap-2 py-4">
                         {['Favorites', 'Spot', 'Derivatives', 'TradFi', 'Newly Listed'].map(tab => (
                             <button
@@ -239,7 +239,7 @@ const Feed = () => {
                 </div>
 
                 {/* Quick Highlights 3-Column Banner */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 md:p-6 border-b border-glass bg-black/5 dark:bg-white/5 hidden lg:grid">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 md:p-6 bg-black/5 dark:bg-white/5 hidden lg:grid">
                     {[
                         { title: 'Top Gainers', data: topGainers },
                         { title: 'Newly Listed', data: newListed },

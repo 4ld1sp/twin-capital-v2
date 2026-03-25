@@ -6,6 +6,7 @@ import ContentPipeline from '../components/media/ContentPipeline';
 import AffiliateFunnel from '../components/media/AffiliateFunnel';
 import AffiliateNetworkManager from '../components/media/AffiliateNetworkManager';
 import RevenueDashboard from '../components/media/RevenueDashboard';
+import MediaGrowthAnalytics from '../components/media/MediaGrowthAnalytics';
 
 const tabs = [
   { id: 'overview', label: 'Overview', icon: 'dashboard' },
@@ -20,22 +21,21 @@ const Media = () => {
 
   return (
     <div className="space-y-6 w-full flex flex-col">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4 border-b border-slate-200 dark:border-primary/10 pb-4 mb-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4 pb-2 mb-2">
         <div>
           <h1 className="text-3xl font-bold">Media & Branding Panel</h1>
           <p className="text-slate-500 text-sm mt-1">Real-time performance and ecosystem management</p>
         </div>
       </div>
 
-      {/* Sub-Navigation */}
-      <nav className="flex items-center gap-1 overflow-x-auto w-full border-b border-slate-200 dark:border-primary/10 mb-4">
+      {/* Sub-Navigation (Matching Trading Page) */}
+      <nav className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-fit mb-6">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 text-sm px-4 pb-3 pt-1 border-b-2 whitespace-nowrap transition-all ${activeTab === tab.id ? 'font-bold text-primary border-primary' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-primary border-transparent hover:border-primary/30'}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
             {tab.label}
           </button>
         ))}
@@ -54,7 +54,7 @@ const Media = () => {
           </div>
 
           {/* Pipeline Status (Full Width) */}
-          <div className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-primary/10 rounded-xl p-6 space-y-4">
+          <div className="glass-card rounded-xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg">Pipeline Status</h3>
               <button onClick={() => setActiveTab('pipeline')} className="text-xs text-primary font-semibold hover:underline">View Board →</button>
@@ -100,13 +100,7 @@ const Media = () => {
 
       {/* ─── Growth Analytics ────────────────────────────── */}
       {activeTab === 'analytics' && (
-        <div className="w-full space-y-8 animate-fade-in">
-          <MediaMetricsRow />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <FollowersGrowthChart />
-            <EngagementBars />
-          </div>
-        </div>
+        <MediaGrowthAnalytics />
       )}
 
       {/* ─── Affiliates ──────────────────────────────────── */}

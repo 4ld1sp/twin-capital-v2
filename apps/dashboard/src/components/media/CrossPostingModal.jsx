@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useApp, availablePlatforms } from '../../context/AppContext';
 
 /* ── Simulated Video Player Controls ─────────────────────────── */
 const VideoPlayerOverlay = () => {
@@ -141,18 +142,37 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
     const [aiMediaType, setAiMediaType] = useState('text'); // text | image | video
     const [aiGeneratedMedia, setAiGeneratedMedia] = useState(null); // { type, url, prompt }
     const [attachedMediaList, setAttachedMediaList] = useState([]); // array of { id, type, url, desc }
+    const fileInputRef = useRef(null);
     const [videoPreview, setVideoPreview] = useState(null); // url of video to preview
 
-    const defaultPlatforms = [
-        { id: 'x', name: 'X / Twitter', icon: 'X', color: 'bg-black text-white hover:bg-slate-800', active: true, status: 'idle' },
-        { id: 'insta', name: 'Instagram', icon: 'camera_alt', color: 'bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 text-white hover:opacity-90', active: true, status: 'idle' },
-        { id: 'tiktok', name: 'TikTok', icon: 'music_note', color: 'bg-black text-white hover:bg-slate-800 border border-slate-700', active: true, status: 'idle' },
-        { id: 'yt', name: 'YouTube Shorts', icon: 'play_arrow', color: 'bg-red-600 text-white hover:bg-red-700', active: false, status: 'idle' },
-        { id: 'linkedin', name: 'LinkedIn', icon: 'work', color: 'bg-[#0077b5] text-white hover:bg-[#006097]', active: false, status: 'idle' },
-        { id: 'telegram', name: 'Telegram', icon: 'send', color: 'bg-[#0088cc] text-white hover:bg-[#0070a8]', active: true, status: 'idle' },
-        { id: 'facebook', name: 'Facebook', icon: 'facebook', color: 'bg-[#1877F2] text-white hover:bg-[#0C63D4]', active: false, status: 'idle' },
-    ];
-    const [platforms, setPlatforms] = useState(defaultPlatforms);
+    const { userConnections } = useApp();
+    
+    // Map connections to platform format
+    const getSocialPlatforms = () => {
+        return (userConnections.social || []).map(conn => {
+            const platformDef = availablePlatforms.social.find(p => p.id === conn.platformId) || 
+                               availablePlatforms.social.find(p => p.id === 'other');
+            
+            return {
+                id: conn.id,
+                name: conn.name,
+                icon: platformDef.icon,
+                color: platformDef.color,
+                active: conn.connected, // Only active if connected
+                connected: conn.connected,
+                status: 'idle'
+            };
+        });
+    };
+
+    const [platforms, setPlatforms] = useState([]);
+
+    // Sync platforms when userConnections or modal opens changes
+    useEffect(() => {
+        if (isOpen) {
+            setPlatforms(getSocialPlatforms());
+        }
+    }, [userConnections.social, isOpen]);
 
     // Populate fields when editing
     useEffect(() => {
@@ -164,14 +184,18 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
             setAffiliateLink(editTask.affiliateLink || 'https://twincapital.com/ref/aldis');
             // Restore platform states if stored
             if (editTask.platformIds) {
-                setPlatforms(defaultPlatforms.map(p => ({ ...p, active: editTask.platformIds.includes(p.id) })));
+                setPlatforms(prev => prev.map(p => ({ ...p, active: editTask.platformIds.includes(p.id) })));
+            }
+            if (editTask.media) {
+                setAttachedMediaList(editTask.media);
             }
         } else {
             setContent('');
             setTargetTime('');
             setTaskStatus('backlog');
             setUseAffiliate(false);
-            setPlatforms(defaultPlatforms);
+            setAttachedMediaList([]);
+            setPlatforms(getSocialPlatforms());
         }
     }, [editTask, isOpen]);
 
@@ -241,7 +265,13 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
 
     const togglePlatform = (id) => {
         if (isPublishing) return;
-        setPlatforms(current => current.map(p => p.id === id ? { ...p, active: !p.active } : p));
+        setPlatforms(current => current.map(p => {
+            if (p.id === id) {
+                if (!p.connected) return p; // Cannot toggle if not connected
+                return { ...p, active: !p.active };
+            }
+            return p;
+        }));
     };
 
     const handlePublish = async () => {
@@ -278,6 +308,7 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
             targetTime: targetTime,
             useAffiliate: useAffiliate,
             affiliateLink: affiliateLink,
+            media: attachedMediaList,
         };
     };
 
@@ -301,12 +332,28 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
         resetAndClose();
     };
 
+    const handleMediaUpload = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        const newMedia = files.map(file => ({
+            id: `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: file.type.startsWith('video/') ? 'video' : 'image',
+            url: URL.createObjectURL(file),
+            desc: file.name
+        }));
+
+        setAttachedMediaList(prev => [...prev, ...newMedia]);
+        // Reset input so discovery works for same file if deleted
+        e.target.value = '';
+    };
+
     const resetAndClose = () => {
         setContent('');
         setTargetTime('');
         setUseAffiliate(false);
         setShowDeleteConfirm(false);
-        setPlatforms(defaultPlatforms.map(p => ({ ...p, status: 'idle' })));
+        setPlatforms(getSocialPlatforms());
         onClose();
     };
 
@@ -560,7 +607,20 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 items-center">
-                            <button disabled={isPublishing} className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 glass-card hover:bg-black/10 dark:hover:bg-white/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-glass disabled:opacity-50 text-main font-bold">
+                            <input 
+                                type="file" 
+                                ref={fileInputRef} 
+                                onChange={handleMediaUpload} 
+                                className="hidden" 
+                                accept="image/*,video/*" 
+                                multiple
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isPublishing} 
+                                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 glass-card hover:bg-black/10 dark:hover:bg-white/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-glass disabled:opacity-50 text-main font-bold"
+                            >
                                 <span className="material-symbols-outlined text-[20px]">imagesmode</span>
                                 Attach Media
                             </button>
@@ -607,13 +667,16 @@ const CrossPostingModal = ({ isOpen, onClose, onSubmit, onUpdate, onDelete, edit
                             <div
                                 key={platform.id}
                                 onClick={() => togglePlatform(platform.id)}
-                                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${platform.active ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/5' : 'border-glass opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'} ${isPublishing ? 'pointer-events-none' : ''}`}
+                                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${platform.active ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/5 opacity-100' : 'border-glass opacity-40 hover:opacity-70'} ${!platform.connected ? 'cursor-not-allowed grayscale' : 'hover:bg-black/5 dark:hover:bg-white/5'} ${isPublishing ? 'pointer-events-none' : ''}`}
                             >
                                 <div className="flex items-center gap-4">
                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-sm ${platform.color}`}>
                                         {platform.icon === 'X' ? '𝕏' : <span className="material-symbols-outlined text-[18px]">{platform.icon}</span>}
                                     </div>
-                                    <span className={`text-sm font-black uppercase tracking-widest ${platform.active ? 'text-main' : 'text-secondary font-bold'}`}>{platform.name}</span>
+                                    <span className={`text-sm font-black uppercase tracking-widest ${platform.active ? 'text-main' : 'text-secondary font-bold'}`}>
+                                        {platform.name}
+                                        {!platform.connected && <span className="block text-[8px] text-rose-500 mt-0.5">Disconnected</span>}
+                                    </span>
                                 </div>
 
                                 <div className="ml-auto flex items-center">

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Camera } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const ProfileHeader = ({ onEditClick }) => {
+const ProfileHeader = () => {
   const { user, updateUser } = useAuth();
   const fileInputRef = useRef(null);
 
@@ -37,20 +37,9 @@ const ProfileHeader = ({ onEditClick }) => {
         />
       </div>
       <div className="flex-1 text-center md:text-left">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-main tracking-tight">{user.name}</h1>
-            <p className="text-primary font-bold text-lg mt-1">{user.role}</p>
-            <p className="text-secondary text-sm mt-1.5 font-bold">Member since {user.memberSince || 'March 2018'}</p>
-          </div>
-          <button 
-            onClick={onEditClick}
-            className="flex items-center gap-2 px-5 py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-main rounded-2xl font-bold transition-all border border-glass shadow-sm"
-          >
-            <span className="material-symbols-outlined text-[18px]">edit</span>
-            Edit Profile
-          </button>
-        </div>
+        <h1 className="text-3xl font-black text-main tracking-tight">{user.name}</h1>
+        <p className="text-primary font-bold text-lg mt-1">{user.role}</p>
+        <p className="text-secondary text-sm mt-1.5 font-bold">Member since {user.memberSince || 'March 2018'}</p>
         
         <div className="grid grid-cols-3 gap-4 md:gap-12 mt-8">
           <div className="flex flex-col gap-1">
