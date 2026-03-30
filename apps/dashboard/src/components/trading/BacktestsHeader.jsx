@@ -2,12 +2,12 @@ import React from 'react';
 
 const BacktestsHeader = () => {
   return (
-    <div className="flex flex-wrap justify-between items-end gap-6 mb-8 mt-4">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-main text-4xl font-black tracking-tight uppercase">Strategy Backtest</h1>
-        <div className="flex items-center gap-3">
-          <span className="bg-primary text-black text-[10px] font-black px-2.5 py-1 rounded-lg shadow-sm uppercase tracking-widest">V2.1</span>
-          <p className="text-secondary text-base font-bold uppercase tracking-wider opacity-80">Mean Reversion Strategy: SPY/QQQ Pair</p>
+    <div className="flex flex-wrap justify-between items-end gap-x-6 gap-y-8 mb-10 mt-6 px-1">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-main text-5xl font-black tracking-tight uppercase leading-none">Strategy Backtest</h1>
+        <div className="flex items-center gap-4">
+          <span className="bg-primary text-black text-[9px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-primary/10 uppercase tracking-[0.2em]">V2.1</span>
+          <p className="text-secondary text-sm font-black uppercase tracking-widest opacity-60">Mean Reversion Strategy: SPY/QQQ Pair</p>
         </div>
       </div>
       <div className="flex gap-4">

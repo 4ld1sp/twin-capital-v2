@@ -45,11 +45,11 @@ const BacktestsEquityCurve = () => {
           {/* Optimized Line (Primary) */}
           <defs>
             <linearGradient id="chartGradientBTCurve" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.3"></stop>
+              <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.2"></stop>
               <stop offset="100%" stopColor="var(--primary)" stopOpacity="0"></stop>
             </linearGradient>
           </defs>
-          <path d="M0 320 C 100 280, 150 200, 200 180 C 250 160, 300 210, 350 180 C 400 150, 450 80, 500 70 C 550 60, 600 120, 650 100 C 700 80, 750 40, 800 30 C 850 20, 950 40, 1000 20" fill="none" stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="6"></path>
+          <path d="M0 320 C 100 280, 150 200, 200 180 C 250 160, 300 210, 350 180 C 400 150, 450 80, 500 70 C 550 60, 600 120, 650 100 C 700 80, 750 40, 800 30 C 850 20, 950 40, 1000 20" fill="none" stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" strokeOpacity="0.8"></path>
           <path d="M0 320 C 100 280, 150 200, 200 180 C 250 160, 300 210, 350 180 C 400 150, 450 80, 500 70 C 550 60, 600 120, 650 100 C 700 80, 750 40, 800 30 C 850 20, 950 40, 1000 20 V 350 H 0 Z" fill="url(#chartGradientBTCurve)"></path>
         </svg>
       </div>

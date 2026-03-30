@@ -13,6 +13,19 @@ const BacktestsTradeDistribution = () => {
           <span>Short Positions</span>
           <span className="text-main font-black">89</span>
         </div>
+        
+        {/* L/S Ratio Bar */}
+        <div className="space-y-2 py-2">
+          <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-secondary opacity-60 px-1">
+            <span>Long 61%</span>
+            <span>Short 39%</span>
+          </div>
+          <div className="w-full h-2 rounded-full overflow-hidden flex border border-glass">
+            <div className="h-full bg-primary/30 border-r border-primary/50" style={{ width: '61.5%' }}></div>
+            <div className="h-full bg-secondary/10" style={{ width: '38.5%' }}></div>
+          </div>
+        </div>
+
         <div className="flex justify-between items-center text-xs font-bold text-secondary uppercase tracking-wider">
           <span>Avg. Duration</span>
           <span className="text-main font-black">4.2 Days</span>

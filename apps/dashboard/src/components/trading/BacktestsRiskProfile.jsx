@@ -11,7 +11,7 @@ const BacktestsRiskProfile = () => {
             <span className="text-primary font-black text-sm">2.41</span>
           </div>
           <div className="w-full bg-black/5 dark:bg-white/5 h-2 rounded-full overflow-hidden border border-glass">
-            <div className="bg-primary h-full w-[80%] rounded-full shadow-[0_0_8px_rgba(202,255,0,0.4)]"></div>
+            <div className="bg-primary/30 h-full w-[80%] rounded-full border-r border-primary/50"></div>
           </div>
         </div>
         <div className="space-y-3">
@@ -20,7 +20,7 @@ const BacktestsRiskProfile = () => {
             <span className="text-primary font-black text-sm">3.12</span>
           </div>
           <div className="w-full bg-black/5 dark:bg-white/5 h-2 rounded-full overflow-hidden border border-glass">
-            <div className="bg-primary h-full w-[90%] rounded-full shadow-[0_0_8px_rgba(202,255,0,0.4)]"></div>
+            <div className="bg-primary/30 h-full w-[90%] rounded-full border-r border-primary/50"></div>
           </div>
         </div>
       </div>

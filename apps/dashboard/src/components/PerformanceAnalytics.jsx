@@ -22,16 +22,16 @@ const PerformanceAnalytics = () => {
     let currentPnl = 0;
 
     for (let i = 0; i < points; i++) {
-      // Simulate some volatility, upward trend
-      const change = (Math.random() * 400) - 100;
+      // Ensure we have some losses for visual testing
+      const change = (Math.random() * 500) - 250;
       currentPnl += change;
 
       // Determine label
       let label = '';
-      if (timeframe === '1W') label = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i];
+      if (timeframe === '1W') label = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i] || `Day ${i+1}`;
       else if (timeframe === '1M') label = `Oct ${i * 3 + 1}`;
       else if (timeframe === '3M') label = `Wk ${i + 1}`;
-      else if (timeframe === '1Y') label = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i];
+      else if (timeframe === '1Y') label = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i] || `Mo ${i+1}`;
 
       arr.push({
         label,
@@ -187,11 +187,11 @@ const PerformanceAnalytics = () => {
 
               {chartType === 'bar' && (
                 <div
-                  className={`w-full rounded-t-lg transition-all duration-500 ease-out cursor-pointer border border-glass ${d.isLoss
-                      ? 'bg-rose-500/20 group-hover/bar:bg-rose-500/40 hover:!bg-rose-500/60 shadow-sm'
-                      : 'bg-primary/20 group-hover/bar:bg-primary/40 hover:!bg-primary/60 shadow-sm'
+                  className={`w-full rounded-t-lg transition-all duration-500 ease-out cursor-pointer border border-glass shadow-lg ${d.isLoss
+                      ? 'bg-rose-500/60 group-hover/bar:bg-rose-500/80 hover:!bg-rose-500 border-rose-500/20 shadow-rose-500/10'
+                      : 'bg-emerald-500/60 group-hover/bar:bg-emerald-500/80 hover:!bg-emerald-500 border-emerald-500/20 shadow-emerald-500/10'
                     }`}
-                  style={{ height: `${heightPercent}%`, minHeight: '6px' }}
+                  style={{ height: `${heightPercent}%`, minHeight: '8px' }}
                   onMouseEnter={() => setHoverIndex(i)}
                   onMouseLeave={() => setHoverIndex(null)}
                 >
