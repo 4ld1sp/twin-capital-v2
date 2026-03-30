@@ -1,8 +1,8 @@
 import React from 'react';
 
-const LogsFilterBar = () => {
+const LogsFilterBar = ({ className = "" }) => {
   return (
-    <div className="glass-card border border-glass rounded-2xl p-5 flex flex-wrap items-center gap-4 mt-6 shadow-sm">
+    <div className={`glass-card border border-glass rounded-2xl p-5 flex flex-wrap items-center gap-4 shadow-sm ${className}`}>
       <div className="flex-1 min-w-[280px] relative">
         <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-secondary opacity-50 text-xl">search</span>
         <input className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl pl-12 pr-4 py-3 text-xs font-bold text-main placeholder:text-secondary/40 placeholder:uppercase placeholder:tracking-widest focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" placeholder="Filter events..."/>

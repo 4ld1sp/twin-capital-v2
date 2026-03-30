@@ -36,7 +36,7 @@
   - Berfluktuasi secara langsung dengan simulasi laba/rugi berdetak interval per-detik.
   - Opsi perintah lokal via *Dropdown Menu* untuk **Pause Strategy** (menghentikan simulasi *tick* pada agen tertentu) atau **Force Close Bot** (fitur melikuidasi bot jika kondisi tidak aman).
 - **Backtest Hub / Evaluasi:** Panel tempat pengguna menguji pengaturan metrik lama beserta persentase risiko.
-- **Live Execution Logs:** *Terminal/console* bergaya peretas untuk memonitor baris-baris sinyal *order execution* dari API luar.
+- **Live Execution Logs (FUTURES):** *Terminal/console* bergaya peretas untuk memonitor baris-baris sinyal *order execution* dari API luar — kini dikategorikan sebagai bagian dari operasional perdagangan berjangka (FUTURES).
 - **Strategy Modals:** Formulir *popup* yang memungkinkan Anda mengunci/menyesuaikan pengaturan seperti alokasi modal dan sebaran bot ke instrumen pasar.
 
 ### 3.4. Markets Overview (Feed Page)
@@ -96,8 +96,16 @@ Platform manajemen konten dan *personal branding* yang terintegrasi untuk menjal
 - **Security Check Gate (Test Connection):** Sebelum koneksi API baru (atau Webhook) dapat ditambahkan, pengguna diwajibkan melakukan *Test Connection* hingga status terverifikasi (Verified) untuk mencegah credential invalid.
 - **Edit Connection Data:** Kemampuan untuk mengubah (*update*) API Key, Secret, atau Password dari koneksi yang sudah ditambahkan dengan tombol konfirmasi Hapus (Delete Confirmation Modal) yang aman.
 - **Security Settings:** Modul pemberitahuan pengaturan sandi / privasi antarmuka, dilengkapi toggle fungsional seperti Two-Factor Authentication.
+- **System Logs Hub (Integrated Logs):** Memindahkan log sistem teknis (engine CPU, api gateway, uptime, DB persistence) dari menu Trading ke menu Settings untuk memisahkan operasional perdagangan dari manajemen sistem.
+- **Institutional-Grade Layout Standard:** Standardisasi jarak vertikal (*vertical spacing*) sebesar 70-72px antara submenu/tab dengan konten utama di seluruh dashboard (Settings, Trading, Media, Assets) untuk kenyamanan visual kelas profesional.
 
-### 3.7. Sistem Tema iOS (*iOS Theme Overhaul*)
+### 3.7. Assets Management (Assets Page)
+Menu navigasi utama baru yang didedikasikan untuk pengelolaan aset non-derivatif dan ekuitas.
+- **SPOT Tab:** Pemantauan kepemilikan aset secara *real-time* dan analitik performa perdagangan *spot* (pindahan dari Trading Hub).
+- **SAHAM Tab:** Integrasi antarmuka untuk pasar ekuitas regional (Indonesia/IDX) dengan kesiapan *gateway* eksekusi.
+- **Asset-Specific Context:** Setiap tab memiliki identitas visual dan indikator status konektivitas bursa yang unik (contoh: *Binance Spot Active*, *IDX Gateway Ready*).
+
+### 3.8. Sistem Tema iOS (*iOS Theme Overhaul*)
 Sistem tema visual menyeluruh yang terinspirasi dari desain iOS, diterapkan secara konsisten di **seluruh halaman** aplikasi.
 
 #### 3.7.1. Arsitektur Tema
@@ -129,12 +137,19 @@ Sistem tema visual menyeluruh yang terinspirasi dari desain iOS, diterapkan seca
 | Header | Navbar glassmorphism, toggle tema (Sun/Moon) |
 | Feed | Panel, tabs, search, tabel data |
 | Dashboard | MetricCards, PerformanceAnalytics, EngagementBars, BotStatusMatrix |
-| Trading | 21 komponen + 4 modal (Optimization, Backtest, Logs) |
-| Profile | ProfileHeader, RecentActivityList, AccountSettingsList, DangerZone |
+| Media | MediaMetricsRow, GrowthPerformance, ContentPipeline, AIContentGenerator |
+| Assets | AssetsHeader, SpotMarketView, SahamEquitiesView, BotStatusMatrix |
+| Settings | ApiKeysManager, SystemLogsTable, LogsSystemStatus, SecuritySettings |
 
 ---
 
-## 4. Rencana Ekspansi yang Belum Dimulai (Next Steps / Evaluasi)
+## 4. Navigasi Hirarki & Struktur Hub
+Urutan menu utama diatur untuk mengoptimalkan alur kerja dari pemantauan pasar hingga manajemen aset:
+`Feed` → `Dashboard` → `Trading` → `Assets` → `Media`.
+
+---
+
+## 5. Rencana Ekspansi yang Belum Dimulai (Next Steps / Evaluasi)
 
 1. **Pengembangan Backend Server/Middleware:** Saat ini semua operasional data transaksi masih menggunakan *mock state* sisi-*client*. Agar fungsi *Force Close* & integrasi *Websocket* dapat berjalan di tingkat organisasi, diperlukan arsitektur *backend* (Node.js, Python FastAPI, dll).
 2. **Database Sinkronisasi (Persistence):** Menyimpan pengaturan seperti *Favorites Tabs*, data pipeline, dan konfigurasi bot ke pangkalan data relasional (PostgreSQL) atau dokumen (MongoDB).

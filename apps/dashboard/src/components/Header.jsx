@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Bell, Settings, LayoutDashboard, Rss, Laptop, PlayCircle } from 'lucide-react';
+import { Sun, Moon, Bell, Settings, LayoutDashboard, Rss, Laptop, PlayCircle, Wallet } from 'lucide-react';
 
 const Header = ({ currentView, onViewChange }) => {
   const { user } = useAuth();
@@ -36,6 +36,12 @@ const Header = ({ currentView, onViewChange }) => {
             className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${currentView === 'trading' ? 'bg-primary text-[#000] font-bold shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <Laptop className="w-4 h-4" /> Trading
+          </button>
+          <button
+            onClick={() => onViewChange('assets')}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${currentView === 'assets' ? 'bg-primary text-[#000] font-bold shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+          >
+            <Wallet className="w-4 h-4" /> Assets
           </button>
           <button
             onClick={() => onViewChange('media')}
@@ -99,6 +105,13 @@ const Header = ({ currentView, onViewChange }) => {
         >
           <span className={`material-symbols-outlined ${currentView === 'trading' ? 'font-bold' : ''}`}>hub</span>
           <span className={`text-[10px] ${currentView === 'trading' ? 'font-bold' : ''}`}>Trading</span>
+        </button>
+        <button
+          onClick={() => onViewChange('assets')}
+          className={`flex flex-col items-center gap-1 w-16 py-1 ${currentView === 'assets' ? 'text-primary' : 'text-slate-500 dark:text-slate-400'}`}
+        >
+          <span className={`material-symbols-outlined ${currentView === 'assets' ? 'font-bold' : ''}`}>account_balance_wallet</span>
+          <span className={`text-[10px] ${currentView === 'assets' ? 'font-bold' : ''}`}>Assets</span>
         </button>
         <button
           onClick={() => onViewChange('media')}

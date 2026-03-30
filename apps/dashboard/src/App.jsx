@@ -5,6 +5,7 @@ import Trading from './pages/Trading'
 import Profile from './pages/Profile'
 import Media from './pages/Media'
 import Feed from './pages/Feed'
+import Assets from './pages/Assets'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
 import { useAuth } from './context/AuthContext'
@@ -25,6 +26,7 @@ export default function App() {
           {currentView === 'dashboard' && <Dashboard />}
           {currentView === 'feed' && <Feed />}
           {currentView === 'trading' && <Trading />}
+          {currentView === 'assets' && <Assets />}
           {currentView === 'profile' && <Profile />}
           {currentView === 'media' && <Media />}
           {currentView === 'settings' && <Settings />}

@@ -21,6 +21,7 @@ import BacktestsRiskProfile from '../components/trading/BacktestsRiskProfile';
 import BacktestsTradeDistribution from '../components/trading/BacktestsTradeDistribution';
 import BacktestsPerformanceMetrics from '../components/trading/BacktestsPerformanceMetrics';
 import BacktestsQuickActions from '../components/trading/BacktestsQuickActions';
+import AdvancedBacktestChart from '../components/trading/AdvancedBacktestChart';
 
 // Logs Components
 import LogsHeader from '../components/trading/LogsHeader';
@@ -41,7 +42,7 @@ const Trading = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Optimization UI State
-  const [optTab, setOptTab] = useState('equity'); // 'logs', 'equity', 'ab_testing', 'correlations'
+  const [backtestTab, setBacktestTab] = useState('performance');
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isRunOptOpen, setIsRunOptOpen] = useState(false);
 
@@ -129,78 +130,60 @@ const Trading = () => {
   const renderOptimization = () => (
     <div className="w-full flex flex-col pt-4">
       <OptimizationHeader
-        activeOptTab={optTab}
-        onTabChange={setOptTab}
         onExportClick={() => setIsExportOpen(true)}
         onRunClick={() => setIsRunOptOpen(true)}
       />
 
-      {/* Equity Curve Tab (Default) */}
-      {optTab === 'equity' && (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Left Column (2/3 width) */}
-          <div className="xl:col-span-2 flex flex-col gap-6">
-            <BacktestEquityChart />
-            <OptimizationMetricsRow />
-            <OptimizationLogsTable />
-            <OptimizationCorrelations />
-          </div>
-
-          {/* Right Column (1/3 width) */}
-          <div className="flex flex-col gap-6">
-            <ABTestingResults />
-            <CurrentParametersList />
-            <AutomatedExecutionControl />
-          </div>
-        </div>
-      )}
-
-      {/* Parameter Logs Tab */}
-      {optTab === 'logs' && (
-        <div className="w-full">
-          <OptimizationLogsTable />
-        </div>
-      )}
-
-      {/* A/B Testing Tab */}
-      {optTab === 'ab_testing' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ABTestingResults />
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Left Column (Main Analytics - 2/3 width) */}
+        <div className="xl:col-span-2 flex flex-col gap-6">
+          <BacktestEquityChart />
           <OptimizationMetricsRow />
-        </div>
-      )}
-
-      {/* Correlations Tab */}
-      {optTab === 'correlations' && (
-        <div className="w-full">
+          <OptimizationLogsTable />
           <OptimizationCorrelations />
         </div>
-      )}
+
+        {/* Right Column (Sidebar - 1/3 width) */}
+        <div className="flex flex-col gap-6">
+          <ABTestingResults />
+          <CurrentParametersList />
+          <AutomatedExecutionControl />
+        </div>
+      </div>
     </div>
   );
 
   const renderBacktests = () => (
     <div className="w-full flex flex-col">
       <BacktestsHeader />
-      <BacktestsSubNav />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-        <BacktestsEquityCurve />
-        <div className="flex flex-col gap-6">
-          <BacktestsRiskProfile />
-          <BacktestsTradeDistribution />
+      <BacktestsSubNav activeTab={backtestTab} onChange={setBacktestTab} />
+      
+      {backtestTab === 'live' ? (
+        <div className="w-full mb-6 relative">
+          <AdvancedBacktestChart />
         </div>
-      </div>
-      <div className="space-y-6">
-        <BacktestsPerformanceMetrics />
-        <BacktestsQuickActions />
-      </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+            <BacktestsEquityCurve />
+            <div className="flex flex-col gap-6">
+              <BacktestsRiskProfile />
+              <BacktestsTradeDistribution />
+            </div>
+          </div>
+          <div className="space-y-6">
+            <BacktestsPerformanceMetrics />
+            <BacktestsQuickActions />
+          </div>
+        </>
+      )}
     </div>
   );
 
-  const renderLogs = () => (
+  const renderFutures = () => (
     <div className="w-full flex flex-col mt-4">
       <LogsHeader />
-      <LogsFilterBar />
+      <LogsFilterBar className="mt-6" />
       <LogsTable />
       <LogsSystemStatus />
     </div>
@@ -229,10 +212,10 @@ const Trading = () => {
             Backtests
           </button>
           <button
-            onClick={() => setActiveTab('logs')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'logs' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+            onClick={() => setActiveTab('futures')}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'futures' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            Logs
+            Futures
           </button>
         </nav>
         <div className="flex items-center gap-4 shrink-0 w-full sm:w-auto justify-between sm:justify-start">
@@ -252,7 +235,7 @@ const Trading = () => {
       {activeTab === 'overview' && renderOverview()}
       {activeTab === 'optimization' && renderOptimization()}
       {activeTab === 'backtests' && renderBacktests()}
-      {activeTab === 'logs' && renderLogs()}
+      {activeTab === 'futures' && renderFutures()}
 
       <NewStrategyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <ExportReportModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
