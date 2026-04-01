@@ -8,14 +8,32 @@ import Feed from './pages/Feed'
 import Assets from './pages/Assets'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
+import Register from './pages/Register'
+import ForgotPassword from './pages/ForgotPassword'
+import TwoFactorAuth from './pages/TwoFactorAuth'
 import { useAuth } from './context/AuthContext'
 
 export default function App() {
-  const { isAuth, login } = useAuth()
+  const { isAuth, is2FANeeded, isRegistering, isSessionPending } = useAuth()
   const [currentView, setCurrentView] = useState('feed')
+  const [authView, setAuthView] = useState('login')
 
-  if (!isAuth) {
-    return <Login onLogin={login} />
+  if (isSessionPending && !isRegistering) {
+    return (
+      <div className="h-screen w-full bg-main flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white font-black italic uppercase tracking-widest text-[10px] animate-pulse">Establishing Identity...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAuth || isRegistering) {
+    if (is2FANeeded) return <TwoFactorAuth onNavigate={setAuthView} />
+    if (authView === 'login') return <Login onNavigate={setAuthView} />
+    if (authView === 'register') return <Register onNavigate={setAuthView} />
+    if (authView === 'forgot-password') return <ForgotPassword onNavigate={setAuthView} />
   }
 
   return (

@@ -1,0 +1,16 @@
+{
+  "strategyName": "Test No Kill Switch",
+  "strategyScript": "Fast loop test. Give me a BUY order.",
+  "strategyPrompt": "Test",
+  "symbol": "BTCUSDT",
+  "exchange": "bybit",
+  "networkMode": "testnet",
+  "signalInterval": "1m",
+  "riskInterval": "10s",
+  "leverage": 5,
+  "maxDailyLossPct": 100,
+  "maxPositions": 1,
+  "maxTradesPerDay": 3,
+  "trailingStopActivationPct": 1.0,
+  "trailingStopCallbackPct": 0.5
+}

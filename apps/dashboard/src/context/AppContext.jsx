@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 export const availablePlatforms = {
   trading: [
@@ -19,8 +20,10 @@ export const availablePlatforms = {
     { id: 'other', name: 'Other (Custom)', icon: 'add_circle', color: 'text-slate-500 bg-slate-500/10', fields: ['access_token', 'api_key'] }
   ],
   ai: [
-    { id: 'openai', name: 'OpenAI', icon: 'psychology', color: 'text-[#10a37f] bg-[#10a37f]/10', fields: ['key'] },
-    { id: 'anthropic', name: 'Anthropic', icon: 'auto_awesome', color: 'text-[#D97757] bg-[#D97757]/10', fields: ['key'] },
+    { id: 'openai', name: 'ChatGPT / OpenAI', icon: 'psychology', color: 'text-[#10a37f] bg-[#10a37f]/10', fields: ['key'] },
+    { id: 'anthropic', name: 'Anthropic (Claude)', icon: 'auto_awesome', color: 'text-[#D97757] bg-[#D97757]/10', fields: ['key'] },
+    { id: 'gemini', name: 'Google Gemini', icon: 'diamond', color: 'text-[#4285F4] bg-[#4285F4]/10', fields: ['key'] },
+    { id: 'minimax', name: 'Minimax AI', icon: 'blur_on', color: 'text-[#FF4B4B] bg-[#FF4B4B]/10', fields: ['group_id', 'key'] },
     { id: 'midjourney', name: 'Midjourney API', icon: 'brush', color: 'text-white bg-slate-900 dark:bg-white/10', fields: ['key'] },
     { id: 'other', name: 'Other (Custom)', icon: 'add_circle', color: 'text-slate-500 bg-slate-500/10', fields: ['api_key', 'secret'] }
   ],
@@ -39,54 +42,127 @@ export function useApp() {
 }
 
 export function AppProvider({ children }) {
+  const { isAuth } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [userConnections, setUserConnections] = useState({
-    trading: [
-      { id: 'conn-1', platformId: 'binance', name: 'Binance', connected: true, lastSynced: '5 mins ago', fields: { key: 'sk-binance-xxx', secret: 'abc-def-ghi' } }
-    ],
-    social: [
-      { id: 'conn-2', platformId: 'x', name: 'X / Twitter', connected: true, lastSynced: '1 hour ago', fields: { key: 'sk-x-1234', secret: 'oauth-token-xxx' }, stats: { followers: 1250, change: '+12%', history: [40, 45, 42, 48, 55, 60, 62] } },
-      { id: 'conn-5', platformId: 'instagram', name: 'Instagram', connected: true, lastSynced: '10 mins ago', fields: { access_token: 'ig-token-xxx' }, stats: { followers: 100, change: '+5%', history: [30, 32, 35, 34, 38, 40, 42] } },
-      { id: 'conn-6', platformId: 'youtube', name: 'YouTube Shorts', connected: true, lastSynced: '2 hours ago', fields: { api_key: 'yt-key-xxx' }, stats: { subscribers: 1000, change: '+20%', history: [70, 75, 80, 85, 90, 95, 100] } },
-      { id: 'conn-7', platformId: 'facebook', name: 'Facebook', connected: true, lastSynced: '1 day ago', fields: { access_token: 'fb-token-xxx' }, stats: { followers: 50, change: '-2%', history: [25, 24, 26, 25, 23, 24, 22] } }
-    ],
-    ai: [
-      { id: 'conn-3', platformId: 'openai', name: 'OpenAI', connected: true, lastSynced: 'Just now', fields: { key: 'sk-proj-xyz...' } }
-    ],
-    webhooks: [
-      { id: 'conn-4', platformId: 'openclaw', name: 'OpenClaw System', connected: true, lastSynced: 'Live', fields: { endpoint: 'https://api.twincapital.com/webhook/openclaw', webhook_secret: 'whsec_1234567890' } }
-    ]
+    trading: [],
+    social: [],
+    ai: [],
+    webhooks: []
   });
 
-  const addConnection = (category, connection) => {
-    setUserConnections(prev => ({
-      ...prev,
-      [category]: [...prev[category], connection]
-    }));
+  const fetchConnections = async () => {
+    if (!isAuth) return;
+    try {
+      setLoading(true);
+      const res = await fetch('/api/keys');
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.log('[AppContext] Unauthorized access to /api/keys - logging out or waiting for session');
+        }
+        return;
+      }
+      const data = await res.json();
+      if (data && data.keys) {
+        const grouped = { trading: [], social: [], ai: [], webhooks: [] };
+        data.keys.forEach(k => {
+          if (grouped[k.category]) {
+            grouped[k.category].push({
+              id: k.id,
+              platformId: k.platformId,
+              name: k.name,
+              connected: k.isConnected,
+              lastSynced: k.lastSyncedAt || 'Never',
+              fields: k.fields // Already masked by server
+            });
+          }
+        });
+        setUserConnections(grouped);
+      }
+    } catch (err) {
+      console.error("Failed to fetch connections", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeConnection = (category, id) => {
-    setUserConnections(prev => ({
-      ...prev,
-      [category]: prev[category].filter(conn => conn.id !== id)
-    }));
+  useEffect(() => {
+    fetchConnections();
+  }, [isAuth]);
+
+  const addConnection = async (category, connection) => {
+    try {
+      const res = await fetch('/api/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platformId: connection.platformId,
+          category,
+          name: connection.name,
+          fields: connection.fields,
+          isConnected: connection.isConnected
+        })
+      });
+      if (res.ok) {
+        await fetchConnections();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   };
 
-  const updateConnection = (category, id, fields) => {
-    setUserConnections(prev => ({
-      ...prev,
-      [category]: prev[category].map(conn => 
-        conn.id === id ? { ...conn, fields: { ...fields } } : conn
-      )
-    }));
+  const removeConnection = async (category, id) => {
+    try {
+      const res = await fetch(`/api/keys/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        await fetchConnections();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   };
 
-  const toggleConnectionStatus = (category, id) => {
-    setUserConnections(prev => ({
-      ...prev,
-      [category]: prev[category].map(conn => 
-        conn.id === id ? { ...conn, connected: !conn.connected } : conn
-      )
-    }));
+  const updateConnection = async (category, id, updateData) => {
+    try {
+      const res = await fetch(`/api/keys/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
+      if (res.ok) {
+        await fetchConnections();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  const toggleConnectionStatus = async (category, id) => {
+    // Find if current is connected
+    const conn = userConnections[category].find(c => c.id === id);
+    if (!conn) return;
+
+    try {
+      const res = await fetch(`/api/keys/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isConnected: !conn.connected })
+      });
+      if (res.ok) {
+        await fetchConnections();
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const value = {
@@ -95,7 +171,8 @@ export function AppProvider({ children }) {
     addConnection,
     removeConnection,
     updateConnection,
-    toggleConnectionStatus
+    toggleConnectionStatus,
+    loading
   };
 
   return (

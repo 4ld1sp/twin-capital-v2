@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import GlassSelect from '../ui/GlassSelect';
 
 const NewStrategyModal = ({ isOpen, onClose }) => {
+  const [assetPair, setAssetPair] = useState('BTC/USDT');
+
   if (!isOpen) return null;
 
   return (
@@ -28,13 +31,13 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Asset Pair</label>
-                <select className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-main text-xs font-bold appearance-none">
-                  <option>BTC/USDT</option>
-                  <option>ETH/USDT</option>
-                  <option>SOL/USDT</option>
-                  <option>AVAX/USDT</option>
-                </select>
+                <GlassSelect
+                  label="Asset Pair"
+                  value={assetPair}
+                  onChange={setAssetPair}
+                  options={['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'AVAX/USDT']}
+                  searchable={true}
+                />
               </div>
             </div>
             

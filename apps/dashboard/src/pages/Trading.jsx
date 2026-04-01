@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { useTrading } from '../context/TradingContext';
+import { useApp } from '../context/AppContext';
+import { useTradingData } from '../hooks/useTradingData';
 import MetricCard from '../components/MetricCard';
 import PerformanceAnalytics from '../components/PerformanceAnalytics';
+import GlassSelect from '../components/ui/GlassSelect';
 import DrawdownTracker from '../components/DrawdownTracker';
 import BotStatusMatrix from '../components/BotStatusMatrix';
 
@@ -15,19 +19,9 @@ import AutomatedExecutionControl from '../components/trading/AutomatedExecutionC
 
 // Backtests Components
 import BacktestsHeader from '../components/trading/BacktestsHeader';
-import BacktestsSubNav from '../components/trading/BacktestsSubNav';
 import BacktestsEquityCurve from '../components/trading/BacktestsEquityCurve';
-import BacktestsRiskProfile from '../components/trading/BacktestsRiskProfile';
-import BacktestsTradeDistribution from '../components/trading/BacktestsTradeDistribution';
-import BacktestsPerformanceMetrics from '../components/trading/BacktestsPerformanceMetrics';
-import BacktestsQuickActions from '../components/trading/BacktestsQuickActions';
-import AdvancedBacktestChart from '../components/trading/AdvancedBacktestChart';
-
-// Logs Components
-import LogsHeader from '../components/trading/LogsHeader';
-import LogsFilterBar from '../components/trading/LogsFilterBar';
-import LogsTable from '../components/trading/LogsTable';
-import LogsSystemStatus from '../components/trading/LogsSystemStatus';
+import BacktestResults from '../components/trading/BacktestResults';
+import RunNewTestModal from '../components/trading/RunNewTestModal';
 
 // Modal Component
 import NewStrategyModal from '../components/trading/NewStrategyModal';
@@ -37,14 +31,30 @@ import RunOptimizationModal from '../components/trading/RunOptimizationModal';
 // Phase 9 Optimization Components
 import OptimizationCorrelations from '../components/trading/OptimizationCorrelations';
 
+// Live Trading Terminal
+import TradingTerminal from '../components/trading/TradingTerminal';
+
+// Strategy Manager
+import StrategyManager from '../components/trading/StrategyManager';
+
 const Trading = () => {
+  const { activeExchange, setActiveExchange, networkMode, setNetworkMode, activeSymbol, livePrice, isConnected, liveTicker } = useTrading();
+  const { userConnections } = useApp();
+  const tradingConnections = userConnections?.trading || [];
   const [activeTab, setActiveTab] = useState('overview');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Optimization UI State
-  const [backtestTab, setBacktestTab] = useState('performance');
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isRunOptOpen, setIsRunOptOpen] = useState(false);
+
+  // Backtest State
+  const [isRunTestOpen, setIsRunTestOpen] = useState(false);
+  const [hasTestResults, setHasTestResults] = useState(false);
+  const [lastTestData, setLastTestData] = useState(null);
+
+  const td = useTradingData();
+  const fmtCurrency = (v) => `$${Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const renderOverview = () => (
     <>
@@ -53,30 +63,30 @@ const Trading = () => {
           title="Winrate"
           icon="target"
           iconColor="text-primary"
-          value="68.5%"
-          change="+2.1%"
-          changeColor="text-emerald-500"
+          value={td.isLoading ? '...' : `${td.winrate.toFixed(1)}%`}
+          change={td.isLoading ? '' : `from ${td.totalTrades} trades`}
+          changeColor={td.winrate >= 50 ? 'text-emerald-500' : 'text-rose-500'}
           visual={
             <div className="w-full bg-black/5 dark:bg-white/5 h-1.5 rounded-full overflow-hidden border border-glass">
-              <div className="bg-primary h-full rounded-full shadow-[0_0_8px_rgba(202,255,0,0.4)]" style={{ width: '68.5%' }}></div>
+              <div className={`h-full rounded-full transition-all duration-500 ${td.winrate >= 50 ? 'bg-primary' : 'bg-rose-500'}`} style={{ width: `${td.winrate}%` }}></div>
             </div>
           }
         />
 
         <MetricCard
-          title="Sharpe Ratio"
-          icon="trending_up"
+          title="Total Equity"
+          icon="account_balance_wallet"
           iconColor="text-primary"
-          value="2.41"
-          change="+0.12"
-          changeColor="text-emerald-500"
+          value={td.isLoading ? '...' : fmtCurrency(td.totalEquity)}
+          change={td.isLoading ? '' : `${td.positions.length} positions`}
+          changeColor="text-secondary"
           visual={
             <div className="flex gap-1.5 items-end h-6">
               <div className="bg-primary/10 w-full h-2 rounded-md border border-glass"></div>
               <div className="bg-primary/30 w-full h-4 rounded-md border border-glass"></div>
               <div className="bg-primary/50 w-full h-3 rounded-md border border-glass"></div>
               <div className="bg-primary/70 w-full h-5 rounded-md border border-glass"></div>
-              <div className="bg-primary w-full h-6 rounded-md shadow-[0_0_10px_rgba(202,255,0,0.3)]"></div>
+              <div className="bg-primary w-full h-6 rounded-md"></div>
             </div>
           }
         />
@@ -85,9 +95,9 @@ const Trading = () => {
           title="Max Drawdown"
           icon="warning"
           iconColor="text-red-500"
-          value="12.4%"
-          change="-1.5%"
-          changeColor="text-red-500"
+          value={td.isLoading ? '...' : `${td.maxDrawdown.toFixed(1)}%`}
+          change={td.maxDrawdown > 10 ? 'High risk' : 'Under control'}
+          changeColor={td.maxDrawdown > 10 ? 'text-red-500' : 'text-emerald-500'}
           visual={
             <div className="w-full h-6 relative bg-rose-500/5 rounded-xl overflow-hidden border border-rose-500/20 shadow-inner">
               <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
@@ -98,16 +108,16 @@ const Trading = () => {
         />
 
         <MetricCard
-          title="Total Profit (PnL)"
+          title="Total Realized P&L"
           icon="payments"
-          iconColor="text-emerald-500"
-          value="$12,450.22"
-          change="+$320.50"
-          changeColor="text-emerald-500"
+          iconColor={td.totalRealizedPnl >= 0 ? 'text-emerald-500' : 'text-rose-500'}
+          value={td.isLoading ? '...' : `${td.totalRealizedPnl >= 0 ? '+' : '-'}${fmtCurrency(td.totalRealizedPnl)}`}
+          change={td.isLoading ? '' : `${td.unrealizedPnl >= 0 ? '+' : ''}${fmtCurrency(td.unrealizedPnl)} unrealized`}
+          changeColor={td.unrealizedPnl >= 0 ? 'text-emerald-500' : 'text-rose-500'}
           visual={
             <div className="w-full h-6 relative bg-emerald-500/5 rounded-xl overflow-hidden border border-emerald-500/20 shadow-inner">
               <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <polyline className="text-emerald-500" fill="none" points="0,80 20,70 40,75 60,40 80,45 100,10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"></polyline>
+                <polyline className={td.totalRealizedPnl >= 0 ? 'text-emerald-500' : 'text-rose-500'} fill="none" points="0,80 20,70 40,75 60,40 80,45 100,10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"></polyline>
               </svg>
             </div>
           }
@@ -116,10 +126,10 @@ const Trading = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <PerformanceAnalytics />
+          <PerformanceAnalytics pnlTimeseries={td.pnlTimeseries} />
         </div>
         <div>
-          <DrawdownTracker />
+          <DrawdownTracker currentDrawdown={td.maxDrawdown} maxDrawdown={td.maxDrawdown} pnlTimeseries={td.pnlTimeseries} />
         </div>
       </div>
 
@@ -135,15 +145,12 @@ const Trading = () => {
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Left Column (Main Analytics - 2/3 width) */}
         <div className="xl:col-span-2 flex flex-col gap-6">
           <BacktestEquityChart />
           <OptimizationMetricsRow />
           <OptimizationLogsTable />
           <OptimizationCorrelations />
         </div>
-
-        {/* Right Column (Sidebar - 1/3 width) */}
         <div className="flex flex-col gap-6">
           <ABTestingResults />
           <CurrentParametersList />
@@ -155,38 +162,22 @@ const Trading = () => {
 
   const renderBacktests = () => (
     <div className="w-full flex flex-col">
-      <BacktestsHeader />
-      <BacktestsSubNav activeTab={backtestTab} onChange={setBacktestTab} />
+      <BacktestsHeader onRunTestClick={() => setIsRunTestOpen(true)} />
       
-      {backtestTab === 'live' ? (
-        <div className="w-full mb-6 relative">
-          <AdvancedBacktestChart />
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-            <BacktestsEquityCurve />
-            <div className="flex flex-col gap-6">
-              <BacktestsRiskProfile />
-              <BacktestsTradeDistribution />
-            </div>
-          </div>
-          <div className="space-y-6">
-            <BacktestsPerformanceMetrics />
-            <BacktestsQuickActions />
-          </div>
-        </>
-      )}
+      <div className="mb-6 mt-6">
+        <BacktestsEquityCurve />
+      </div>
+      <div className="space-y-6">
+        {hasTestResults && (
+          <BacktestResults onClear={() => { setHasTestResults(false); setLastTestData(null); }} strategyData={lastTestData} />
+        )}
+        <StrategyManager />
+      </div>
     </div>
   );
 
-  const renderFutures = () => (
-    <div className="w-full flex flex-col mt-4">
-      <LogsHeader />
-      <LogsFilterBar className="mt-6" />
-      <LogsTable />
-      <LogsSystemStatus />
-    </div>
+  const renderTerminal = () => (
+    <TradingTerminal />
   );
 
   return (
@@ -195,39 +186,59 @@ const Trading = () => {
         <nav className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'overview' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'overview' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('optimization')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'optimization' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'optimization' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             Optimization
           </button>
           <button
             onClick={() => setActiveTab('backtests')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'backtests' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'backtests' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             Backtests
           </button>
           <button
-            onClick={() => setActiveTab('futures')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'futures' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+            onClick={() => setActiveTab('terminal')}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'terminal' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            Futures
+            Live Trading
           </button>
         </nav>
-        <div className="flex items-center gap-4 shrink-0 w-full sm:w-auto justify-between sm:justify-start">
-          <div className="px-5 py-2 rounded-xl bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 flex items-center gap-2 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> Live Market
+        <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-between sm:justify-start flex-wrap">
+          <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-2 shadow-sm ${isConnected ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+            {isConnected ? 'Live Market' : 'Connecting'}
           </div>
+          {/* Exchange Selector */}
+          <GlassSelect
+            value={activeExchange}
+            onChange={setActiveExchange}
+            options={(() => {
+              const allOptions = [
+                ...tradingConnections.filter(c => c.connected).map(c => ({ value: c.platformId, label: c.name })),
+                { value: 'bybit', label: 'Bybit' },
+                { value: 'binance', label: 'Binance' }
+              ];
+              // Deduplicate by value (platformId)
+              return allOptions.filter((opt, index, self) => 
+                index === self.findIndex((t) => t.value === opt.value)
+              );
+            })()}
+            placeholder="Platform"
+            className="w-32"
+            searchable={false}
+          />
+          {/* Network Mode */}
           <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-primary text-black px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all shadow-xl shadow-primary/20"
+            onClick={() => setNetworkMode(prev => prev === 'testnet' ? 'mainnet' : 'testnet')}
+            className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${networkMode === 'testnet' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}
           >
-            <span className="material-symbols-outlined text-lg">add</span>
-            New Strategy
+            {networkMode}
           </button>
         </div>
       </div>
@@ -235,11 +246,16 @@ const Trading = () => {
       {activeTab === 'overview' && renderOverview()}
       {activeTab === 'optimization' && renderOptimization()}
       {activeTab === 'backtests' && renderBacktests()}
-      {activeTab === 'futures' && renderFutures()}
+      {activeTab === 'terminal' && renderTerminal()}
 
       <NewStrategyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <ExportReportModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
       <RunOptimizationModal isOpen={isRunOptOpen} onClose={() => setIsRunOptOpen(false)} />
+      <RunNewTestModal 
+        isOpen={isRunTestOpen} 
+        onClose={() => setIsRunTestOpen(false)} 
+        onTestComplete={(data) => { setLastTestData(data); setHasTestResults(true); }}
+      />
     </div>
   );
 };

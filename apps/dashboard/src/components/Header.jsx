@@ -60,9 +60,18 @@ const Header = ({ currentView, onViewChange }) => {
             {isDark ? <Sun className="w-5 h-5 text-primary" /> : <Moon className="w-5 h-5 text-primary" />}
           </button>
           
-          <button className="p-2.5 text-main bg-glass hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-all border border-glass flex items-center justify-center shadow-sm">
-            <Bell className="w-5 h-5 opacity-70" />
-          </button>
+          <div className="relative group">
+            <button className="p-2.5 text-main bg-glass hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-all border border-glass flex items-center justify-center shadow-sm cursor-not-allowed opacity-70">
+              <Bell className="w-5 h-5 opacity-70" />
+            </button>
+            <div className="absolute -top-1 -right-1 flex h-2 w-2">
+              <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-primary/40"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary shadow-[0_0_8px_rgba(20,241,149,0.5)]"></span>
+            </div>
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1.5 bg-black text-[9px] text-white font-black rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl border border-glass/20 uppercase tracking-widest">
+              Notifications Coming Soon
+            </div>
+          </div>
           
           <button 
             onClick={() => onViewChange('settings')}
@@ -75,7 +84,7 @@ const Header = ({ currentView, onViewChange }) => {
             className={`w-10 h-10 rounded-full overflow-hidden border-2 transition-all shadow-md ${currentView === 'profile' ? 'border-primary ring-4 ring-primary/20 scale-105' : 'border-glass hover:border-primary/50'}`}
           >
             <img
-              src={user.avatar}
+              src={user?.image || user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=placeholder'}
               alt="Profile Avatar"
               className="w-full h-full object-cover"
             />

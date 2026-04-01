@@ -9,6 +9,9 @@ import LogsSystemStatus from '../components/trading/LogsSystemStatus';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('api_config');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterLevel, setFilterLevel] = useState('All');
+  const [filterScope, setFilterScope] = useState('All Scopes');
 
   const renderApiConfig = () => (
     <div className="w-full mt-4">
@@ -17,9 +20,20 @@ export default function Settings() {
   );
 
   const renderLogs = () => (
-    <div className="w-full flex flex-col mt-4">
-      <LogsFilterBar />
-      <LogsTable />
+    <div className="w-full flex flex-col mt-4 gap-6">
+      <LogsFilterBar 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        filterLevel={filterLevel}
+        setFilterLevel={setFilterLevel}
+        filterScope={filterScope}
+        setFilterScope={setFilterScope}
+      />
+      <LogsTable 
+        searchQuery={searchQuery}
+        filterLevel={filterLevel}
+        filterScope={filterScope}
+      />
       <LogsSystemStatus />
     </div>
   );

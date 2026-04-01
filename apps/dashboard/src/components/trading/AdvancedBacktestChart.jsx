@@ -55,7 +55,7 @@ function calculateEMA(data, period) {
   return ema;
 }
 
-const AdvancedBacktestChart = () => {
+const AdvancedBacktestChart = ({ height = '800px', hideHeader = false, hideControls = false }) => {
   const chartContainerRef = useRef(null);
   const tooltipRef = useRef(null);
   const [timeframe, setTimeframe] = useState('1D');
@@ -95,7 +95,7 @@ const AdvancedBacktestChart = () => {
         color: 'rgba(255, 255, 255, 0.04)',
         visible: true,
         text: 'BTC/USDT - AlphaNode Backtest',
-        fontSize: 48,
+        fontSize: 32,
         horzAlign: 'center',
         vertAlign: 'center',
       },
@@ -244,42 +244,46 @@ const AdvancedBacktestChart = () => {
 
   // --- UI Structure ---
   return (
-    <div className="flex flex-col w-full h-[800px] bg-[#131722] border border-gray-800 rounded-3xl overflow-hidden shadow-2xl font-sans">
+    <div className="flex flex-col w-full bg-[#131722] border border-gray-800 rounded-3xl overflow-hidden shadow-2xl font-sans" style={{ height }}>
       
       {/* Top Bar (Timeframes & Controls) */}
-      <div className="flex justify-between items-center px-6 py-4 bg-[#1e222d] border-b border-gray-800">
-        <div className="flex items-center gap-1">
-          {['1m', '15m', '1H', '1D'].map((tf) => (
-            <button
-              key={tf}
-              onClick={() => setTimeframe(tf)}
-              className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors ${
-                timeframe === tf
-                  ? 'bg-blue-600/20 text-blue-500'
-                  : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-              }`}
-            >
-              {tf}
-            </button>
-          ))}
+      {!hideHeader && (
+        <div className="flex justify-between items-center px-6 py-4 bg-[#1e222d] border-b border-gray-800">
+          <div className="flex items-center gap-1">
+            {['1m', '15m', '1H', '1D'].map((tf) => (
+              <button
+                key={tf}
+                onClick={() => setTimeframe(tf)}
+                className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors ${
+                  timeframe === tf
+                    ? 'bg-blue-600/20 text-blue-500'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                }`}
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+          
+          {!hideControls && (
+            <div className="flex items-center gap-4">
+              <button className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-400 bg-white/5 rounded-xl hover:bg-white/10 hover:text-white transition-all uppercase tracking-wider">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                Indicators
+              </button>
+              <button className="flex items-center gap-2 px-6 py-2 text-xs font-black text-black bg-[#26a69a] rounded-xl shadow-lg shadow-[#26a69a]/20 hover:brightness-110 transition-all uppercase tracking-wider">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Run Backtest
+              </button>
+            </div>
+          )}
         </div>
-        
-        <div className="flex items-center gap-4">
-          <button className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-400 bg-white/5 rounded-xl hover:bg-white/10 hover:text-white transition-all uppercase tracking-wider">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            Indicators
-          </button>
-          <button className="flex items-center gap-2 px-6 py-2 text-xs font-black text-black bg-[#26a69a] rounded-xl shadow-lg shadow-[#26a69a]/20 hover:brightness-110 transition-all uppercase tracking-wider">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Run Backtest
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Main Chart Container */}
       <div className="relative flex-grow min-h-0 bg-[#131722]" ref={chartContainerRef}>

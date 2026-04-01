@@ -3,75 +3,97 @@
 @tailwind utilities;
 
 :root {
-  /* Dark Theme (Default) — solid dark cards on black */
-  --bg-main: #000000;
-  --card-bg: #1c1c1e;
-  --card-border: rgba(255, 255, 255, 0.08);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.55);
+  /* Premium Dark Theme */
+  --bg-main: #050508;
+  --bg-dots: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  --card-bg: rgba(13, 13, 20, 0.7);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --card-border-glow: rgba(255, 255, 255, 0.12);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
   --primary: #00d6ab;
-  --glass-blur: blur(0px);
+  --primary-glow: rgba(0, 214, 171, 0.15);
+  --glass-blur: blur(16px);
+  
+  /* Brand Colors */
+  --neon-lime: #ccff00;
+  --subzero-blue: #00eaff;
+  --matrix-green: #00ff41;
 }
 
 [data-theme='light'] {
-  --bg-main: #f2f2f7;
-  --card-bg: rgba(255, 255, 255, 0.7);
-  --card-border: rgba(0, 0, 0, 0.05);
-  --text-primary: #1c1c1e;
-  --text-secondary: rgba(60, 60, 67, 0.6);
+  --bg-main: #f8fafc;
+  --bg-dots: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-border-glow: rgba(0, 214, 171, 0.1);
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
   --primary: #00d6ab;
-  --glass-blur: blur(25px);
+  --glass-blur: blur(20px);
 }
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-    @apply transition-colors duration-300;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply transition-colors duration-500 selection:bg-emerald-500/30;
     background-color: var(--bg-main);
+    background-image: var(--bg-dots);
+    background-size: 24px 24px;
     color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+
+  /* Global Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid transparent;
+    background-clip: content-box;
+    border-radius: 20px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 214, 171, 0.3);
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
 }
 
 @layer utilities {
-  .chart-gradient-green {
-    background: linear-gradient(180deg, rgba(0, 214, 171, 0.2) 0%, rgba(0, 214, 171, 0) 100%);
+  .border-glass {
+    border-color: var(--card-border);
   }
-  .chart-gradient-red {
-    background: linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0) 100%);
-  }
+
   .glass-card {
     background: var(--card-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--card-border);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15);
+    @apply transition-all duration-300;
   }
-  .gradient-bg {
-    background: radial-gradient(circle at 0% 0%, var(--bg-main) 0%, var(--bg-main) 50%, var(--primary) 0.05%);
+  
+  .glass-card:hover {
+    border-color: var(--card-border-glow);
+    box-shadow: 0 8px 30px 0 rgba(0, 0, 0, 0.25);
   }
-  .glass-modal {
-    background: var(--card-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--card-border);
-  }
-  .bg-dim {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-  }
-}
 
-@layer components {
-  .custom-scrollbar::-webkit-scrollbar { 
-    width: 6px; 
+  .text-glow {
+    text-shadow: 0 0 10px var(--primary-glow);
   }
-  .custom-scrollbar::-webkit-scrollbar-track { 
-    background: transparent; 
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb { 
-    background: rgba(0, 214, 171, 0.2); 
-    border-radius: 10px; 
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-    @apply bg-primary;
+  
+  .border-glow {
+    box-shadow: 0 0 15px var(--primary-glow);
   }
 }

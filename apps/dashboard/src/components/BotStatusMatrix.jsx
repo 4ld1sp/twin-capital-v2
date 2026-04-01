@@ -1,62 +1,109 @@
 import React, { useState, useEffect, useRef } from 'react';
+import TradeLogViewer from './trading/TradeLogViewer';
 
-// Generates dummy runtime string
-const getBaseRuntime = (id) => {
-  const days = Math.floor(Math.random() * 30);
-  const hours = Math.floor(Math.random() * 24);
-  return `${days}d ${hours}h`;
-};
-
-const initialStrategies = [
-  { id: 1, name: 'BTC Momentum', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'B', pairBg: 'bg-orange-500/20 text-orange-500', pairName: 'BTC/USDT', pnlValue: 1240.00, runtime: getBaseRuntime(1) },
-  { id: 2, name: 'ETH Pullback', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'E', pairBg: 'bg-blue-500/20 text-blue-500', pairName: 'ETH/USDT', pnlValue: -450.20, runtime: getBaseRuntime(2) },
-  { id: 3, name: 'SOL Breakout', status: 'Paused', statusBg: 'bg-amber-500/10 border-amber-500/20 text-amber-500', statusDot: 'bg-amber-500', pairInitial: 'S', pairBg: 'bg-purple-500/20 text-purple-500', pairName: 'SOL/USDC', pnlValue: 890.15, runtime: getBaseRuntime(3) },
-  { id: 4, name: 'Macro Hedge', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'M', pairBg: 'bg-slate-500/20 text-slate-400', pairName: 'XAU/USD', pnlValue: 3410.00, runtime: getBaseRuntime(4) },
-  { id: 5, name: 'DOGE Scalper', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'D', pairBg: 'bg-yellow-500/20 text-yellow-500', pairName: 'DOGE/USDT', pnlValue: 120.50, runtime: getBaseRuntime(5) },
-  { id: 6, name: 'LINK Oracle Arbitrage', status: 'Paused', statusBg: 'bg-amber-500/10 border-amber-500/20 text-amber-500', statusDot: 'bg-amber-500', pairInitial: 'L', pairBg: 'bg-indigo-500/20 text-indigo-500', pairName: 'LINK/USDT', pnlValue: -80.20, runtime: getBaseRuntime(6) },
-  { id: 7, name: 'AVAX Avalanche', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'A', pairBg: 'bg-red-500/20 text-red-500', pairName: 'AVAX/USDT', pnlValue: 450.80, runtime: getBaseRuntime(7) },
-  { id: 8, name: 'XRP Swing', status: 'Stopped', statusBg: 'bg-rose-500/10 border-rose-500/20 text-rose-500', statusDot: 'bg-rose-500', pairInitial: 'X', pairBg: 'bg-slate-800 text-white', pairName: 'XRP/USDT', pnlValue: -1200.00, runtime: getBaseRuntime(8) },
-  { id: 9, name: 'ADA Staking Hedge', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'A', pairBg: 'bg-blue-400/20 text-blue-400', pairName: 'ADA/USDT', pnlValue: 55.40, runtime: getBaseRuntime(9) },
-  { id: 10, name: 'DOT Polka Trend', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'D', pairBg: 'bg-pink-500/20 text-pink-500', pairName: 'DOT/USDT', pnlValue: 210.00, runtime: getBaseRuntime(10) },
-  { id: 11, name: 'UNI Dex Arb', status: 'Paused', statusBg: 'bg-amber-500/10 border-amber-500/20 text-amber-500', statusDot: 'bg-amber-500', pairInitial: 'U', pairBg: 'bg-pink-400/20 text-pink-400', pairName: 'UNI/USDT', pnlValue: 0.00, runtime: getBaseRuntime(11) },
-  { id: 12, name: 'MATIC L2 Scalp', status: 'Active', statusBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500', statusDot: 'bg-emerald-500', pairInitial: 'M', pairBg: 'bg-purple-600/20 text-purple-600', pairName: 'MATIC/USDT', pnlValue: 340.20, runtime: getBaseRuntime(12) },
+const colorPalette = [
+  { pairBg: 'bg-orange-500/20 text-orange-500' },
+  { pairBg: 'bg-blue-500/20 text-blue-500' },
+  { pairBg: 'bg-purple-500/20 text-purple-500' },
+  { pairBg: 'bg-emerald-500/20 text-emerald-500' },
+  { pairBg: 'bg-amber-500/20 text-amber-500' },
+  { pairBg: 'bg-red-500/20 text-red-500' },
+  { pairBg: 'bg-pink-500/20 text-pink-500' },
+  { pairBg: 'bg-indigo-500/20 text-indigo-500' },
 ];
 
 const BotStatusMatrix = () => {
-  const [bots, setBots] = useState(initialStrategies);
+  const [bots, setBots] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
 
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const [viewAll, setViewAll] = useState(false);
-  const ITEMS_PER_PAGE = 4;
+  const fetchBots = async () => {
+    try {
+      const res = await fetch('/api/bots');
+      if (res.ok) {
+        const data = await res.json();
+        const mapped = data.map((b, i) => {
+          const colorIdx = i % colorPalette.length;
+          const pair = b.symbol;
+          const statusColors = {
+            running: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500',
+            stopped: 'bg-secondary/10 border-secondary/20 text-secondary',
+            paused: 'bg-amber-500/10 border-amber-500/20 text-amber-500',
+            killed: 'bg-rose-500/10 border-rose-500/20 text-rose-500',
+            error: 'bg-rose-500/10 border-rose-500/20 text-rose-500',
+          };
+          const statusDots = {
+            running: 'bg-emerald-500 animate-pulse',
+            stopped: 'bg-secondary',
+            paused: 'bg-amber-500',
+            killed: 'bg-rose-500',
+            error: 'bg-rose-500',
+          };
+          
+          return {
+            id: b.id,
+            name: b.strategyName,
+            status: b.status,
+            statusBg: statusColors[b.status] || statusColors.stopped,
+            statusDot: statusDots[b.status] || statusDots.stopped,
+            pairInitial: pair[0],
+            pairBg: colorPalette[colorIdx].pairBg,
+            pairName: pair,
+            pnlValue: b.dailyPnl || 0,
+            winRate: `${b.winRate}%`,
+            trades: b.totalTrades || 0,
+            raw: b,
+          };
+        });
+        setBots(mapped);
+      }
+    } catch (err) {
+      console.error('Failed to fetch bots', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Handle click outside to close menu
   useEffect(() => {
+    fetchBots();
+    const interval = setInterval(fetchBots, 10000); // Polling every 10s
+    
+    // Close menu when clicking outside
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setOpenMenuId(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
-  // Real-time PnL Simulation (only updates Active bots)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBots(currentBots => currentBots.map(bot => {
-        if (bot.status === 'Active') {
-          // Simulate a small market tick (-$5 to +$5)
-          const volatility = (Math.random() * 10) - 5;
-          return { ...bot, pnlValue: bot.pnlValue + volatility };
-        }
-        return bot;
-      }));
-    }, 5000); // 5 seconds match the UI label
-    return () => clearInterval(interval);
-  }, []);
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [viewAll, setViewAll] = useState(false);
+  const ITEMS_PER_PAGE = 4;
+
+  // Handle action function
+  const handleAction = async (id, action) => {
+    try {
+      const res = await fetch(`/api/bots/${id}/${action}`, { method: 'POST' });
+      if (res.ok) {
+        fetchBots(); // Refresh state
+      } else {
+        const error = await res.json();
+        alert(`Failed to ${action} bot: ` + error.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const [expandedLogsId, setExpandedLogsId] = useState(null);
 
   // Format PnL consistently
   const formatPnl = (value) => {
@@ -64,38 +111,27 @@ const BotStatusMatrix = () => {
     const formattedVal = Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return {
       text: `${isNegative ? '-' : '+'}$${formattedVal}`,
-      colorClass: isNegative ? 'text-rose-500' : 'text-emerald-500' // Using rose-500 for reds
+      colorClass: isNegative ? 'text-rose-500' : 'text-emerald-500'
     };
   };
 
-  // Bot Actions
+  // Bot Actions — deploy/undeploy via TradingContext
   const toggleBotStatus = (id) => {
-    setBots(current => current.map(bot => {
-      if (bot.id === id) {
-        const isCurrentlyActive = bot.status === 'Active';
-        return {
-          ...bot,
-          status: isCurrentlyActive ? 'Paused' : 'Active',
-          statusBg: isCurrentlyActive ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500',
-          statusDot: isCurrentlyActive ? 'bg-amber-500' : 'bg-emerald-500'
-        };
-      }
-      return bot;
-    }));
+    const bot = bots.find(b => b.id === id);
+    if (!bot) return;
+    if (bot.status === 'Active') {
+      // Undeploy
+      deployStrategy(null);
+    } else {
+      // Deploy
+      deployStrategy(bot.strategyRef);
+    }
     setOpenMenuId(null);
   };
 
   const removeBot = (id) => {
-    // Only allow removing paused/stopped bots for safety simulation
-    setBots(current => current.filter(bot => bot.id !== id));
+    deleteStrategy(id);
     setOpenMenuId(null);
-
-    // Adjust pagination if we delete the last item on a page
-    const remainingItems = bots.length - 1;
-    const maxPages = Math.ceil(remainingItems / ITEMS_PER_PAGE);
-    if (currentPage > maxPages && maxPages > 0) {
-      setCurrentPage(maxPages);
-    }
   };
 
   // Pagination Logic
@@ -117,7 +153,7 @@ const BotStatusMatrix = () => {
               setViewAll(!viewAll);
               setCurrentPage(1); // Reset page when toggling
             }}
-            className={`text-xs font-black transition-all px-4 py-2 rounded-xl border ${viewAll ? 'bg-primary text-black border-primary shadow-lg shadow-primary/20' : 'text-secondary border-glass hover:text-main hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-widest'}`}
+            className={`text-xs font-black transition-all px-4 py-2 rounded-xl border ${viewAll ? 'bg-primary text-black border-primary shadow-sm' : 'text-secondary border-glass hover:text-main hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-widest'}`}
           >
             {viewAll ? 'PAGINATED VIEW' : 'VIEW ALL ALGORITHMS'}
           </button>
@@ -145,7 +181,11 @@ const BotStatusMatrix = () => {
             {paginatedBots.length === 0 ? (
               <tr>
                 <td colSpan="6" className="px-6 py-12 text-center text-slate-500 font-medium h-[256px]">
-                  No active strategies found. Click + New Strategy to deploy a bot.
+                  <div className="flex flex-col items-center gap-3">
+                    <span className="material-symbols-outlined text-4xl text-secondary/30">robot_2</span>
+                    <p className="text-sm text-secondary font-bold">No strategies deployed yet</p>
+                    <p className="text-xs text-secondary/60">Create a strategy via Backtests → Save → Deploy to Live Trading</p>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -198,31 +238,39 @@ const BotStatusMatrix = () => {
                             <p className="text-[10px] text-secondary font-black uppercase tracking-widest truncate">{bot.name}</p>
                           </div>
 
-                          <button
-                            onClick={() => toggleBotStatus(bot.id)}
-                            className="px-4 py-2.5 text-sm text-main font-semibold hover:bg-primary hover:text-black flex items-center gap-2 transition-all"
-                          >
-                            <span className="material-symbols-outlined text-[18px]">{bot.status === 'Active' ? 'pause_circle' : 'play_circle'}</span>
-                            {bot.status === 'Active' ? 'Pause Strategy' : 'Resume Strategy'}
-                          </button>
+                          {bot.status === 'running' ? (
+                            <>
+                              <button
+                                onClick={() => { handleAction(bot.id, 'pause'); setOpenMenuId(null); }}
+                                className="px-4 py-2.5 text-sm text-amber-500 font-semibold hover:bg-amber-500/10 flex items-center gap-2 transition-all"
+                              >
+                                <span className="material-symbols-outlined text-[18px]">pause_circle</span>
+                                Pause Bot
+                              </button>
+                              <button
+                                onClick={() => { handleAction(bot.id, 'stop'); setOpenMenuId(null); }}
+                                className="px-4 py-2.5 text-sm text-rose-500 font-bold hover:bg-rose-500 hover:text-white flex items-center gap-2 transition-all"
+                              >
+                                <span className="material-symbols-outlined text-[18px]">cancel</span>
+                                Terminate Bot
+                              </button>
+                            </>
+                          ) : bot.status === 'paused' ? (
+                            <button
+                              onClick={() => { handleAction(bot.id, 'resume'); setOpenMenuId(null); }}
+                              className="px-4 py-2.5 text-sm text-emerald-500 font-semibold hover:bg-emerald-500/10 flex items-center gap-2 transition-all"
+                            >
+                              <span className="material-symbols-outlined text-[18px]">play_circle</span>
+                              Resume Bot
+                            </button>
+                          ) : null}
 
                           <button
-                            onClick={() => { setOpenMenuId(null); alert('Routing to detailed logs for ' + bot.name); }}
+                            onClick={() => { setOpenMenuId(null); setExpandedLogsId(expandedLogsId === bot.id ? null : bot.id); }}
                             className="px-4 py-2.5 text-sm text-main font-semibold hover:bg-black/10 dark:hover:bg-white/10 flex items-center gap-2 transition-all"
                           >
                             <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                             View Detailed Logs
-                          </button>
-
-                          <div className="h-px bg-glass my-1 mx-2"></div>
-
-                          <button
-                            onClick={() => removeBot(bot.id)}
-                            disabled={bot.status === 'Active'}
-                            className="px-4 py-2.5 text-sm text-rose-500 font-bold hover:bg-rose-500 hover:text-white flex items-center gap-2 transition-all disabled:opacity-20 disabled:cursor-not-allowed group/btn"
-                          >
-                            <span className="material-symbols-outlined text-[18px]">cancel</span>
-                            Force Close Bot
                           </button>
                         </div>
                       )}
@@ -234,6 +282,10 @@ const BotStatusMatrix = () => {
           </tbody>
         </table>
       </div>
+
+      {expandedLogsId && (
+        <TradeLogViewer botId={expandedLogsId} onClose={() => setExpandedLogsId(null)} />
+      )}
 
       {/* Pagination Footer */}
       {!viewAll && bots.length > 0 && (
@@ -257,7 +309,7 @@ const BotStatusMatrix = () => {
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-5 py-2 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 disabled:cursor-not-allowed shadow-lg shadow-primary/20 hover:brightness-110"
+              className="px-5 py-2 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 disabled:cursor-not-allowed shadow-sm hover:brightness-110"
             >
               <span className="flex items-center gap-1">Next <span className="material-symbols-outlined text-[14px]">chevron_right</span></span>
             </button>

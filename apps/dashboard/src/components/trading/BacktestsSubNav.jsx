@@ -4,9 +4,6 @@ const BacktestsSubNav = ({ activeTab = 'performance', onChange }) => {
   const tabs = [
     { id: 'performance', label: 'Performance Analysis' },
     { id: 'live', label: 'Live Backtest' },
-    { id: 'history', label: 'Trade History' },
-    { id: 'parameters', label: 'Parameters' },
-    { id: 'signals', label: 'Signals' },
   ];
 
   return (

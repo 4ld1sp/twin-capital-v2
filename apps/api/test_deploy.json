@@ -1,0 +1,16 @@
+{
+  "strategyName": "EMA Crossover Test",
+  "strategyScript": "Simple EMA 50/200 crossover strategy. BUY when EMA50 crosses above EMA200 (Golden Cross). SELL when EMA50 crosses below EMA200 (Death Cross). Use ATR for stop loss calculation. Risk per trade: 1% of equity.",
+  "strategyPrompt": "EMA crossover golden cross strategy",
+  "symbol": "BTCUSDT",
+  "exchange": "bybit",
+  "networkMode": "testnet",
+  "signalInterval": "30m",
+  "riskInterval": "30s",
+  "leverage": 5,
+  "maxDailyLossPct": 5,
+  "maxPositions": 1,
+  "maxTradesPerDay": 3,
+  "trailingStopActivationPct": 1.0,
+  "trailingStopCallbackPct": 0.5
+}

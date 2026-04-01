@@ -1,0 +1,16 @@
+{
+  "strategyName": "Fast Test",
+  "strategyScript": "Fast loop test.",
+  "strategyPrompt": "Test",
+  "symbol": "BTCUSDT",
+  "exchange": "bybit",
+  "networkMode": "testnet",
+  "signalInterval": "1m",
+  "riskInterval": "10s",
+  "leverage": 5,
+  "maxDailyLossPct": 5,
+  "maxPositions": 1,
+  "maxTradesPerDay": 3,
+  "trailingStopActivationPct": 1.0,
+  "trailingStopCallbackPct": 0.5
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Save, Trash2, CheckCircle2, AlertCircle, Plus, Key, Webhook, X, Edit2, Loader2 } from 'lucide-react';
 import { useApp, availablePlatforms } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 
 const apiCategories = [
   { id: 'trading', label: 'Trading Exchanges', icon: 'currency_exchange' },
@@ -22,16 +23,20 @@ export default function ApiKeysManager() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [customPlatformName, setCustomPlatformName] = useState('');
   
-  const { userConnections, setUserConnections } = useApp();
+  const { userConnections, setUserConnections, addConnection, removeConnection, updateConnection } = useApp();
+  const { logActivity } = useAuth();
 
   // Add Form State
   const [newConnPlatform, setNewConnPlatform] = useState('');
   const [newConnFields, setNewConnFields] = useState({});
+  const [customFieldsArray, setCustomFieldsArray] = useState([{ name: 'API Key', value: '' }]);
   const [testStatus, setTestStatus] = useState('idle');
 
   // Edit State
   const [editingConnectionId, setEditingConnectionId] = useState(null);
   const [editFields, setEditFields] = useState({});
+  const [editTestStatus, setEditTestStatus] = useState('idle'); // 'idle'|'testing'|'success'|'error'
+  const [isSaving, setIsSaving] = useState(false);
 
   // Delete State
   const [connectionToDelete, setConnectionToDelete] = useState(null);
@@ -43,76 +48,155 @@ export default function ApiKeysManager() {
     }));
   };
 
-  const confirmRemoveConnection = () => {
+  const confirmRemoveConnection = async () => {
     if (!connectionToDelete) return;
-    
-    setUserConnections(prev => ({
-      ...prev,
-      [connectionToDelete.category]: prev[connectionToDelete.category].filter(conn => conn.id !== connectionToDelete.id)
-    }));
     
     if (editingConnectionId === connectionToDelete.id) {
       setEditingConnectionId(null);
       setEditFields({});
     }
     
+    const success = await removeConnection(connectionToDelete.category, connectionToDelete.id);
+    if (success) {
+      logActivity('API Key Removed', `${connectionToDelete.name} connection deleted from ${connectionToDelete.category}`, 'security');
+    }
     setConnectionToDelete(null);
   };
 
   const handleStartEdit = (item) => {
     setEditingConnectionId(item.id);
     setEditFields({ ...item.fields });
+    setEditTestStatus('idle');
   };
 
   const handleCancelEdit = () => {
     setEditingConnectionId(null);
     setEditFields({});
+    setEditTestStatus('idle');
   };
 
-  const handleSaveEdit = (category, id) => {
-    setUserConnections(prev => ({
-      ...prev,
-      [category]: prev[category].map(conn => 
-        conn.id === id ? { ...conn, fields: { ...editFields } } : conn
-      )
-    }));
-    setEditingConnectionId(null);
-    setEditFields({});
+  const handleSaveEdit = async (category, id) => {
+    if (isSaving) return;
+    setIsSaving(true);
+    const success = await updateConnection(category, id, { 
+      fields: editFields,
+      isConnected: editTestStatus === 'success'
+    });
+    setIsSaving(false);
+    if (success) {
+      logActivity('API Config Updated', `${category.toUpperCase()}: ${id} updated`, 'update');
+      setEditingConnectionId(null);
+      setEditFields({});
+      setEditTestStatus('idle');
+    }
   };
 
-  const handleAddConnection = () => {
+  const handleTestEditConnection = async (item) => {
+    setEditTestStatus('testing');
+    // Use editFields if actively editing, otherwise use item's stored fields
+    const fieldsToTest = editingConnectionId === item.id ? editFields : item.fields;
+    try {
+      const res = await fetch('/api/keys/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platformId: item.platformId,
+          fields: fieldsToTest
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setEditTestStatus('success');
+        // If not editing, auto-update connection status to Connected
+        if (editingConnectionId !== item.id) {
+          await updateConnection(activeTab, item.id, { isConnected: true });
+        }
+      } else {
+        setEditTestStatus('error');
+        alert(`Connection test failed: ${data.message || data.error}`);
+      }
+    } catch (err) {
+      setEditTestStatus('error');
+      alert('Network error while testing connection.');
+    }
+  };
+
+  const handleAddConnection = async () => {
     if (!newConnPlatform) return;
 
     const platformDef = availablePlatforms[activeTab].find(p => p.id === newConnPlatform);
     if (!platformDef) return;
 
+    // Build the final fields object depending on if it's custom or predefined
+    let finalFields = {};
+    if (newConnPlatform === 'other') {
+      customFieldsArray.forEach(f => {
+        if (f.name.trim()) finalFields[f.name.trim().toLowerCase().replace(/\s+/g, '_')] = f.value;
+      });
+    } else {
+      finalFields = { ...newConnFields };
+    }
+
+    if (isSaving) return;
+    setIsSaving(true);
     const newConnection = {
-      id: `conn-${Date.now()}`,
       platformId: platformDef.id,
       name: platformDef.id === 'other' ? customPlatformName : platformDef.name,
-      connected: false,
-      lastSynced: 'Never',
-      fields: { ...newConnFields }
+      fields: finalFields,
+      isConnected: testStatus === 'success'
     };
-
-    setUserConnections(prev => ({
-      ...prev,
-      [activeTab]: [...prev[activeTab], newConnection]
-    }));
-
+    const success = await addConnection(activeTab, newConnection);
+    setIsSaving(false);
+    if (success) {
+      logActivity('API Key Created', `${newConnection.name} connection added to ${activeTab}`, 'update');
+    }
     setShowAddModal(false);
     setIsDropdownOpen(false);
     setNewConnPlatform('');
     setCustomPlatformName('');
     setNewConnFields({});
+    setCustomFieldsArray([{ name: 'API Key', value: '' }]);
     setTestStatus('idle');
   };
 
-  const handleTestNewConnection = () => {
+  const handleTestNewConnection = async () => {
     setTestStatus('testing');
-    setTimeout(() => {
-      setTestStatus('success');
-    }, 1500);
+    logActivity('API Connection Test', `Testing connectivity to ${newConnPlatform === 'other' ? customPlatformName : newConnPlatform}...`, 'system');
+    
+    let finalFields = {};
+    if (newConnPlatform === 'other') {
+      customFieldsArray.forEach(f => {
+        if (f.name.trim()) finalFields[f.name.trim().toLowerCase().replace(/\s+/g, '_')] = f.value;
+      });
+    } else {
+      finalFields = { ...newConnFields };
+    }
+
+    try {
+      const res = await fetch('/api/keys/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platformId: newConnPlatform === 'other' ? 'custom' : newConnPlatform,
+          fields: finalFields
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        setTestStatus('success');
+        logActivity('API Connection Success', `Verification successful for ${newConnPlatform || 'custom platform'} (${data.latency}ms)`, 'system');
+      } else {
+        setTestStatus('idle'); // or 'error' if we want to add an error state
+        alert(`Connection test failed: ${data.message || data.error}`);
+        logActivity('API Connection Failed', `Verification failed for ${newConnPlatform}: ${data.message || data.error}`, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      setTestStatus('idle');
+      alert('Network error while testing connection.');
+    }
   };
 
   const renderAddModal = () => {
@@ -196,22 +280,85 @@ export default function ApiKeysManager() {
             </div>
             
             {newConnPlatform === 'other' && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">What's the platform name?</label>
-                <input 
-                  type="text"
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner"
-                  placeholder="e.g. Mexc Exchange, DeepSeek, etc."
-                  value={customPlatformName}
-                  onChange={e => {
-                    setCustomPlatformName(e.target.value);
-                    setTestStatus('idle');
-                  }}
-                />
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">What's the platform name?</label>
+                  <input 
+                    type="text"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner"
+                    placeholder="e.g. Mexc Exchange, DeepSeek, dll."
+                    value={customPlatformName}
+                    onChange={e => {
+                      setCustomPlatformName(e.target.value);
+                      setTestStatus('idle');
+                    }}
+                  />
+                </div>
+                
+                <div className="pt-2">
+                  <div className="flex justify-between items-center mb-2">
+                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Custom Fields</label>
+                     <button
+                        type="button"
+                        onClick={() => setCustomFieldsArray([...customFieldsArray, { name: '', value: '' }])}
+                        className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-1"
+                     >
+                       <Plus className="w-3 h-3" /> Add Field
+                     </button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {customFieldsArray.map((field, idx) => (
+                      <div key={idx} className="flex gap-2 items-start relative group">
+                         <div className="w-1/3">
+                            <input 
+                              type="text"
+                              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-black/5 dark:bg-white/5 px-3 py-2 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                              placeholder="Field Name"
+                              value={field.name}
+                              onChange={e => {
+                                 const newArr = [...customFieldsArray];
+                                 newArr[idx].name = e.target.value;
+                                 setCustomFieldsArray(newArr);
+                                 setTestStatus('idle');
+                              }}
+                            />
+                         </div>
+                         <div className="w-2/3 flex gap-2">
+                            <input 
+                              type="text"
+                              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-xs text-slate-900 dark:text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                              placeholder="Value (Secret/Token/Key)"
+                              value={field.value}
+                              onChange={e => {
+                                 const newArr = [...customFieldsArray];
+                                 newArr[idx].value = e.target.value;
+                                 setCustomFieldsArray(newArr);
+                                 setTestStatus('idle');
+                              }}
+                            />
+                            {customFieldsArray.length > 1 && (
+                               <button 
+                                 type="button" 
+                                 onClick={() => {
+                                    const newArr = [...customFieldsArray];
+                                    newArr.splice(idx, 1);
+                                    setCustomFieldsArray(newArr);
+                                 }}
+                                 className="text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-6 top-2"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </button>
+                            )}
+                         </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
-            {selectedPlatformDef && selectedPlatformDef.fields.map(field => (
+            {selectedPlatformDef && newConnPlatform !== 'other' && selectedPlatformDef.fields.map(field => (
               <div key={field}>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{formatFieldLabel(field)}</label>
                 <input 
@@ -386,17 +533,34 @@ export default function ApiKeysManager() {
                     <button onClick={handleCancelEdit} className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-primary/20 rounded-md hover:bg-slate-50 dark:hover:bg-primary/10 transition-colors">
                       Cancel
                     </button>
-                    <button onClick={() => handleSaveEdit(activeTab, item.id)} className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-hover shadow-sm transition-colors flex items-center gap-1">
-                      <Save className="w-3.5 h-3.5" /> Save Changes
+                    <button
+                      onClick={() => handleTestEditConnection(item)}
+                      disabled={editTestStatus === 'testing'}
+                      className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-primary/20 rounded-md hover:bg-slate-50 dark:hover:bg-primary/10 transition-colors flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {editTestStatus === 'testing' ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+                      {editTestStatus === 'success' ? <CheckCircle2 className="w-3 h-3 text-green-500" /> : null}
+                      {editTestStatus === 'success' ? 'Verified' : 'Test Connection'}
+                    </button>
+                    <button
+                      onClick={() => handleSaveEdit(activeTab, item.id)}
+                      disabled={isSaving}
+                      className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-hover shadow-sm transition-colors flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                      Save Changes
                     </button>
                   </>
                 ) : (
                   <>
-                    <button className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-primary/20 rounded-md hover:bg-slate-50 dark:hover:bg-primary/10 transition-colors">
-                      Test Connection
-                    </button>
-                    <button className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-hover shadow-sm transition-colors flex items-center gap-1">
-                      <Save className="w-3.5 h-3.5" /> Save
+                    <button
+                      onClick={() => handleTestEditConnection(item)}
+                      disabled={editTestStatus === 'testing'}
+                      className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-primary/20 rounded-md hover:bg-slate-50 dark:hover:bg-primary/10 transition-colors flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {editTestStatus === 'testing' ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+                      {editTestStatus === 'success' ? <CheckCircle2 className="w-3 h-3 text-green-500" /> : null}
+                      {editTestStatus === 'success' ? 'Verified' : 'Retest Connection'}
                     </button>
                   </>
                 )}

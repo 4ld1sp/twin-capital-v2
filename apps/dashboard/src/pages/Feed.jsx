@@ -230,7 +230,7 @@ const Feed = () => {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab ? 'bg-primary text-[#000] shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'} `}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab ? 'bg-primary text-[#000] shadow-sm' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'} `}
                             >
                                 {tab}
                             </button>
@@ -332,7 +332,7 @@ const Feed = () => {
                                         <td className="p-4 text-right pr-6">
                                             <div className="flex items-center justify-end gap-3">
                                                 <button className="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">Details</button>
-                                                <button className="bg-primary hover:brightness-110 text-black font-bold text-xs px-5 py-2 rounded-xl transition-all shadow-lg shadow-primary/10">
+                                                <button className="bg-primary hover:brightness-110 text-black font-bold text-xs px-5 py-2 rounded-xl transition-all shadow-sm">
                                                     Trade
                                                 </button>
                                             </div>

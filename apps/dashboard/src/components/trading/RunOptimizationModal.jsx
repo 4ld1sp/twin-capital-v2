@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import GlassSelect from '../ui/GlassSelect';
 
 const RunOptimizationModal = ({ isOpen, onClose }) => {
+  const [strategy, setStrategy] = useState('Active: BTC Momentum');
+  const [algorithm, setAlgorithm] = useState('Genetic Algorithm (GA)');
+  const [metric, setMetric] = useState('Sharpe Ratio');
+
   if (!isOpen) return null;
 
   return (
@@ -22,36 +27,37 @@ const RunOptimizationModal = ({ isOpen, onClose }) => {
           
           <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onClose(); }}>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Target Strategy</label>
-              <select className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-main text-xs font-bold appearance-none">
-                <option>Active: BTC Momentum</option>
-                <option>Active: ETH Pullback</option>
-                <option>Draft: Alpha Sector</option>
-              </select>
+              <GlassSelect
+                label="Target Strategy"
+                value={strategy}
+                onChange={setStrategy}
+                options={['Active: BTC Momentum', 'Active: ETH Pullback', 'Draft: Alpha Sector']}
+                searchable={false}
+              />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Optimizer Algorithm</label>
-              <select className="w-full bg-background-dark/50 border border-primary/20 rounded-lg px-4 py-3 focus:ring-primary focus:border-primary transition-all text-slate-100 appearance-none">
-                <option>Genetic Algorithm (GA)</option>
-                <option>Particle Swarm Optimization (PSO)</option>
-                <option>Grid Search (Exhaustive)</option>
-                <option>Random Search</option>
-              </select>
+              <GlassSelect
+                label="Optimizer Algorithm"
+                value={algorithm}
+                onChange={setAlgorithm}
+                options={['Genetic Algorithm (GA)', 'Particle Swarm Optimization (PSO)', 'Grid Search (Exhaustive)', 'Random Search']}
+                searchable={false}
+              />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Target Metric</label>
-                <select className="w-full bg-background-dark/50 border border-primary/20 rounded-lg px-4 py-3 focus:ring-primary focus:border-primary transition-all text-slate-100 appearance-none">
-                  <option>Sharpe Ratio</option>
-                  <option>Net Profit</option>
-                  <option>Profit Factor</option>
-                  <option>Low Drawdown</option>
-                </select>
+                <GlassSelect
+                  label="Target Metric"
+                  value={metric}
+                  onChange={setMetric}
+                  options={['Sharpe Ratio', 'Net Profit', 'Profit Factor', 'Low Drawdown']}
+                  searchable={false}
+                />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Population Size</label>
+              <div className="space-y-2 pb-1">
+                <label className="text-[10px] font-black text-secondary uppercase tracking-widest pl-1">Population Size</label>
                 <input 
                   className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-main text-xs font-bold placeholder:text-secondary/30" 
                   type="number" 

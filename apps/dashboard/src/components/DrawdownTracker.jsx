@@ -1,30 +1,67 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-const DrawdownTracker = () => {
+const DrawdownTracker = ({ currentDrawdown = 0, maxDrawdown = 0, pnlTimeseries = [] }) => {
+  // Build SVG path from cumulative P&L timeseries
+  const svgPath = useMemo(() => {
+    if (pnlTimeseries.length < 2) {
+      return { fill: 'M0,0 L100,0 L100,0 Z', line: '0,0 100,0' };
+    }
+
+    const values = pnlTimeseries.map(d => d.cumulative || 0);
+    const max = Math.max(...values.map(Math.abs), 1);
+
+    const points = values.map((v, i) => {
+      const x = (i / (values.length - 1)) * 100;
+      // Map -max..+max to 0..100 (inverted for SVG where 0 is top)
+      const y = 100 - ((v + max) / (max * 2)) * 100;
+      return `${x},${y}`;
+    });
+
+    const lineStr = points.join(' ');
+    const fillStr = `M0,${points[0].split(',')[1]} ${lineStr} L100,100 L0,100 Z`;
+
+    return { fill: fillStr, line: lineStr };
+  }, [pnlTimeseries]);
+
+  const hasData = pnlTimeseries.length > 0;
+
   return (
-    <div className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-primary/10 rounded-xl p-6 shadow-sm flex flex-col h-full">
+    <div className="glass-card rounded-2xl p-6 shadow-sm flex flex-col h-full transition-all duration-300">
       <div className="mb-6">
-        <h3 className="text-lg font-bold">Drawdown Tracker</h3>
-        <p className="text-xs text-slate-500">Risk exposure heatmap</p>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-black text-main uppercase tracking-tight">Drawdown Tracker</h3>
+          {hasData && (
+            <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest">Live</span>
+          )}
+        </div>
+        <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-70">Risk exposure from closed trades</p>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-6">
-        <div className="relative h-40 w-full bg-red-500/5 rounded-xl border border-red-500/10 overflow-hidden">
+        <div className="relative h-44 w-full bg-rose-500/5 rounded-2xl border border-rose-500/20 overflow-hidden shadow-inner">
           <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-            <path d="M0,0 L10,5 L20,15 L30,45 L40,30 L50,60 L60,85 L70,70 L80,95 L90,80 L100,100 L100,0 Z" fill="rgba(239, 68, 68, 0.15)" stroke="none"></path>
-            <polyline fill="none" points="0,0 10,5 20,15 30,45 40,30 50,60 60,85 70,70 80,95 90,80 100,100" stroke="rgba(239, 68, 68, 0.5)" strokeWidth="1.5"></polyline>
+            <defs>
+              <linearGradient id="drawdownGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#f43f5e" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d={svgPath.fill} fill="url(#drawdownGradient)" stroke="none"></path>
+            <polyline fill="none" points={svgPath.line} stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"></polyline>
           </svg>
-          <div className="absolute inset-x-0 bottom-2 text-center">
-            <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Active Drawdown Zone</span>
+          <div className="absolute inset-x-0 bottom-4 text-center">
+            <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
+              {maxDrawdown > 0 ? 'Active Drawdown Zone' : 'No Drawdown Detected'}
+            </span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-primary/5 border border-slate-100 dark:border-primary/10">
-            <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Current</p>
-            <p className="text-xl font-bold text-red-500">-4.2%</p>
+          <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-glass transition-all hover:bg-black/10 dark:hover:bg-white/10">
+            <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">Current</p>
+            <p className="text-2xl font-black text-rose-500">-{currentDrawdown.toFixed(1)}%</p>
           </div>
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-primary/5 border border-slate-100 dark:border-primary/10">
-            <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Worst Case</p>
-            <p className="text-xl font-bold">-12.4%</p>
+          <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-glass transition-all hover:bg-black/10 dark:hover:bg-white/10">
+            <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">Worst Case</p>
+            <p className="text-2xl font-black text-main">-{maxDrawdown.toFixed(1)}%</p>
           </div>
         </div>
       </div>

@@ -1,161 +1,108 @@
-# Product Requirements Document (PRD) - Twin Capital Command Center
+# Product Requirements Document (PRD)
 
-## 1. Pendahuluan
-- **Nama Produk:** Twin Capital Command Center
-- **Tujuan Produk:** Menyediakan antarmuka dashboard eksekutif dan operasional (*web application*) yang komprehensif bagi tim internal untuk memantau aktivitas *trading bot*, menganalisis data pasar (*real-time*), dan mengelola eksekusi strategi portofolio kripto.
-- **Target Pengguna:** Administrator, Eksekutif, Quant Trader, dan Portfolio Manager internal.
-- **Platform:** Aplikasi *Single Page Application* (SPA) berbasis web (Desktop-first).
+## 1. Overview
+Twin Capital Command Center is an executive web application designed for internal teams to monitor and manage crypto trading bots, analyze real-time market data, and execute portfolio strategies. It features a modern, iOS-inspired "Subtle Glass" interface and integrates a Hybrid Auto-Trading Engine that leverages AI for signal generation, alongside a hardcoded risk engine for strict financial safety.
 
----
+## 2. Requirements
+- Secure authentication system including Two-Factor Authentication (2FA) via an Authenticator app.
+- Real-time market data integration utilizing Bybit WebSocket for Spot/Linear assets.
+- Integrated API Key management for various external platforms (Binance, Bybit, Minimax AI, etc.) securely encrypted with AES-256-GCM in the backend.
+- Hybrid Auto-Trading Engine capable of deploying configured strategies, monitoring positions continuously, and enforcing hard constraints to forcefully close trading bots.
+- Immersive, dynamic UI/UX equipped with an elegant Light/Dark mode persistent switch.
+- Robust media and branding pipeline featuring a Kanban-style board for content lifecycle and AI-powered content generation.
+- Scalable, persistent backend state leveraging a solid PostgreSQL database infrastructure.
 
-## 2. Arsitektur & Teknologi Utama
-- **Frontend Framework:** React + Vite (Aplikasi *Client-Side* berkinerja tinggi).
-- **Styling:** Tailwind CSS dengan sistem tema ganda (*Dual Theme*). Mode Terang (*Light Mode*) menggunakan efek *Glassmorphism* (`backdrop-blur`) pada kartu transparan di atas latar `#f2f2f7`. Mode Gelap (*Dark Mode*) menggunakan kartu solid `#1c1c1e` di atas latar hitam `#000000`, terinspirasi dari desain iOS. Toggle tema tersimpan di `localStorage`.
-- **Routing:** React Router DOM (Mendukung perlindungan rute, dilarang masuk tanpa sesi berizin).
-- **Visualisasi Data:** Chart.js melalui antarmuka `react-chartjs-2`.
-- **Integrasi Pihak Ketiga (Data Real-Time):**
-  - Bybit V5 Public WebSocket (*Spot* & *Linear*) untuk koneksi langsung *tick-by-tick* harga aset.
-  - Glint API (`api-v2.glint.trade`) & Integrasi antarmuka/struktur metrik Polymarket (peluang peluang *Yes/No* pasaran prediksi).
+## 3. Core Features
+- **Authentication & Security:** Protected routing with Better Auth, comprehensive session tracking, Two-Factor Authentication (2FA) backup code generation, and activity logging.
+- **Dashboard Overview:** At-a-glance portfolio metrics, custom PolyMarket contextual intel blocks, and asset performance tracking.
+- **Trading Hub (Command Center):** Bot Status Matrix to view running AI bots, Backtest Hub for evaluating historical performance, real-time Live Execution Logs (FUTURES) panel, and bot management tools to Pause Strategy or Force Close Bot mechanisms.
+- **Markets Overview:** Live WebSocket feeds populating dynamic flashing UI components that react to price ticks per millisecond.
+- **Assets Management:** Cross-market tracking interface managing both Crypto Spot holdings and traditional Indonesia Stock (IDX) equities.
+- **Media & Branding Pipeline:** Dedicated visual Kanban board to govern content status (Backlog → Go Live), integrated multi-platform Cross-Posting Studio, and an AI Content Generator for Text, Image, and Video drafting.
+- **Settings & Configuration:** Comprehensive API Key manager facilitating Add/Edit/Test connections, system status readouts, and UI aesthetic preferences.
+- **Hybrid Auto-Trading Engine (Phase 5):** A robust dual-loop mechanism. The Signal Engine interfaces with AI to generate strategic trade signals, while the asynchronous Risk Engine handles active stop losses, trailing stops, and profit taking securely on the server side.
 
----
+## 4. User Flow
+1. **Authentication:** User logs in securely with credentials -> Submits 2FA code (if enabled) -> Authenticated session granted.
+2. **Dashboard Overview:** User lands on the main Dashboard to review top-level metrics, daily highlights, and total portfolio allocations across spot and derivative margins.
+3. **Execution & Monitoring:** User navigates to the Trading Hub -> Reviews the Bot Status Matrix -> Deploys a new Bot equipped with an AI prompt or monitors the immutable trade logs of currently active bots -> Force closes or pauses bots manually if unpredicted risk is perceived.
+4. **Market Analysis:** User navigates to the Feed section filtering customized tabs across Spot, Linear, and TradFi arrays, observing real-time dynamic flashes indicating market volatility via Bybit WebSockets.
+5. **Asset Tracking:** User navigates to the Assets module reviewing equity health in the spot crypto sub-portfolio and regional (IDX) sub-portfolio. 
+6. **Brand Management:** User opens the Media tab, dragging content tickets across the Kanban board pipelines, or prompting the underlying AI engine to compose a new market-related post.
+7. **System Configuration:** User switches over to Settings in order to test and inject a new OpenAI API key, monitor granular backend service logs, or adjust their overall user profile configurations.
 
-## 3. Fitur Utama yang Telah Selesai (Saat Ini)
+## 5. Architecture
+- **Frontend Structure:** React.js operating over Vite, designed as a highly responsive Single Page Application (SPA).
+- **Styling Methodology:** Tailwind CSS merged with custom foundational CSS variables ensuring seamless transition across iOS-Theme modes (Subtle Glassmorphism vs Solid Dark).
+- **Backend Architecture:** Node.js Express server establishing robust, modular REST APIs to securely proxy sensitive requests without exposing logic to the client.
+- **Database Layer:** PostgreSQL managed through Drizzle ORM specifying strictly-typed schemas.
+- **Authentication Proxy:** Better Auth abstracting secure credential, token, and session lifecycles natively natively onto the PostgreSQL layer.
+- **Real-time Pipeline:** Direct Bybit WebSocket hookups initialized client-side to guarantee lowest latency GUI rendering, accompanied by backend pooled requests for structural execution logic.
+- **Asymmetric Trading Engine:** Detached engine loop logic isolated into a Signal Engine (evaluating context every X minutes) and an independent Risk Engine (polling account margins every Y seconds).
 
-### 3.1. Autentikasi & Keamanan Dasar
-- **Login Portal:** Antarmuka masuk responsif yang dilindungi oleh autentikasi awal. Jika kredensial dimasukkan, sesi pengguna diberikan.
-- **Guarded Routes:** Menolak rute navigasi publik jika pengguna tidak berhasil *login*.
+## 6. Sequence Diagram
 
-### 3.2. Dashboard Utama (Home)
-- **Top Metrics:** Indikator panel berisi metrik harian ditarik dari struktur API Glint (contoh: *Signals Caught*, *Fast Movers*).
-- **Contextual Intel (Polymarket Layout):** Panel intelijen informasi pasar yang kontekstual, dengan visual elemen *progress-bar* peluang probabilitas dinamis berbasis variabel `best_catch.related_market`.
-- **Portfolio & Asset Chart:** Visual grafik aset dalam portofolio (Garis waktu kumulatif total dan alokasi instrumen per koin).
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant Minimax as Minimax AI API
+    participant Bybit as Bybit Market/Execution
+    participant DB as PostgreSQL DB
 
-### 3.3. Command Center (Trading Page)
-- **Bot Status Matrix:** 
-  - Array interaktif dari bot yang sedang beroperasi.
-  - Berfluktuasi secara langsung dengan simulasi laba/rugi berdetak interval per-detik.
-  - Opsi perintah lokal via *Dropdown Menu* untuk **Pause Strategy** (menghentikan simulasi *tick* pada agen tertentu) atau **Force Close Bot** (fitur melikuidasi bot jika kondisi tidak aman).
-- **Backtest Hub / Evaluasi:** Panel tempat pengguna menguji pengaturan metrik lama beserta persentase risiko.
-- **Live Execution Logs (FUTURES):** *Terminal/console* bergaya peretas untuk memonitor baris-baris sinyal *order execution* dari API luar — kini dikategorikan sebagai bagian dari operasional perdagangan berjangka (FUTURES).
-- **Strategy Modals:** Formulir *popup* yang memungkinkan Anda mengunci/menyesuaikan pengaturan seperti alokasi modal dan sebaran bot ke instrumen pasar.
+    User->>Frontend: Sets strategy parameters & creates Bot
+    Frontend->>Backend: POST /api/bots/deploy (prompt, config)
+    Backend->>DB: INSERT deployed_bots (status: running)
+    Backend-->>Frontend: Operational Success confirmation
 
-### 3.4. Markets Overview (Feed Page)
-- **Koneksi Tunggal & Fleksibel ke Bybit:** Menangani API publik *WebSocket* untuk menghadirkan terminal profesional.
-- **Dynamic Flashing UI:** Tabel yang otomatis mengamankan perbedaan angka; layar berkedip hijau jika tren beli naik, dan merah ketika terjadi volatilitas turun per milidetik.
-- **Tab Isolasi Berbanyak (Dynamic Switching):** Rute dienkapsulasi untuk memuat beragam struktur langganan terpisah (Favorites, Spot, Derivatives/Linear, TradFi, Newly Listed).
-- **Sektor Peringkat Sentimen Atas:** Takometer Sentimen Pasar, Volume *Trading*, dan klasifikasi Aset Berdasarkan Nilai Sentimen Sektor.
+    loop Risk Engine (Frequency: 10s)
+        Backend->>Bybit: Fetch current position metrics (pnl, current_price)
+        Bybit-->>Backend: Account Margin & Position Data
+        Backend->>Backend: Calculate against Trailing Stop / Stop Loss limits
+        alt Risk threshold executed
+            Backend->>Bybit: Inject Market Close Order safely
+            Backend->>DB: INSERT trade_logs (action: CLOSE, source: risk_engine)
+            Backend->>DB: UPDATE bot config status to paused/stopped
+        end
+    end
 
-### 3.5. Media & Branding Panel (Media Page)
-Platform manajemen konten dan *personal branding* yang terintegrasi untuk menjalankan strategi monetisasi multi-platform.
+    loop Signal Engine (Frequency: 30m)
+        Backend->>Bybit: Fetch market snapshot (candles, indicators)
+        Backend->>Minimax: Prompt AI with deep market context snapshot
+        Minimax-->>Backend: Output Trade Decision (BUY/SELL/HOLD) + Reasoning
+        alt If Action != HOLD
+            Backend->>Bybit: Execute precise Market Order (Buy/Sell)
+            Backend->>DB: INSERT trade_logs (action: BUY/SELL, source: signal_engine, context: ai_reasoning)
+            Backend->>DB: UPDATE bot config (lastSignalAt marker)
+        end
+    end
+```
 
-#### 3.5.1. Overview Dashboard
-- **Quick Stats Row:** 4 kartu metrik utama (Total Followers, Engagement Rate, Affiliate Revenue, Monthly Posts) dengan indikator persentase pertumbuhan.
-- **Growth Performance Card**: Visualisasi interactive grafik batang pertumbuhan followers per platform (YouTube, Twitter, Instagram, dll) — dilengkapi filter platform fungsional, indikator "Top Performer", dan tren pertumbuhan rata-rata.
-- **Engagement Rate Bars:** Progress bar per tipe konten (Video Content, Articles, Infographics).
-- **Pipeline Status (Full-Width):** Ringkasan status Kanban pipeline (Backlog, In Progress, Review, Go Live) dalam grid horizontal 4 kolom, beserta Quick Actions (New Post, Analytics).
+## 7. Database Schema
 
-#### 3.5.2. Content Pipeline (Jira-Style Kanban Board)
-- **Kolom Kanban 4-Tingkat:** Backlog → In Progress → Review → Go Live.
-- **Drag-and-Drop:** Kartu task bisa dipindahkan antar kolom secara interaktif.
-- **Auto-Pilot Timer:** Task yang sudah mencapai `targetTime` otomatis dipindahkan ke kolom "Go Live" setiap 10 detik.
-- **CRUD Lengkap:** Kartu bisa diklik untuk membuka modal *Edit* dengan data pre-populated, termasuk tombol Delete dengan konfirmasi estetik (*glassmorphism popup*).
+The core PostgreSQL application logic incorporates specialized schemas bridging both infrastructure and feature requirements:
 
-#### 3.5.3. Cross-Posting Studio (Modal)
-- **Composition Area:** *Textarea* dengan penghitung karakter untuk menulis konten.
-- **Target Post Time & Pipeline Status:** Input waktu target dan dropdown status pipeline (Backlog, In Progress, Review, Go Live) dengan *custom glassmorphism dropdown*.
-- **Platform Toggle Switches:** Toggle untuk 6 platform sosial media (X/Twitter, Instagram, TikTok, YouTube Shorts, LinkedIn, Telegram) dengan ikon dan warna brand masing-masing platform.
-- **Affiliate Link Injection:** Toggle otomatis injeksi link afiliasi ke dalam konten.
-- **Multi-Media Attachments:** Mendukung lampiran beberapa media sekaligus (contoh: 2 gambar + 1 video) dalam galeri grid 3 kolom, dengan badge tipe media (🖼️/🎬), tombol hapus per-item, dan "Clear All".
-- **Video Player Preview:** Overlay pemutar video simulasi dengan kontrol Play/Pause, progress bar yang bisa di-scrub, timer (0:00 / 0:15), serta ikon volume dan fullscreen — memungkinkan review video sebelum posting.
+- **Authentication Entities (Better Auth Managed):** `users`, `sessions`, `accounts`, `verifications`, and explicit `twoFactor` instances enforcing stringent session retention policies.
+- **Platform Integrity:** 
+  - `api_keys`: Contains all associated integration keys (Binance, OpenAi, Bybit) securely packed natively as AES-256-GCM configurations (`encryptedFields`).
+  - `activity_logs`: Preserves an immutable platform system audit trail mapping all structural modifications.
+- **Portfolios:**
+  - `assets_crypto`: Spot crypto positions logging quantity, distinct symbol identities, and initial entry points.
+  - `assets_saham`: Equities representations for the regional IDX market mapping lot capacities.
+- **Media Content Distribution:**
+  - `content_items`: Tracking Kanban pipelines integrating status parameters alongside formatted multi-media assets ready for broadcast. 
+- **Auto-Trading System Layer (Phase 5):**
+  - `deployed_bots`: Definition state defining AI prompt inputs (`strategyPrompt`), dynamic trailing stop configurations, intervals for the dual loop architecture, and active runtime stats (totalPnl, winCount).
+  - `trade_logs`: Highly-protected immutable transactional records tracking autonomous AI choices (`aiReasoning`), snapshot context contexts, precise Bybit P&L attributes, formatting decisions generated natively by both `signal_engine` or the enforcing `risk_engine`.
 
-#### 3.5.4. AI Content Generator
-- **3 Tab Media Type:** Text, Image, dan Video.
-- **Text Generation:** Input prompt → animasi mengetik konten otomatis → preview → "Use This Content" mengisi textarea utama.
-- **Image Generation:** Input deskripsi → loading spinner → preview gambar AI → "Use This Image" / Retry / Discard.
-- **Video Generation:** Input deskripsi → loading spinner → preview thumbnail dengan overlay play button dan badge durasi "0:15" → "Use This Video" / Retry / Discard.
-- **Library Aset AI:** 4 gambar pre-generated bertema crypto/trading (trading chart, bull run, market analysis, signal alert).
-
-#### 3.5.5. Growth Analytics (Sub-Menu)
-- **Dedicated Sub-Page**: Menu terpisah yang menyajikan metrik pertumbuhan mendalam.
-- **Platform Breakdown**: Kartu statistik per-platform (X, Instagram, YouTube, Facebook) dengan status follower/subscriber real-time sesuai API Key yang terkoneksi.
-- **Performance Summary**: Tabel ringkasan performa lintas platform dengan metrik efisiensi dan pertumbuhan.
-
-#### 3.5.6. Affiliates
-- **Affiliate Funnel:** Visualisasi funnel konversi afiliasi.
-- **Network Management:** Placeholder untuk integrasi API partner (coming soon).
-
-#### 3.5.7. Revenue Streams
-- Placeholder modul untuk agregasi pendapatan dari Adsense, Sponsorships, dan monetisasi langsung (coming soon).
-
-### 3.6. Profil Pengguna (Profile Page) & Pengaturan (Settings)
-- **Dynamic Profile State:** Halaman profil yang terpusat state-nya, memungkinkan pengeditan iteraktif untuk Nama, Peran, Email, dan Avatar melalui Modal Edit pop-up.
-- **API Connections Manager**: Antarmuka pengelola *API Keys* yang dinamis untuk Bursa Trading (Trading Exchanges), Media Sosial, dan AI Models.
-- **Generic Connections**: Opsi "Other" untuk menambahkan koneksi platform di luar list standar, yang akan otomatis muncul di seluruh dashboard terkait.
-- **Dynamic Platform Matching**: Dropdown dan list platform (seperti di Add Task Media) otomatis menyesuaikan dengan daftar API yang telah berhasil terkoneksi di Settings.
-- **Generic Webhooks**: Integrasi *Custom Webhook* yang general (tidak hanya terbatas pada OpenClaw) untuk menerima sinyal/data eksternal.
-- **Security Check Gate (Test Connection):** Sebelum koneksi API baru (atau Webhook) dapat ditambahkan, pengguna diwajibkan melakukan *Test Connection* hingga status terverifikasi (Verified) untuk mencegah credential invalid.
-- **Edit Connection Data:** Kemampuan untuk mengubah (*update*) API Key, Secret, atau Password dari koneksi yang sudah ditambahkan dengan tombol konfirmasi Hapus (Delete Confirmation Modal) yang aman.
-- **Security Settings:** Modul pemberitahuan pengaturan sandi / privasi antarmuka, dilengkapi toggle fungsional seperti Two-Factor Authentication.
-- **System Logs Hub (Integrated Logs):** Memindahkan log sistem teknis (engine CPU, api gateway, uptime, DB persistence) dari menu Trading ke menu Settings untuk memisahkan operasional perdagangan dari manajemen sistem.
-- **Institutional-Grade Layout Standard:** Standardisasi jarak vertikal (*vertical spacing*) sebesar 70-72px antara submenu/tab dengan konten utama di seluruh dashboard (Settings, Trading, Media, Assets) untuk kenyamanan visual kelas profesional.
-
-### 3.7. Assets Management (Assets Page)
-Menu navigasi utama baru yang didedikasikan untuk pengelolaan aset non-derivatif dan ekuitas.
-- **SPOT Tab:** Pemantauan kepemilikan aset secara *real-time* dan analitik performa perdagangan *spot* (pindahan dari Trading Hub).
-- **SAHAM Tab:** Integrasi antarmuka untuk pasar ekuitas regional (Indonesia/IDX) dengan kesiapan *gateway* eksekusi.
-- **Asset-Specific Context:** Setiap tab memiliki identitas visual dan indikator status konektivitas bursa yang unik (contoh: *Binance Spot Active*, *IDX Gateway Ready*).
-
-### 3.8. Sistem Tema iOS (*iOS Theme Overhaul*)
-Sistem tema visual menyeluruh yang terinspirasi dari desain iOS, diterapkan secara konsisten di **seluruh halaman** aplikasi.
-
-#### 3.7.1. Arsitektur Tema
-- **CSS Variables:** Variabel warna terpusat (`:root` untuk gelap, `[data-theme='light']` untuk terang) mencakup `--bg-main`, `--card-bg`, `--card-border`, `--text-primary`, `--text-secondary`, `--primary`, dan `--glass-blur`.
-- **Tailwind Mapping:** Variabel CSS dipetakan ke utilitas Tailwind (`text-main`, `text-secondary`, `bg-main`, `bg-glass`, `border-glass`, `glass-card`).
-- **ThemeContext (React):** Context provider dengan `localStorage` persistence, menyediakan toggle `toggleTheme()` yang dapat diakses seluruh komponen.
-
-#### 3.7.2. Mode Terang (*Light Mode*)
-- Latar belakang: `#f2f2f7` (abu-abu terang ala iOS).
-- Kartu: `rgba(255,255,255,0.7)` dengan `backdrop-blur(25px)` — efek kaca (*Glassmorphism*).
-- Border halus: `rgba(0,0,0,0.05)`.
-
-#### 3.7.3. Mode Gelap (*Dark Mode*)
-- Latar belakang: `#000000` (hitam murni).
-- Kartu: `#1c1c1e` solid (tanpa blur) — gaya iOS Dark Mode.
-- Border halus: `rgba(255,255,255,0.08)`.
-
-#### 3.7.4. Bahasa Desain
-- **Tipografi:** `font-black uppercase tracking-widest` untuk judul dan label, memberikan kesan premium dan konsisten.
-- **Warna Aksen**: `#00d6ab` (hijau *teal*) sebagai warna utama di kedua mode.
-- **Soft Contrast Visualization**: Dashboard trading dan chart analytics menggunakan sistem transparansi dan warna muted (opacity 20-30%) untuk kenyamanan mata dan kesan premium.
-- **Elemen Interaktif**: Tombol aktif menggunakan `bg-primary text-black shadow-primary/20`, dengan efek `hover:brightness-110` and `active:scale-[0.98]`.
-- **Sudut:** `rounded-2xl` hingga `rounded-3xl` pada kartu dan tombol.
-- **Segmented Control:** Tab navigasi bergaya iOS menggunakan latar `bg-black/5 dark:bg-white/5` dengan pill aktif `bg-primary`.
-
-#### 3.7.5. Cakupan Halaman
-| Halaman | Komponen yang Di-tema |
-|---------|----------------------|
-| Header | Navbar glassmorphism, toggle tema (Sun/Moon) |
-| Feed | Panel, tabs, search, tabel data |
-| Dashboard | MetricCards, PerformanceAnalytics, EngagementBars, BotStatusMatrix |
-| Media | MediaMetricsRow, GrowthPerformance, ContentPipeline, AIContentGenerator |
-| Assets | AssetsHeader, SpotMarketView, SahamEquitiesView, BotStatusMatrix |
-| Settings | ApiKeysManager, SystemLogsTable, LogsSystemStatus, SecuritySettings |
-
----
-
-## 4. Navigasi Hirarki & Struktur Hub
-Urutan menu utama diatur untuk mengoptimalkan alur kerja dari pemantauan pasar hingga manajemen aset:
-`Feed` → `Dashboard` → `Trading` → `Assets` → `Media`.
-
----
-
-## 5. Rencana Ekspansi yang Belum Dimulai (Next Steps / Evaluasi)
-
-1. **Pengembangan Backend Server/Middleware:** Saat ini semua operasional data transaksi masih menggunakan *mock state* sisi-*client*. Agar fungsi *Force Close* & integrasi *Websocket* dapat berjalan di tingkat organisasi, diperlukan arsitektur *backend* (Node.js, Python FastAPI, dll).
-2. **Database Sinkronisasi (Persistence):** Menyimpan pengaturan seperti *Favorites Tabs*, data pipeline, dan konfigurasi bot ke pangkalan data relasional (PostgreSQL) atau dokumen (MongoDB).
-3. **Autentikasi Aman Berbasis Kriptografi (JWT/OAuth):** *Logout* asli dan verifikasi identitas di bawah sesi token yang divalidasi oleh *backend*.
-4. **Eksekusi Order Pertukaran Privat:** Membangun API spesifik Bybit/Binance "Privat" (meminta status kepemilikan dompet) dengan menghubungkan pengaturan di profil ke jembatan perintah tombol tabel Trading Bot.
-5. **Integrasi AI API Nyata:** Menghubungkan AI Content Generator ke API seperti OpenAI (DALL-E, GPT), Midjourney, atau Runway untuk generasi konten teks, gambar, dan video yang benar-benar unik.
-6. **OAuth Social Media API:** Integrasi OAuth 2.0 sesungguhnya ke platform sosial media (Twitter API, Instagram Graph API, TikTok API, YouTube Data API, LinkedIn API, Telegram Bot API) untuk auto-posting konten secara nyata.
-7. **Analytics & Revenue Tracking:** Mengintegrasikan Google Analytics, Adsense API, dan affiliate partner API untuk data revenue dan growth yang real-time.
-8. **Responsif / Desain Mobile:** Pengoptimalan resolusi ponsel karena UI Dashboard saat ini berfokus pada resolusi aplikasi terminal Desktop tinggi (*Executive View*).
+## 8. Tech Stack
+- **Core Frontend Framework:** React 18, Vite.
+- **Routing Module:** React Router DOM (v6).
+- **Styling Architecture:** Tailwind CSS native utility, Lucide React iconography.
+- **Chart Utilities:** Chart.js, react-chartjs-2.
+- **Backend Application Logic:** Node.js, Express.js.
+- **Database Substrate:** PostgreSQL natively.
+- **Database ORM Syntax:** Drizzle ORM cleanly defining all database schemas.
+- **Authentication Authority:** Better Auth.
+- **Automated External Logic Integration:** Bybit API (V5 Spot/Linear variants), Minimax AI Model Endpoints.
