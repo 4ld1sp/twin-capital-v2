@@ -45,36 +45,36 @@ const LogsTable = ({ searchQuery, filterLevel, filterScope }) => {
   };
 
   return (
-    <div className="flex-1 glass-card border border-glass rounded-2xl overflow-hidden flex flex-col mt-6 shadow-sm min-h-[400px]">
+    <div className="flex-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-2xl overflow-hidden flex flex-col mt-6 shadow-sm min-h-[400px]">
       <div className="overflow-x-auto custom-scrollbar flex-1">
         <table className="w-full text-left border-collapse">
-          <thead className="sticky top-0 bg-black/5 dark:bg-white/5 border-b border-glass z-10">
+          <thead className="sticky top-0 border-b border-[var(--border)] z-10">
             <tr>
-              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-secondary w-48">Timestamp</th>
-              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-secondary w-32">Status</th>
-              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-secondary w-48">Aksi</th>
-              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-secondary">Rincian Aktivitas</th>
-              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-secondary w-24">Detail</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] w-48">Timestamp</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] w-32">Status</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] w-48">Aksi</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Rincian Aktivitas</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] w-24">Detail</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-glass">
             {filteredLogs.length > 0 ? (
               filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
-                  <td className="px-6 py-4 font-mono text-[11px] text-secondary font-bold whitespace-nowrap">
+                <tr key={log.id} className="hover: transition-colors group">
+                  <td className="px-6 py-4 font-mono text-[11px] text-[var(--text-secondary)] font-bold whitespace-nowrap">
                     {formatTime(log.timestamp)}
                   </td>
                   <td className="px-6 py-4">
                     {getLevelBadge(log.type)}
                   </td>
-                  <td className="px-6 py-4 text-xs font-black text-main uppercase tracking-wider">
+                  <td className="px-6 py-4 text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">
                     {log.action}
                   </td>
-                  <td className="px-6 py-4 text-xs text-secondary font-bold">
+                  <td className="px-6 py-4 text-xs text-[var(--text-secondary)] font-bold">
                     {log.details}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-1.5 opacity-0 group-hover:opacity-100 text-secondary hover:text-primary transition-all rounded-lg hover:bg-black/5 dark:hover:bg-white/5">
+                    <button className="p-1.5 opacity-0 group-hover:opacity-100 text-[var(--text-secondary)] hover:text-primary transition-all rounded-lg hover:">
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </td>
@@ -85,7 +85,7 @@ const LogsTable = ({ searchQuery, filterLevel, filterScope }) => {
                 <td colSpan="5" className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center gap-3 opacity-40">
                     <span className="material-symbols-outlined text-4xl">search_off</span>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">No matching audit logs found</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)]">No matching audit logs found</p>
                   </div>
                 </td>
               </tr>
@@ -95,8 +95,8 @@ const LogsTable = ({ searchQuery, filterLevel, filterScope }) => {
       </div>
       
       {/* Footer Info */}
-      <div className="px-6 py-4 border-t border-glass flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
-        <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">
+      <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
+        <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest opacity-60">
           Showing {filteredLogs.length} of {activityLogs.length} events
         </p>
         <div className="flex items-center gap-4">

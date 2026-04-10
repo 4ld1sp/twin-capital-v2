@@ -43,10 +43,10 @@ const BotTradeLogs = ({ logs = [], isLoading, onRefetch }) => {
   const paged = logs.slice((page - 1) * LOGS_PER_PAGE, page * LOGS_PER_PAGE);
 
   return (
-    <div className="glass-card border border-glass rounded-3xl p-6 flex flex-col bg-bg-card">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6 flex flex-col bg-bg-card">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-main text-sm font-black uppercase tracking-widest flex items-center gap-2">
+        <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" />
           Engine Execution Logs
           {logs.length > 0 && (
@@ -58,7 +58,7 @@ const BotTradeLogs = ({ logs = [], isLoading, onRefetch }) => {
         <button
           onClick={onRefetch}
           disabled={isLoading}
-          className="flex items-center gap-1.5 text-[10px] bg-black/10 dark:bg-white/5 border border-glass px-3 py-1.5 rounded-lg text-secondary font-black uppercase tracking-widest hover:text-main transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 text-[10px]  border border-[var(--border)] px-3 py-1.5 rounded-lg text-[var(--text-secondary)] font-black uppercase tracking-widest hover:text-[var(--text-primary)] transition-colors disabled:opacity-50"
         >
           <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
@@ -70,28 +70,28 @@ const BotTradeLogs = ({ logs = [], isLoading, onRefetch }) => {
         {isLoading && logs.length === 0 ? (
           <div className="flex items-center justify-center py-12 gap-3">
             <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs text-secondary font-bold">Loading logs...</span>
+            <span className="text-xs text-[var(--text-secondary)] font-bold">Loading logs...</span>
           </div>
         ) : paged.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 gap-2 text-center">
             <FileText className="w-8 h-8 text-secondary/20" />
-            <p className="text-xs text-secondary font-bold">No execution logs yet</p>
+            <p className="text-xs text-[var(--text-secondary)] font-bold">No execution logs yet</p>
             <p className="text-[10px] text-secondary/50 font-bold">Logs will appear once the bot executes its first cycle</p>
           </div>
         ) : (
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-glass/30">
-                <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest pl-2 min-w-[100px]">Time</th>
-                <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest min-w-[80px]">Action</th>
-                <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest min-w-[100px]">Symbol</th>
-                <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest min-w-[130px]">Trigger</th>
-                <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest pr-2">Reasoning / Context</th>
+              <tr className="border-b border-[var(--border)]/30">
+                <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest pl-2 min-w-[100px]">Time</th>
+                <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest min-w-[80px]">Action</th>
+                <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest min-w-[100px]">Symbol</th>
+                <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest min-w-[130px]">Trigger</th>
+                <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest pr-2">Reasoning / Context</th>
               </tr>
             </thead>
             <tbody>
               {paged.map((log) => {
-                const actionStyle = ACTION_STYLES[log.action] || { bg: 'bg-glass', text: 'text-secondary' };
+                const actionStyle = ACTION_STYLES[log.action] || { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' };
                 const sourceStyle = SOURCE_STYLES[log.source] || SOURCE_STYLES.signal_engine;
                 const time = log.createdAt
                   ? new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -100,7 +100,7 @@ const BotTradeLogs = ({ logs = [], isLoading, onRefetch }) => {
                 return (
                   <tr
                     key={log.id}
-                    className="border-b border-glass/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+                    className="border-b border-[var(--border)]/10 hover: transition-colors group"
                   >
                     <td className="py-3.5 text-[10px] font-mono text-secondary/70 pl-2 whitespace-nowrap">
                       {time}
@@ -145,22 +145,22 @@ const BotTradeLogs = ({ logs = [], isLoading, onRefetch }) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-4 mt-4 border-t border-glass/30">
-          <p className="text-[10px] text-secondary font-black uppercase tracking-widest">
+        <div className="flex items-center justify-between pt-4 mt-4 border-t border-[var(--border)]/30">
+          <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-main disabled:opacity-30 transition-all"
+              className="p-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-main disabled:opacity-30 transition-all"
+              className="p-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 transition-all"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

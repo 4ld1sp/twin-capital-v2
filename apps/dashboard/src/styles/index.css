@@ -3,56 +3,21 @@
 @tailwind utilities;
 
 :root {
-  /* Premium Dark Theme - Smooth Glass Gradient */
-  --bg-main: #000000;
-  --bg-gradient: linear-gradient(120deg, #000c2e 0%, #064387 45%, #ffffff 100%);
-  --bg-dots: none;
-  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-  --card-border: rgba(255, 255, 255, 0.25);
-  --card-border-glow: rgba(255, 255, 255, 0.4);
-  --card-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.25);
-  --card-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 1px 0 0 rgba(255, 255, 255, 0.05);
-  --text-primary: #ffffff;
-  --text-secondary: #a0aec0;
-  --primary: #20acca;
-  --primary-glow: rgba(32, 172, 204, 0.3);
-  --glass-blur: blur(32px);
-
-  /* Brand Colors */
-  --neon-lime: #ccff00;
-  --subzero-blue: #00eaff;
-  --matrix-green: #00ff41;
-}
-
-[data-theme='light'] {
-  --bg-main: #f8fafc;
-  --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f1f5f9 40%, #cbd5e1 100%);
-
-  --bg-dots: none;
-  --card-bg: rgba(255, 255, 255, 0.65);
-  --card-border: rgba(255, 255, 255, 0.9);
-  --card-border-glow: rgba(0, 214, 171, 0.3);
-  --card-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.05);
-  --card-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), inset 1px 0 0 rgba(255, 255, 255, 0.8);
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --primary: #00d6ab;
-  --primary-glow: rgba(0, 214, 171, 0.15);
-  --glass-blur: blur(28px);
-}
-
-@keyframes bg-pulse {
-  0% {
-    background-position: 0% 0%;
-  }
-
-  50% {
-    background-position: 100% 100%;
-  }
-
-  100% {
-    background-position: 0% 0%;
-  }
+  --bg-main: #0B1120;
+  --bg-surface: #131B2E;
+  --bg-subtle: #1C2742;
+  --border: #1E2D4A;
+  --border-hover: #2D4266;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+  --primary: #818CF8;
+  --primary-hover: #A5B4FC;
+  --primary-dim: rgba(129, 140, 248, 0.12);
+  --success: #34D399;
+  --danger: #F87171;
+  --warning: #FBBF24;
+  --info: #60A5FA;
 }
 
 @layer base {
@@ -62,23 +27,18 @@
 
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    @apply transition-colors duration-500 selection:bg-cyan-500/30;
     margin: 0;
     min-height: 100vh;
     background-color: var(--bg-main);
-    background-image: var(--bg-gradient);
-    background-size: 200% 200%;
-    background-attachment: fixed;
-    animation: bg-pulse 60s ease infinite;
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
   }
 
-  /* Global Premium Scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -86,44 +46,31 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid transparent;
-    background-clip: content-box;
-    border-radius: 20px;
+    background: var(--border);
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 214, 171, 0.3);
-    border: 2px solid transparent;
-    background-clip: content-box;
+    background: var(--border-hover);
+  }
+
+  ::selection {
+    background: rgba(129, 140, 248, 0.25);
   }
 }
 
 @layer utilities {
-  .border-glass {
-    border-color: var(--card-border);
+  .border-subtle {
+    border-color: var(--border);
   }
 
-  .glass-card {
-    background: var(--card-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow), var(--card-inner-shadow);
-    @apply transition-all duration-300 rounded-2xl;
+  .card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    @apply rounded-xl transition-colors duration-200;
   }
 
-  .glass-card:hover {
-    border-color: var(--card-border-glow);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
-    box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.3), var(--card-inner-shadow);
-  }
-
-  .text-glow {
-    text-shadow: 0 0 10px var(--primary-glow);
-  }
-
-  .border-glow {
-    box-shadow: 0 0 15px var(--primary-glow);
+  .card:hover {
+    border-color: var(--border-hover);
   }
 }

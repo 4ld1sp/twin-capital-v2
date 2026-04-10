@@ -28,7 +28,7 @@ const BotStatusMatrix = () => {
           const pair = b.symbol;
           const statusColors = {
             running: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500',
-            stopped: 'bg-secondary/10 border-secondary/20 text-secondary',
+            stopped: 'bg-secondary/10 border-secondary/20 text-[var(--text-secondary)]',
             paused: 'bg-amber-500/10 border-amber-500/20 text-amber-500',
             killed: 'bg-rose-500/10 border-rose-500/20 text-rose-500',
             error: 'bg-rose-500/10 border-rose-500/20 text-rose-500',
@@ -139,11 +139,11 @@ const BotStatusMatrix = () => {
   const paginatedBots = viewAll ? bots : bots.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="glass-card rounded-2xl shadow-sm overflow-hidden mt-6 flex flex-col h-full min-h-[400px] transition-all duration-300">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl shadow-sm overflow-hidden mt-6 flex flex-col h-full min-h-[400px] transition-all duration-300">
 
       {/* Header */}
-      <div className="px-6 py-4 border-b border-glass flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-black/5 dark:bg-white/5">
-        <h3 className="text-lg font-bold flex items-center gap-2 text-main">
+      <div className="px-6 py-4 border-b border-[var(--border)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ">
+        <h3 className="text-lg font-bold flex items-center gap-2 text-[var(--text-primary)]">
           <span className="material-symbols-outlined text-primary">robot_2</span>
           Bot Status Matrix
         </h3>
@@ -153,12 +153,12 @@ const BotStatusMatrix = () => {
               setViewAll(!viewAll);
               setCurrentPage(1); // Reset page when toggling
             }}
-            className={`text-xs font-black transition-all px-4 py-2 rounded-xl border ${viewAll ? 'bg-primary text-black border-primary shadow-sm' : 'text-secondary border-glass hover:text-main hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-widest'}`}
+            className={`text-xs font-black transition-all px-4 py-2 rounded-xl border ${viewAll ? 'bg-primary text-black border-primary shadow-sm' : 'text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover: uppercase tracking-widest'}`}
           >
             {viewAll ? 'PAGINATED VIEW' : 'VIEW ALL ALGORITHMS'}
           </button>
-          <div className="flex items-center gap-2 bg-black/10 dark:bg-white/5 px-4 py-2 rounded-xl border border-glass">
-            <span className="text-[10px] sm:text-[11px] font-black text-secondary tracking-widest uppercase">AUTO-REFRESH 5S</span>
+          <div className="flex items-center gap-2  px-4 py-2 rounded-xl border border-[var(--border)]">
+            <span className="text-[10px] sm:text-[11px] font-black text-[var(--text-secondary)] tracking-widest uppercase">AUTO-REFRESH 5S</span>
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
           </div>
         </div>
@@ -167,7 +167,7 @@ const BotStatusMatrix = () => {
       {/* Table Area (Flex-1 allows it to grow if View All is clicked) */}
       <div className="overflow-x-auto flex-1 relative">
         <table className="w-full min-w-[700px] text-sm text-left">
-          <thead className="bg-glass text-secondary font-black uppercase text-[10px] tracking-widest sticky top-0 z-10 border-b border-glass">
+          <thead className="bg-[var(--bg-surface)] text-[var(--text-secondary)] font-black uppercase text-[10px] tracking-widest sticky top-0 z-10 border-b border-[var(--border)]">
             <tr>
               <th className="px-6 py-4">Strategy Name</th>
               <th className="px-6 py-4">Status</th>
@@ -183,7 +183,7 @@ const BotStatusMatrix = () => {
                 <td colSpan="6" className="px-6 py-12 text-center text-slate-500 font-medium h-[256px]">
                   <div className="flex flex-col items-center gap-3">
                     <span className="material-symbols-outlined text-4xl text-secondary/30">robot_2</span>
-                    <p className="text-sm text-secondary font-bold">No strategies deployed yet</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-bold">No strategies deployed yet</p>
                     <p className="text-xs text-secondary/60">Create a strategy via Backtests → Save → Deploy to Live Trading</p>
                   </div>
                 </td>
@@ -193,8 +193,8 @@ const BotStatusMatrix = () => {
                 const formattedPnl = formatPnl(bot.pnlValue);
 
                 return (
-                  <tr key={bot.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-all group relative">
-                    <td className="px-6 py-4 font-bold text-main">{bot.name}</td>
+                  <tr key={bot.id} className="hover: transition-all group relative">
+                    <td className="px-6 py-4 font-bold text-[var(--text-primary)]">{bot.name}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         <span className={`w-fit inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${bot.statusBg}`}>
@@ -209,10 +209,10 @@ const BotStatusMatrix = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border border-glass shadow-sm ${bot.pairBg}`}>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border border-[var(--border)] shadow-sm ${bot.pairBg}`}>
                           {bot.pairInitial}
                         </div>
-                        <span className="font-mono text-xs font-bold text-main">{bot.pairName}</span>
+                        <span className="font-mono text-xs font-bold text-[var(--text-primary)]">{bot.pairName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -221,7 +221,7 @@ const BotStatusMatrix = () => {
                         {formattedPnl.text}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-secondary font-mono text-[11px] font-bold uppercase">{bot.runtime}</td>
+                    <td className="px-6 py-4 text-[var(--text-secondary)] font-mono text-[11px] font-bold uppercase">{bot.runtime}</td>
                     <td className="px-6 py-4 text-right relative">
 
                       {/* Action Menu Button */}
@@ -230,7 +230,7 @@ const BotStatusMatrix = () => {
                           e.stopPropagation();
                           setOpenMenuId(openMenuId === bot.id ? null : bot.id);
                         }}
-                        className={`p-2 rounded-xl transition-all border ${openMenuId === bot.id ? 'bg-primary text-black border-primary' : 'text-secondary border-glass hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+                        className={`p-2 rounded-xl transition-all border ${openMenuId === bot.id ? 'bg-primary text-black border-primary' : 'text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:'}`}
                       >
                         <span className="material-symbols-outlined text-[20px]">more_vert</span>
                       </button>
@@ -239,10 +239,10 @@ const BotStatusMatrix = () => {
                       {openMenuId === bot.id && (
                         <div
                           ref={menuRef}
-                          className="absolute right-8 top-12 w-56 bg-glass/95 backdrop-blur-3xl border border-glass rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col py-1.5 animate-fade-in origin-top-right text-left"
+                          className="absolute right-8 top-12 w-56 bg-[var(--bg-surface)] backdrop-blur-3xl border border-[var(--border)] rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col py-1.5 animate-fade-in origin-top-right text-left"
                         >
-                          <div className="px-4 py-3 border-b border-glass mb-1 bg-black/5 dark:bg-white/5">
-                            <p className="text-[10px] text-secondary font-black uppercase tracking-widest truncate">{bot.name}</p>
+                          <div className="px-4 py-3 border-b border-[var(--border)] mb-1 ">
+                            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest truncate">{bot.name}</p>
                           </div>
 
                           {bot.status === 'running' ? (
@@ -274,7 +274,7 @@ const BotStatusMatrix = () => {
 
                           <button
                             onClick={() => { setOpenMenuId(null); setExpandedLogsId(expandedLogsId === bot.id ? null : bot.id); }}
-                            className="px-4 py-2.5 text-sm text-main font-semibold hover:bg-black/10 dark:hover:bg-white/10 flex items-center gap-2 transition-all"
+                            className="px-4 py-2.5 text-sm text-[var(--text-primary)] font-semibold hover:  flex items-center gap-2 transition-all"
                           >
                             <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                             View Detailed Logs
@@ -296,20 +296,20 @@ const BotStatusMatrix = () => {
 
       {/* Pagination Footer */}
       {!viewAll && bots.length > 0 && (
-        <div className="px-6 py-4 bg-black/5 dark:bg-white/5 border-t border-glass flex flex-col sm:flex-row justify-between items-center gap-4 mt-auto transition-all">
-          <p className="text-xs text-secondary font-black uppercase tracking-widest">
-            Showing <span className="text-main">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span>-
-            <span className="text-main">{Math.min(currentPage * ITEMS_PER_PAGE, bots.length)}</span> of 
+        <div className="px-6 py-4 border-t border-[var(--border)] flex flex-col sm:flex-row justify-between items-center gap-4 mt-auto transition-all">
+          <p className="text-xs text-[var(--text-secondary)] font-black uppercase tracking-widest">
+            Showing <span className="text-[var(--text-primary)]">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span>-
+            <span className="text-[var(--text-primary)]">{Math.min(currentPage * ITEMS_PER_PAGE, bots.length)}</span> of 
             <span className="text-primary ml-1">{bots.length}</span> strategies
           </p>
           <div className="flex gap-3 items-center">
 
-            <span className="text-[10px] font-black text-secondary tracking-widest uppercase mr-2 hidden sm:inline-block">PAGE {currentPage} / {totalPages}</span>
+            <span className="text-[10px] font-black text-[var(--text-secondary)] tracking-widest uppercase mr-2 hidden sm:inline-block">PAGE {currentPage} / {totalPages}</span>
 
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-5 py-2 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 disabled:cursor-not-allowed text-main hover:bg-primary hover:text-black border border-glass"
+              className="px-5 py-2 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 disabled:cursor-not-allowed text-[var(--text-primary)] hover:bg-primary hover:text-black border border-[var(--border)]"
             >
               <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">chevron_left</span> Previous</span>
             </button>

@@ -343,7 +343,7 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
   };
 
   return (
-    <div className="glass-card border border-glass rounded-[2rem] p-8 overflow-hidden bg-gradient-to-br from-white/[0.03] to-transparent">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-[2rem] p-8 overflow-hidden bg-gradient-to-br from-white/[0.03] to-transparent">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
@@ -352,10 +352,10 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
               <span className="material-symbols-outlined text-primary text-2xl">candlestick_chart</span>
             </div>
             <div>
-              <h3 className="text-main text-lg font-black tracking-tight leading-none mb-1">Backtest Trade Chart</h3>
+              <h3 className="text-[var(--text-primary)] text-lg font-black tracking-tight leading-none mb-1">Backtest Trade Chart</h3>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest">{symbol}</span>
-                <span className="px-2.5 py-0.5 rounded-lg bg-white/5 border border-glass text-secondary text-[10px] font-black uppercase tracking-widest">{timeframeLabel[timeframe] || timeframe}</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-white/5 border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest">{timeframeLabel[timeframe] || timeframe}</span>
               </div>
             </div>
           </div>
@@ -364,9 +364,9 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
         {/* Quick Stats */}
         {stats && (
           <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-glass">
-              <span className="text-[10px] text-secondary font-black uppercase tracking-widest">Trades</span>
-              <span className="text-main text-xs font-black">{stats.totalTrades}</span>
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-[var(--border)]">
+              <span className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">Trades</span>
+              <span className="text-[var(--text-primary)] text-xs font-black">{stats.totalTrades}</span>
             </div>
             <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
               <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest">TP</span>
@@ -385,7 +385,7 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
       </div>
 
       {/* Chart Container */}
-      <div className="relative w-full rounded-2xl overflow-hidden border border-glass bg-[#050508]" style={{ height: `${height}px` }}>
+      <div className="relative w-full rounded-2xl overflow-hidden border border-[var(--border)] bg-[#050508]" style={{ height: `${height}px` }}>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#050508]/80 backdrop-blur-sm z-10 transition-all duration-500">
             <div className="flex flex-col items-center gap-4">
@@ -401,14 +401,14 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
       </div>
 
       {/* Trade Legend */}
-      <div className="flex items-center gap-8 mt-6 px-4 py-3 rounded-2xl bg-white/[0.02] border border-glass">
+      <div className="flex items-center gap-8 mt-6 px-4 py-3 rounded-2xl bg-white/[0.02] border border-[var(--border)]">
         <div className="flex items-center gap-3 group">
           <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"></div>
-          <span className="text-[10px] text-secondary font-black uppercase tracking-widest group-hover:text-emerald-400 transition-colors">Long Entry</span>
+          <span className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest group-hover:text-emerald-400 transition-colors">Long Entry</span>
         </div>
         <div className="flex items-center gap-3 group">
           <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[10px] border-t-rose-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.5)]"></div>
-          <span className="text-[10px] text-secondary font-black uppercase tracking-widest group-hover:text-rose-400 transition-colors">Short Entry</span>
+          <span className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest group-hover:text-rose-400 transition-colors">Short Entry</span>
         </div>
         <div className="flex items-center gap-3">
           <div className="w-4 h-0 border-t-2 border-dashed border-emerald-400/50"></div>
@@ -420,19 +420,19 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
         </div>
         <div className="flex items-center gap-2.5 ml-auto">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(0,214,171,0.6)]"></span>
-          <span className="text-[10px] text-secondary font-bold uppercase tracking-widest opacity-60">Real-time {activeExchange} Bridge</span>
+          <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest opacity-60">Real-time {activeExchange} Bridge</span>
         </div>
       </div>
 
       {/* Trade List Table */}
       {trades.length > 0 && (
-        <div className="mt-8 overflow-hidden rounded-[1.5rem] border border-glass bg-black/20">
+        <div className="mt-8 overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-black/20">
           <div className="max-h-64 overflow-y-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead className="sticky top-0 z-20">
-                <tr className="bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-glass">
+                <tr className="bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-[var(--border)]">
                   {['Type', 'Side', 'Price', 'TP', 'SL', 'Exit', 'P&L', 'Reason'].map(h => (
-                    <th key={h} className="px-5 py-4 text-[10px] text-secondary font-black uppercase tracking-[0.15em] opacity-60">{h}</th>
+                    <th key={h} className="px-5 py-4 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.15em] opacity-60">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -449,7 +449,7 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
                       <td className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider ${entry.side === 'long' ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {entry.side === 'long' ? '↑ LONG' : '↓ SHORT'}
                       </td>
-                      <td className="px-5 py-4 text-[11px] font-bold text-main">
+                      <td className="px-5 py-4 text-[11px] font-bold text-[var(--text-primary)]">
                         <span className="opacity-30 text-[10px] mr-0.5">$</span>
                         {entry.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
@@ -461,7 +461,7 @@ const BacktestTradeChart = ({ strategyData, height = 500 }) => {
                         <span className="opacity-30 text-[10px] mr-1">$</span>
                         {entry.sl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td className="px-5 py-4 text-[11px] font-bold text-secondary">
+                      <td className="px-5 py-4 text-[11px] font-bold text-[var(--text-secondary)]">
                         {exit ? (
                           <>
                             <span className="opacity-30 text-[10px] mr-0.5">$</span>

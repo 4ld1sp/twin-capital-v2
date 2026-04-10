@@ -10,7 +10,7 @@ const GlassDateInput = ({
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
       {label && (
-        <label className="text-[10px] text-secondary font-black uppercase tracking-widest pl-1">
+        <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest pl-1">
           {label}
         </label>
       )}
@@ -24,7 +24,7 @@ const GlassDateInput = ({
           type="date" 
           value={value} 
           onChange={onChange}
-          className="w-full pl-12 pr-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-main text-xs font-bold outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all hover:bg-white/10"
+          className="w-full pl-12 pr-4 py-3 rounded-xl border border-[var(--border)] text-[var(--text-primary)] text-xs font-bold outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all hover:bg-white/10"
           style={{ colorScheme: 'dark' }} // Force dark theme for native date picker dropdown in chrome
         />
       </div>

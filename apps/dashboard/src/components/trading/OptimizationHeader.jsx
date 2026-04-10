@@ -8,15 +8,15 @@ const OptimizationHeader = ({ onExportClick, onRunClick }) => {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-2xl">monitoring</span>
-            <h1 className="text-main text-2xl font-black leading-tight tracking-tight uppercase">Strategy Optimization</h1>
+            <h1 className="text-[var(--text-primary)] text-2xl font-black leading-tight tracking-tight uppercase">Strategy Optimization</h1>
           </div>
-          <p className="text-secondary text-[11px] font-bold uppercase tracking-widest opacity-60">Unified Intelligence Center</p>
+          <p className="text-[var(--text-secondary)] text-[11px] font-bold uppercase tracking-widest opacity-60">Unified Intelligence Center</p>
         </div>
         
         <div className="flex gap-3">
           <button 
             onClick={onExportClick}
-            className="flex items-center justify-center gap-2 rounded-xl h-10 px-5 border border-glass text-secondary text-[10px] font-black uppercase tracking-widest hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+            className="flex items-center justify-center gap-2 rounded-xl h-10 px-5 border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest hover: transition-all"
           >
             <span className="material-symbols-outlined text-lg">download</span>
             <span>Export</span>

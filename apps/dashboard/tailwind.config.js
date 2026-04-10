@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,31 +7,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "var(--primary)",
-        "accent": "#00d6ab",
+        primary: {
+          DEFAULT: '#818CF8',
+          hover: '#A5B4FC',
+          dim: 'rgba(129,140,248,0.12)',
+          600: '#6366F1',
+        },
+        surface: '#131B2E',
+        subtle: '#1C2742',
+        success: '#34D399',
+        danger: '#F87171',
+        warning: '#FBBF24',
+        info: '#60A5FA',
       },
       backgroundColor: {
-        "main": "var(--bg-main)",
-        "glass": "var(--card-bg)",
-        "background-dark": "#000000",
-        "background-light": "#f2f2f7",
+        main: '#0B1120',
+        surface: '#131B2E',
+        subtle: '#1C2742',
       },
       textColor: {
-        "main": "var(--text-primary)",
-        "secondary": "var(--text-secondary)",
+        main: '#F1F5F9',
+        secondary: '#94A3B8',
+        tertiary: '#64748B',
       },
       borderColor: {
-        "glass": "var(--card-border)",
+        DEFAULT: '#1E2D4A',
+        subtle: '#1E2D4A',
+        hover: '#2D4266',
       },
       fontFamily: {
-        "display": ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Inter", "sans-serif"]
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       borderRadius: {
-        "DEFAULT": "0.5rem",
-        "lg": "0.75rem",
-        "xl": "1rem",
-        "2xl": "1.5rem",
-        "full": "9999px"
+        DEFAULT: '0.5rem',
+        lg: '0.75rem',
+        xl: '1rem',
+        '2xl': '1.25rem',
       },
     },
   },

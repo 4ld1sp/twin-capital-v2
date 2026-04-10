@@ -5,7 +5,7 @@ const getIcon = (symbol) => {
     if (symbol.includes('BTC')) return <div className="w-6 h-6 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-bold text-[10px] shadow-sm">₿</div>;
     if (symbol.includes('ETH')) return <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold text-[10px] shadow-sm">Ξ</div>;
     if (symbol.includes('SOL')) return <div className="w-6 h-6 rounded-full bg-purple-500/20 text-purple-500 flex items-center justify-center font-bold text-[10px] shadow-sm">S</div>;
-    return <div className="w-6 h-6 rounded-full bg-glass text-secondary flex items-center justify-center font-bold text-[10px] border border-glass shadow-sm">♦</div>;
+    return <div className="w-6 h-6 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] flex items-center justify-center font-bold text-[10px] border border-[var(--border)] shadow-sm">♦</div>;
 };
 
 // Initial state mapping for our highlighted tickers so they render immediately before WS connects
@@ -137,9 +137,9 @@ const Feed = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* Panel 1: Mock Market Sentiment */}
-                <div className="glass-card rounded-2xl p-6 shadow-sm flex flex-col justify-between transition-all duration-300">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl p-6 shadow-sm flex flex-col justify-between transition-all duration-300">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-main">Market Sentiment</h3>
+                        <h3 className="font-bold text-[var(--text-primary)]">Market Sentiment</h3>
                         <button className="text-xs text-primary font-bold flex items-center gap-1 hover:brightness-110">
                             View More <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
                         </button>
@@ -162,9 +162,9 @@ const Feed = () => {
                 </div>
 
                 {/* Panel 2: Mock Market Data */}
-                <div className="glass-card rounded-2xl p-6 shadow-sm flex flex-col transition-all duration-300">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl p-6 shadow-sm flex flex-col transition-all duration-300">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-main">Market Data</h3>
+                        <h3 className="font-bold text-[var(--text-primary)]">Market Data</h3>
                         <button className="text-xs text-primary font-bold flex items-center gap-1 hover:brightness-110">
                             View More <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
                         </button>
@@ -183,9 +183,9 @@ const Feed = () => {
                 </div>
 
                 {/* Panel 3: Trending Sectors */}
-                <div className="glass-card rounded-2xl p-6 shadow-sm flex flex-col transition-all duration-300">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl p-6 shadow-sm flex flex-col transition-all duration-300">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-main">Trending Sectors</h3>
+                        <h3 className="font-bold text-[var(--text-primary)]">Trending Sectors</h3>
                     </div>
                     <div className="space-y-4 flex-1">
                         {[
@@ -195,10 +195,10 @@ const Feed = () => {
                             { name: 'Layer 1 (L1)', p1: '+2.46%', asset: 'SUI', p2: '+3.96%', color: 'text-emerald-500' }
                         ].map((sector, i) => (
                             <div key={i} className="flex justify-between items-center text-sm">
-                                <span className="font-semibold text-main w-1/3 text-xs md:text-sm">{sector.name}</span>
+                                <span className="font-semibold text-[var(--text-primary)] w-1/3 text-xs md:text-sm">{sector.name}</span>
                                 <span className={`font-bold ${sector.color} w-1/4 text-right`}>{sector.p1}</span>
                                 <div className="flex items-center justify-end gap-2 w-1/3">
-                                    <span className="font-bold text-secondary text-xs">{sector.asset}</span>
+                                    <span className="font-bold text-[var(--text-secondary)] text-xs">{sector.asset}</span>
                                     <span className={`font-bold ${sector.color} text-xs`}>{sector.p2}</span>
                                 </div>
                             </div>
@@ -208,17 +208,17 @@ const Feed = () => {
             </div>
 
             {/* 🚀 Main Markets List Section */}
-            <div className="glass-card rounded-2xl shadow-sm overflow-hidden flex flex-col transition-all duration-300">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl shadow-sm overflow-hidden flex flex-col transition-all duration-300">
 
                 {/* Header Search & Title */}
                 <div className="p-4 md:p-6 pb-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <h2 className="text-xl font-bold text-main">Markets</h2>
+                    <h2 className="text-xl font-bold text-[var(--text-primary)]">Markets</h2>
                     <div className="relative w-full md:w-64">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[18px]">search</span>
+                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-[18px]">search</span>
                         <input
                             type="text"
                             placeholder="Search"
-                            className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl pl-9 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/50 text-main placeholder:text-secondary group transition-all"
+                            className="w-full border border-[var(--border)] rounded-xl pl-9 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/50 text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] group transition-all"
                         />
                     </div>
                 </div>
@@ -230,7 +230,7 @@ const Feed = () => {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab ? 'bg-primary text-[#000] shadow-sm' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'} `}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab ? 'bg-primary text-[#000] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:'} `}
                             >
                                 {tab}
                             </button>
@@ -239,15 +239,15 @@ const Feed = () => {
                 </div>
 
                 {/* Quick Highlights 3-Column Banner */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 md:p-6 bg-black/5 dark:bg-white/5 hidden lg:grid">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 md:p-6 hidden lg:grid">
                     {[
                         { title: 'Top Gainers', data: topGainers },
                         { title: 'Newly Listed', data: newListed },
                         { title: 'Trending', data: trending }
                     ].map((col, idx) => (
                         <div key={idx}>
-                            <h4 className="text-sm font-bold text-main mb-3">{col.title}</h4>
-                            <div className="flex justify-between text-[11px] font-bold text-secondary uppercase tracking-wider mb-2 px-1">
+                            <h4 className="text-sm font-bold text-[var(--text-primary)] mb-3">{col.title}</h4>
+                            <div className="flex justify-between text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2 px-1">
                                 <span>Pairs</span>
                                 <div className="flex gap-4 text-right">
                                     <span className="w-16">Price</span>
@@ -258,13 +258,13 @@ const Feed = () => {
                                 {col.data.map((t, i) => {
                                     const isUp = Number(t.priceChangePercent) >= 0;
                                     return (
-                                        <div key={i} className="flex justify-between items-center text-sm px-1 py-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all cursor-pointer">
+                                        <div key={i} className="flex justify-between items-center text-sm px-1 py-1.5 hover: rounded-xl transition-all cursor-pointer">
                                             <div className="flex items-center gap-2 font-bold max-w-[100px] truncate">
                                                 {getIcon(t.symbol)}
-                                                <span className="text-main">{t.symbol.replace('USDT', '')}</span><span className="text-secondary text-xs font-normal">/USDT</span>
+                                                <span className="text-[var(--text-primary)]">{t.symbol.replace('USDT', '')}</span><span className="text-[var(--text-secondary)] text-xs font-normal">/USDT</span>
                                             </div>
                                             <div className="flex gap-4 text-right font-mono">
-                                                <span className="w-16 text-main font-semibold">{Number(t.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</span>
+                                                <span className="w-16 text-[var(--text-primary)] font-semibold">{Number(t.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</span>
                                                 <span className={`w-16 font-bold ${isUp ? 'text-emerald-500' : 'text-red-500'} `}>
                                                     {isUp ? '+' : ''}{t.priceChangePercent}%
                                                 </span>
@@ -281,13 +281,13 @@ const Feed = () => {
                 <div className="overflow-x-auto w-full">
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
-                            <tr className="border-b border-glass text-[11px] font-bold text-secondary uppercase tracking-wider">
+                            <tr className="border-b border-[var(--border)] text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
                                 <th className="p-4 pl-6 w-1/4">Trading Pairs</th>
-                                <th className="p-4 text-right cursor-pointer hover:text-main">Last Traded Price <span className="text-[10px]">↕</span></th>
-                                <th className="p-4 text-right cursor-pointer hover:text-main">24H Change % <span className="text-[10px]">↕</span></th>
+                                <th className="p-4 text-right cursor-pointer hover:text-[var(--text-primary)]">Last Traded Price <span className="text-[10px]">↕</span></th>
+                                <th className="p-4 text-right cursor-pointer hover:text-[var(--text-primary)]">24H Change % <span className="text-[10px]">↕</span></th>
                                 <th className="p-4 text-right">24H High</th>
                                 <th className="p-4 text-right">24H Low</th>
-                                <th className="p-4 text-right cursor-pointer hover:text-main">24H Volume <span className="text-[10px]">↕</span></th>
+                                <th className="p-4 text-right cursor-pointer hover:text-[var(--text-primary)]">24H Volume <span className="text-[10px]">↕</span></th>
                                 <th className="p-4 text-right pr-6">Action</th>
                             </tr>
                         </thead>
@@ -300,7 +300,7 @@ const Feed = () => {
                                         'text-slate-800 dark:text-slate-100 transition-colors duration-1000'; // fade back slowly
 
                                 return (
-                                    <tr key={t.symbol} className="hover:bg-black/5 dark:hover:bg-white/5 transition-all group">
+                                    <tr key={t.symbol} className="hover: transition-all group">
                                         <td className="p-4 pl-6">
                                             <div className="flex items-center gap-3">
                                                 <button className="text-secondary/40 hover:text-amber-400 transition-colors">
@@ -308,8 +308,8 @@ const Feed = () => {
                                                 </button>
                                                 {getIcon(t.symbol)}
                                                 <div className="flex items-center gap-1 font-bold">
-                                                    <span className="text-main">{t.symbol.replace('USDT', '')}</span>
-                                                    <span className="text-secondary font-normal text-xs">/USDT</span>
+                                                    <span className="text-[var(--text-primary)]">{t.symbol.replace('USDT', '')}</span>
+                                                    <span className="text-[var(--text-secondary)] font-normal text-xs">/USDT</span>
                                                     <span className="px-1.5 py-0.5 rounded text-[8px] bg-amber-500/10 text-amber-500 border border-amber-500/20 font-black ml-1">10X</span>
                                                 </div>
                                             </div>
@@ -320,13 +320,13 @@ const Feed = () => {
                                         <td className={`p-4 text-right font-mono font-bold ${isUp ? 'text-emerald-500' : 'text-red-500'} `}>
                                             {isUp ? '+' : ''}{t.priceChangePercent}%
                                         </td>
-                                        <td className="p-4 text-right font-mono text-sm text-secondary">
+                                        <td className="p-4 text-right font-mono text-sm text-[var(--text-secondary)]">
                                             {Number(t.highPrice24h).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
                                         </td>
-                                        <td className="p-4 text-right font-mono text-sm text-secondary">
+                                        <td className="p-4 text-right font-mono text-sm text-[var(--text-secondary)]">
                                             {Number(t.lowPrice24h).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
                                         </td>
-                                        <td className="p-4 text-right font-mono text-sm text-main font-medium">
+                                        <td className="p-4 text-right font-mono text-sm text-[var(--text-primary)] font-medium">
                                             {formatCompact(t.turnover24h)}
                                         </td>
                                         <td className="p-4 text-right pr-6">

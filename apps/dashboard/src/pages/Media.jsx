@@ -17,17 +17,17 @@ const tabs = [
 ];
 
 const ComingSoonPlaceholder = ({ title, icon }) => (
-  <div className="w-full h-96 flex flex-col items-center justify-center glass-card rounded-3xl border border-glass/30 relative overflow-hidden group">
+  <div className="w-full h-96 flex flex-col items-center justify-center bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)]/30 relative overflow-hidden group">
     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-50"></div>
     <div className="relative z-10 flex flex-col items-center text-center p-8">
       <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 animate-pulse">
         <span className="material-symbols-outlined text-4xl text-primary">{icon}</span>
       </div>
-      <h2 className="text-2xl font-black text-main uppercase italic mb-2 tracking-tight">{title}</h2>
+      <h2 className="text-2xl font-black text-[var(--text-primary)] uppercase italic mb-2 tracking-tight">{title}</h2>
       <div className="px-4 py-1.5 rounded-full bg-primary text-black text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 mb-6">
         Coming Soon
       </div>
-      <p className="max-w-md text-secondary text-sm font-medium leading-relaxed">
+      <p className="max-w-md text-[var(--text-secondary)] text-sm font-medium leading-relaxed">
         Our engineers are currently building the most advanced {title.toLowerCase()} ecosystem for elite traders. Get ready for real-time tracking and automated payouts.
       </p>
     </div>
@@ -47,12 +47,12 @@ const Media = () => {
       </div>
 
       {/* Sub-Navigation (Matching Trading Page) */}
-      <nav className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-fit mb-6">
+      <nav className="flex items-center gap-2 p-1.5 rounded-2xl border border-[var(--border)] overflow-x-auto w-fit mb-6">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => !tab.comingSoon && setActiveTab(tab.id)}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all relative group ${activeTab === tab.id ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'} ${tab.comingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all relative group ${activeTab === tab.id ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:'} ${tab.comingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
           >
             {tab.label}
             {tab.comingSoon && (
@@ -83,7 +83,7 @@ const Media = () => {
           </div>
 
           {/* Pipeline Status (Full Width) */}
-          <div className="glass-card rounded-xl p-6 space-y-4">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg">Pipeline Status</h3>
               <button onClick={() => setActiveTab('pipeline')} className="text-xs text-primary font-semibold hover:underline">View Board →</button>

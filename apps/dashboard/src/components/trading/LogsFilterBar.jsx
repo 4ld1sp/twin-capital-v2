@@ -11,24 +11,24 @@ const LogsFilterBar = ({
   className = "" 
 }) => {
   return (
-    <div className={`glass-card border border-glass rounded-2xl p-5 flex flex-wrap items-center gap-4 shadow-sm ${className}`}>
+    <div className={`bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-2xl p-5 flex flex-wrap items-center gap-4 shadow-sm ${className}`}>
       <div className="flex-1 min-w-[280px] relative">
-        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-secondary opacity-50 text-xl">search</span>
+        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-50 text-xl">search</span>
         <input 
-          className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl pl-12 pr-4 py-3 text-xs font-bold text-main placeholder:text-secondary/40 placeholder:uppercase placeholder:tracking-widest focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all font-mono" 
+          className="w-full border border-[var(--border)] rounded-xl pl-12 pr-4 py-3 text-xs font-bold text-[var(--text-primary)] placeholder:text-secondary/40 placeholder:uppercase placeholder:tracking-widest focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all font-mono" 
           placeholder="SEARCH AUDIT LOGS..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
       <div className="flex items-center gap-3">
-        <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Level</span>
-        <div className="flex p-1 bg-black/5 dark:bg-white/5 rounded-xl border border-glass">
+        <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Level</span>
+        <div className="flex p-1 rounded-xl border border-[var(--border)]">
           {['All', 'Info', 'Warn', 'Error'].map(level => (
             <button 
               key={level}
               onClick={() => setFilterLevel(level)}
-              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${filterLevel === level ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${filterLevel === level ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:'}`}
             >
               {level}
             </button>

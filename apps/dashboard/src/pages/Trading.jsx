@@ -53,7 +53,7 @@ const Trading = () => {
           change={td.isLoading ? '' : `from ${td.totalTrades} trades`}
           changeColor={td.winrate >= 50 ? 'text-emerald-500' : 'text-rose-500'}
           visual={
-            <div className="w-full bg-black/5 dark:bg-white/5 h-1.5 rounded-full overflow-hidden border border-glass">
+            <div className="w-full bg-[var(--bg-subtle)] h-1.5 rounded-full overflow-hidden border border-[var(--border)]">
               <div className={`h-full rounded-full transition-all duration-500 ${td.winrate >= 50 ? 'bg-primary' : 'bg-rose-500'}`} style={{ width: `${td.winrate}%` }}></div>
             </div>
           }
@@ -65,13 +65,13 @@ const Trading = () => {
           iconColor="text-primary"
           value={td.isLoading ? '...' : fmtCurrency(td.totalEquity)}
           change={td.isLoading ? '' : `${td.positions.length} positions`}
-          changeColor="text-secondary"
+          changeColor="text-[var(--text-secondary)]"
           visual={
             <div className="flex gap-1.5 items-end h-6">
-              <div className="bg-primary/10 w-full h-2 rounded-md border border-glass"></div>
-              <div className="bg-primary/30 w-full h-4 rounded-md border border-glass"></div>
-              <div className="bg-primary/50 w-full h-3 rounded-md border border-glass"></div>
-              <div className="bg-primary/70 w-full h-5 rounded-md border border-glass"></div>
+              <div className="bg-primary/10 w-full h-2 rounded-md border border-[var(--border)]"></div>
+              <div className="bg-primary/30 w-full h-4 rounded-md border border-[var(--border)]"></div>
+              <div className="bg-primary/50 w-full h-3 rounded-md border border-[var(--border)]"></div>
+              <div className="bg-primary/70 w-full h-5 rounded-md border border-[var(--border)]"></div>
               <div className="bg-primary w-full h-6 rounded-md"></div>
             </div>
           }
@@ -146,43 +146,22 @@ const Trading = () => {
   return (
     <div className="space-y-8 flex flex-col w-full">
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center w-full gap-6 pb-6">
-        <nav className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass overflow-x-auto w-full sm:w-auto">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'overview' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setActiveTab('bot-engine')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'bot-engine' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
-          >
-            Bot Engine
-          </button>
-          <button
-            onClick={() => setActiveTab('quant-agent')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === 'quant-agent' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
-          >
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Quant Agent
-          </button>
-          <button
-            onClick={() => setActiveTab('backtests')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'backtests' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
-          >
-            Backtests
-          </button>
-          <button
-            onClick={() => setActiveTab('terminal')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'terminal' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
-          >
-            Live Trading
-          </button>
+        <nav className="flex items-center gap-1 border-b border-[var(--border)] overflow-x-auto w-full sm:w-auto">
+          {['overview', 'bot-engine', 'quant-agent', 'backtests', 'terminal'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex items-center gap-1.5 ${activeTab === tab ? 'text-primary border-primary' : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'}`}
+            >
+              {tab === 'quant-agent' && <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-dot" />}
+              {tab === 'overview' ? 'Overview' : tab === 'bot-engine' ? 'Bot Engine' : tab === 'quant-agent' ? 'Quant Agent' : tab === 'backtests' ? 'Backtests' : 'Live Trading'}
+            </button>
+          ))}
         </nav>
         <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-between sm:justify-start flex-wrap">
-          <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-2 shadow-sm ${isConnected ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
-            {isConnected ? 'Live Market' : 'Connecting'}
+          <div className={`px-3 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${isConnected ? 'text-[var(--success)] border-[var(--success)]/20 bg-[var(--success)]/5' : 'text-[var(--warning)] border-[var(--warning)]/20 bg-[var(--warning)]/5'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-[var(--success)] animate-pulse-dot' : 'bg-[var(--warning)]'}`}></span>
+            {isConnected ? 'Live' : 'Connecting'}
           </div>
           {/* Exchange Selector */}
           <GlassSelect
