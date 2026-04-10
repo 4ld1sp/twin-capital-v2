@@ -2,7 +2,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
 import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react'
-import { backtestResults, parameterLogs, marketRegime, abTests } from '../data/mock'
+import { backtestResults, marketRegime, abTests } from '../data/mock'
 
 export default function Research() {
   const regimeColors = {
@@ -15,10 +15,9 @@ export default function Research() {
   return (
     <div>
       <div className="page-header">
-        <h1>Research & Optimization</h1>
+        <h1>Research</h1>
       </div>
 
-      {/* Market Regime + Parameter Logs */}
       <div className="grid-1-1 section">
         <div className="card">
           <h3 className="section-title">Market Regime Detection</h3>
@@ -44,40 +43,6 @@ export default function Research() {
                 </div>
                 <div style={{ fontSize: 'var(--fs-body)', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {val}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="card">
-          <h3 className="section-title">Parameter Optimization Logs</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {parameterLogs.map(log => (
-              <div key={log.id} style={{
-                display: 'flex', alignItems: 'center', gap: 'var(--space-md)',
-                padding: 'var(--space-md) 0',
-                borderBottom: '1px solid rgba(30,37,72,0.5)',
-              }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: 8,
-                  background: 'var(--accent-cyan-dim)', color: 'var(--accent-cyan)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 14, flexShrink: 0,
-                }}>
-                  ⟳
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 500, fontSize: 'var(--fs-body)' }}>{log.param}</div>
-                  <div style={{ fontSize: 'var(--fs-caption)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span>{log.from}</span>
-                    <ArrowRight size={12} />
-                    <span style={{ color: 'var(--accent-teal)' }}>{log.to}</span>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 'var(--fs-caption)', color: 'var(--accent-teal)', fontWeight: 500 }}>{log.impact}</div>
-                  <div style={{ fontSize: 'var(--fs-overline)', color: 'var(--text-tertiary)' }}>{log.date}</div>
                 </div>
               </div>
             ))}

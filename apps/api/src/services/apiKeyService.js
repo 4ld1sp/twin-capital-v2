@@ -204,7 +204,7 @@ export async function testConnection(platformId, fields) {
           'GroupId': fields.group_id
         };
         options.body = JSON.stringify({
-          model: "MiniMax-M2.5",
+          model: "MiniMax-M2.7-highspeed",
           messages: [{ role: "user", content: "ping" }],
           tokens_to_generate: 1
         });

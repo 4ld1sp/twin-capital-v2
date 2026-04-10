@@ -31,5 +31,11 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24,     // refresh every 24h
   },
-  trustedOrigins: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  trustedOrigins: [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.1.11:5173',
+    'https://smart-lite-alike-hearings.trycloudflare.com',
+    'https://teddy-mill-telecommunications-titles.trycloudflare.com',
+  ],
 });

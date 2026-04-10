@@ -47,9 +47,9 @@ const BotStatusMatrix = () => {
             status: b.status,
             statusBg: statusColors[b.status] || statusColors.stopped,
             statusDot: statusDots[b.status] || statusDots.stopped,
-            pairInitial: pair[0],
+            pairInitial: pair === 'ALL_MARKETS' ? 'G' : pair[0],
             pairBg: colorPalette[colorIdx].pairBg,
-            pairName: pair,
+            pairName: pair === 'ALL_MARKETS' ? 'GLOBAL' : pair,
             pnlValue: b.dailyPnl || 0,
             winRate: `${b.winRate}%`,
             trades: b.totalTrades || 0,
@@ -196,9 +196,16 @@ const BotStatusMatrix = () => {
                   <tr key={bot.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-all group relative">
                     <td className="px-6 py-4 font-bold text-main">{bot.name}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${bot.statusBg}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${bot.statusDot} ${bot.status === 'Active' ? 'animate-pulse shadow-[0_0_8px_currentColor]' : ''}`}></span> {bot.status}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className={`w-fit inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${bot.statusBg}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${bot.statusDot} ${bot.status === 'running' ? 'animate-pulse shadow-[0_0_8px_currentColor]' : ''}`}></span> {bot.status}
+                        </span>
+                        {(bot.status === 'error' || bot.status === 'killed') && bot.raw.errorMessage && (
+                          <span className="text-rose-500/80 text-[10px] font-bold truncate max-w-[200px]" title={bot.raw.errorMessage}>
+                            {bot.raw.errorMessage}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">

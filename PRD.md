@@ -83,26 +83,27 @@ sequenceDiagram
 
 The core PostgreSQL application logic incorporates specialized schemas bridging both infrastructure and feature requirements:
 
-- **Authentication Entities (Better Auth Managed):** `users`, `sessions`, `accounts`, `verifications`, and explicit `twoFactor` instances enforcing stringent session retention policies.
+- **Authentication Entities (Better Auth Managed):** `user`, `session`, `account`, `verification`, and explicit `twoFactor` instances enforcing stringent session retention policies.
 - **Platform Integrity:** 
   - `api_keys`: Contains all associated integration keys (Binance, OpenAi, Bybit) securely packed natively as AES-256-GCM configurations (`encryptedFields`).
   - `activity_logs`: Preserves an immutable platform system audit trail mapping all structural modifications.
+  - `operator_keys`: Manages external agent autonomous access (i.e., OpenClaw) utilizing secure Bearer tokens (`tc_op_...`) hashed with SHA-256 for API consumption and remote platform operations.
 - **Portfolios:**
   - `assets_crypto`: Spot crypto positions logging quantity, distinct symbol identities, and initial entry points.
   - `assets_saham`: Equities representations for the regional IDX market mapping lot capacities.
 - **Media Content Distribution:**
   - `content_items`: Tracking Kanban pipelines integrating status parameters alongside formatted multi-media assets ready for broadcast. 
 - **Auto-Trading System Layer (Phase 5):**
-  - `deployed_bots`: Definition state defining AI prompt inputs (`strategyPrompt`), dynamic trailing stop configurations, intervals for the dual loop architecture, and active runtime stats (totalPnl, winCount).
+  - `deployed_bots`: Definition state defining AI prompt inputs (`strategyScript`), dynamic parameters (stop limits, daily max loss), intervals for the dual loop architecture (signal vs risk), and active runtime stats (totalPnl, winCount).
   - `trade_logs`: Highly-protected immutable transactional records tracking autonomous AI choices (`aiReasoning`), snapshot context contexts, precise Bybit P&L attributes, formatting decisions generated natively by both `signal_engine` or the enforcing `risk_engine`.
 
 ## 8. Tech Stack
 - **Core Frontend Framework:** React 18, Vite.
 - **Routing Module:** React Router DOM (v6).
-- **Styling Architecture:** Tailwind CSS native utility, Lucide React iconography.
-- **Chart Utilities:** Chart.js, react-chartjs-2.
+- **Styling Architecture:** Tailwind CSS native utility, custom native CSS variables for Premium Dark Glassmorphism, Neon glow aesthetics, and dynamic pulse animations.
+- **Chart Utilities:** Recharts (replacing Chart.js for unified modern data visualization), Lucide React iconography.
 - **Backend Application Logic:** Node.js, Express.js.
-- **Database Substrate:** PostgreSQL natively.
-- **Database ORM Syntax:** Drizzle ORM cleanly defining all database schemas.
-- **Authentication Authority:** Better Auth.
-- **Automated External Logic Integration:** Bybit API (V5 Spot/Linear variants), Minimax AI Model Endpoints.
+- **Database Substrate:** PostgreSQL via Docker.
+- **Database ORM Syntax:** Drizzle ORM cleanly defining all database schemas and utilizing Drizzle Studio.
+- **Authentication Authority:** Better Auth (with dual Session/Cookie and Bearer Token support).
+- **Automated External Logic Integration:** Bybit API (V5 Linear/Futures), Modular AI endpoints (Minimax AlphaQuant / OpenAI), OpenClaw Autonomous Workspace integration via Cloudflare Tunnels natively hooked to `/api/operator` routes.

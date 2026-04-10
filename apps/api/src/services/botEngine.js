@@ -23,13 +23,16 @@
 import crypto from 'crypto';
 import { db } from '../db/index.js';
 import { deployedBots, tradeLogs } from '../db/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, gt, desc } from 'drizzle-orm';
 import { getDecryptedKey } from './apiKeyService.js';
 import * as bybit from './bybitService.js';
 
 // ─── In-Memory Bot Registry ───────────────────────────────────
 // Maps botId → { signalTimer, riskTimer, isRunning }
 const activeBots = new Map();
+
+// Mutex lock to prevent overlapping Risk Engine cycles for the same bot
+const riskLocks = new Set();
 
 // ─── Interval Parsing ─────────────────────────────────────────
 function parseIntervalMs(interval) {
@@ -134,6 +137,26 @@ export async function stopBot(botId) {
 }
 
 /**
+ * Stop a bot and mark it as errored due to terminal failure.
+ */
+export async function markBotError(botId, errorMessage) {
+  const entry = activeBots.get(botId);
+  if (entry) {
+    clearInterval(entry.signalTimer);
+    clearInterval(entry.riskTimer);
+    activeBots.delete(botId);
+  }
+
+  await updateBotStatus(botId, 'error', errorMessage);
+  await db.update(deployedBots).set({
+    stoppedAt: new Date(),
+    updatedAt: new Date(),
+  }).where(eq(deployedBots.id, botId));
+
+  console.log(`[BotEngine] ❌ Bot ${botId} errored: ${errorMessage}`);
+}
+
+/**
  * Pause a bot (keeps record, clears intervals).
  */
 export async function pauseBot(botId) {
@@ -184,26 +207,93 @@ async function runSignalCycle(botId, botSnapshot, creds) {
   console.log(`[Signal:${botId.slice(0, 8)}] ── AI Signal Cycle ──`);
 
   try {
-    // 1. Fetch market data — 100 klines
-    const interval = mapSignalIntervalToKlineInterval(bot.signalInterval);
-    const klineData = await bybit.makeBybitRequest('GET', '/v5/market/kline', {
-      category: 'linear',
-      symbol: bot.symbol,
-      interval: interval,
-      limit: '100'
-    }, creds.apiKey, creds.apiSecret);
-    
-    const klines = klineData.result?.list || [];
+    // 0. Fetch recent memory and setup cooldown guard
+    const cooldownMs = parseIntervalMs(bot.signalInterval);
+    const recentLogs = await db.select().from(tradeLogs)
+      .where(eq(tradeLogs.botId, botId))
+      .orderBy(desc(tradeLogs.createdAt))
+      .limit(6);
+      
+    const recentHistoryString = recentLogs.length > 0
+      ? recentLogs.map(l => `[${l.symbol}] ${l.action} ${l.side||''} (PnL: ${l.pnl !== null ? '$'+parseFloat(l.pnl).toFixed(2) : 'N/A'}) at ${new Date(l.createdAt).toLocaleTimeString()}`).join('\n')
+      : 'No recent trade history.';
+      
+    const now = Date.now();
+    const isSymbolOnCooldown = (sym) => {
+      const lastClose = recentLogs.find(l => l.symbol === sym && l.action === 'CLOSE');
+      if (!lastClose) return false;
+      return (now - new Date(lastClose.createdAt).getTime()) < cooldownMs;
+    };
 
-    if (klines.length === 0) {
-      console.warn(`[Signal:${botId.slice(0, 8)}] No kline data returned. Bybit response:`, klineData);
-      return;
+    // 1. Market Data Fetching (Single or Top 5 Scanner)
+    const interval = mapSignalIntervalToKlineInterval(bot.signalInterval);
+    let klinesFormatted = '';
+    let latestKlines = []; // Fallback for logging and price checking
+    let scannerKlinesMap = {}; // Maps symbol to its klines for exact price matching
+    if (bot.symbol === 'ALL_MARKETS') {
+      const tickersData = await bybit.getMarketTickers('linear');
+      if (tickersData.retCode !== 0) {
+        await logTrade(botId, bot.userId, { action: 'ERROR', source: 'signal_engine', symbol: 'ALL_MARKETS', aiReasoning: `Failed fetching tickers: ${tickersData.retMsg}` });
+        return;
+      }
+
+      // Get Top 5 by turnover
+      let top5 = (tickersData.result?.list || [])
+        .filter(t => t.symbol.endsWith('USDT'))
+        .sort((a, b) => parseFloat(b.turnover24h) - parseFloat(a.turnover24h))
+        .map(t => t.symbol);
+
+      // [GUARD] Apply adaptive cooldown filter
+      const originalTop5 = top5.slice(0, 5);
+      top5 = top5.filter(sym => !isSymbolOnCooldown(sym)).slice(0, 5);
+
+      if (top5.length === 0) {
+        console.log(`[Signal:${botId.slice(0, 8)}] 🛡️ All top markets are on cooldown. Skipping cycle.`);
+        return;
+      }
+      if (top5.length < originalTop5.length) {
+        console.log(`[Signal:${botId.slice(0, 8)}] 🛡️ Cooldown Guard active: Filtered out recently closed pairs.`);
+      }
+
+      console.log(`[Signal:${botId.slice(0, 8)}] ALL_MARKETS Top 5: ${top5.join(', ')}`);
+      
+      const klinePromises = top5.map(sym => 
+        bybit.makeBybitRequest('GET', '/v5/market/kline', { category: 'linear', symbol: sym, interval, limit: '100' }, creds.apiKey, creds.apiSecret)
+      );
+      
+      const results = await Promise.all(klinePromises);
+      
+      top5.forEach((sym, idx) => {
+        const res = results[idx];
+        if (res.retCode === 0 && res.result?.list?.length > 0) {
+          const klines = res.result.list.reverse();
+          klinesFormatted += `\n--- MARKET: ${sym} ---\n`;
+          klinesFormatted += klines.map(k => `[${new Date(parseInt(k[0])).toISOString()}, O:${k[1]}, H:${k[2]}, L:${k[3]}, C:${k[4]}, V:${k[5]}]`).join('\n');
+          latestKlines = klines; // Store the last one for fallback
+          scannerKlinesMap[sym] = klines;
+        }
+      });
+    } else {
+      // [GUARD] Single market cooldown
+      if (isSymbolOnCooldown(bot.symbol)) {
+         console.log(`[Signal:${botId.slice(0, 8)}] 🛡️ Cooldown Guard active: ${bot.symbol} recently closed. Skipping cycle.`);
+         return;
+      }
+      const klineData = await bybit.makeBybitRequest('GET', '/v5/market/kline', { category: 'linear', symbol: bot.symbol, interval: interval, limit: '100' }, creds.apiKey, creds.apiSecret);
+      latestKlines = klineData.result?.list || [];
+      if (klineData.retCode !== 0 || latestKlines.length === 0) {
+        await logTrade(botId, bot.userId, { action: 'ERROR', source: 'signal_engine', symbol: bot.symbol, aiReasoning: `Bybit API Error: ${klineData.retMsg}` });
+        return;
+      }
+      klinesFormatted = latestKlines.reverse().map(k => `[${new Date(parseInt(k[0])).toISOString()}, O:${k[1]}, H:${k[2]}, L:${k[3]}, C:${k[4]}, V:${k[5]}]`).join('\n');
     }
 
     // 2. Fetch wallet + positions
+    // If ALL_MARKETS, positionQuerySymbol is undefined (fetches all open perp positions globally)
+    const positionQuerySymbol = bot.symbol === 'ALL_MARKETS' ? undefined : bot.symbol;
     const [walletData, positionData] = await Promise.all([
       bybit.getWalletBalance(creds.apiKey, creds.apiSecret),
-      bybit.getPositions(creds.apiKey, creds.apiSecret, 'linear', bot.symbol),
+      bybit.getPositions(creds.apiKey, creds.apiSecret, 'linear', positionQuerySymbol),
     ]);
 
     const wallet = walletData.result?.list?.[0];
@@ -227,15 +317,11 @@ async function runSignalCycle(botId, botSnapshot, creds) {
       ? positions.map(p => `${p.symbol} ${p.side} qty=${p.size} entry=$${p.avgPrice} uPnL=$${p.unrealisedPnl}`).join('; ')
       : 'None';
 
-    const klinesFormatted = klines
-      .reverse() // oldest first
-      .map(k => `[${new Date(parseInt(k[0])).toISOString()}, O:${k[1]}, H:${k[2]}, L:${k[3]}, C:${k[4]}, V:${k[5]}]`)
-      .join('\n');
-
     const prompt = buildSignalPrompt({
       strategyScript: bot.strategyScript,
       equity,
       positionsJson,
+      recentHistory: recentHistoryString,
       dailyTrades: bot.dailyTradeCount,
       maxTradesPerDay: bot.maxTradesPerDay,
       dailyPnl: bot.dailyPnl,
@@ -246,7 +332,14 @@ async function runSignalCycle(botId, botSnapshot, creds) {
     });
 
     // 5. Call AI
-    console.log(`[Signal:${botId.slice(0, 8)}] Calling AI (${klines.length} candles)...`);
+    // [CRITICAL] Token Optimization: Check status again in case bot was paused/stopped during data fetching
+    const [latestBot] = await db.select().from(deployedBots).where(eq(deployedBots.id, botId));
+    if (!latestBot || latestBot.status !== 'running') {
+      console.log(`[Signal:${botId.slice(0, 8)}] ⏸ Research aborted: Bot is no longer in 'running' status. Saving tokens.`);
+      return;
+    }
+
+    console.log(`[Signal:${botId.slice(0, 8)}] Calling AI...`);
     const aiResponse = await callAI(bot.userId, prompt);
     console.log(`[Signal:${botId.slice(0, 8)}] AI responded: ${aiResponse.substring(0, 200)}...`);
 
@@ -279,7 +372,7 @@ async function runSignalCycle(botId, botSnapshot, creds) {
         source: 'signal_engine',
         symbol: bot.symbol,
         aiReasoning: decision.reasoning,
-        marketSnapshot: { equity, positions: positionsJson, klineCount: klines.length },
+        marketSnapshot: { equity, positions: positionsJson, klineCount: latestKlines.length },
       });
       return;
     }
@@ -291,10 +384,79 @@ async function runSignalCycle(botId, botSnapshot, creds) {
         await logTrade(botId, bot.userId, {
           action: 'HOLD',
           source: 'signal_engine',
-          symbol: bot.symbol,
-          aiReasoning: `AI said ${decision.action} but max positions reached (${positions.length}/${bot.maxPositions})`,
+          symbol: decision.symbol || bot.symbol,
+          aiReasoning: `Blocked by Max Positions (${positions.length}/${bot.maxPositions}): AI intended to ${decision.action} ${decision.symbol || bot.symbol} because ${decision.reasoning || 'no reasoning provided'}.`,
         });
         return;
+      }
+
+      // 8.5 Calculate optimal and Bybit-compliant Quantity natively
+      const targetKlines = bot.symbol === 'ALL_MARKETS' && scannerKlinesMap[decision.symbol]
+        ? scannerKlinesMap[decision.symbol]
+        : latestKlines;
+        
+      const currentPrice = parseFloat(targetKlines[targetKlines.length - 1]?.[4] || 0);
+      const riskCalc = await calculateValidOrderQty(
+        decision.symbol || bot.symbol,
+        equity,
+        bot.riskPerTradePct,
+        bot.leverage,
+        currentPrice,
+        creds
+      );
+
+      if (!riskCalc) {
+        await logTrade(botId, bot.userId, {
+          action: 'ERROR',
+          source: 'signal_engine',
+          symbol: decision.symbol || bot.symbol,
+          aiReasoning: `Failed to calculate a valid order quantity for ${decision.symbol || bot.symbol} (Price: ${currentPrice}). Order aborted to prevent API error.`,
+        });
+        return;
+      }
+
+      decision.qty = String(riskCalc.qty);
+
+      // 8.6 Calculate Hardcoded Initial Stop Loss & Take Profit Exchange Overrides
+      // Since position size makes margin EXACTLY equal to the dollar risk amount,
+      // losing the margin means a 100% ROE loss (which is a 1/leverage price drop).
+      // We set SL just before liquidation, e.g., 90% of the margin (0.90 / leverage).
+      const maxPriceDrop = 0.90 / bot.leverage;
+      const slDistance = Math.min(maxPriceDrop, 0.15); // Cap at 15% distance max
+      
+      // TP is widened significantly (e.g. 10%) so it acts only as a catastrophic safety net,
+      // letting the dynamic Trailing Stop handle the actual profit-taking.
+      const tpDistance = 0.10; 
+      let rawSL, rawTP;
+
+      if (decision.action === 'BUY') {
+        rawSL = currentPrice * (1 - slDistance);
+        rawTP = currentPrice * (1 + tpDistance);
+      } else {
+        rawSL = currentPrice * (1 + slDistance);
+        rawTP = currentPrice * (1 - tpDistance);
+      }
+
+      // Round to Bybit's tickSize precision to avoid validation errors
+      const tickSize = riskCalc.tickSize;
+      const precisionMatch = tickSize.toString().match(/(?:\.(\d+))?$/);
+      const precisionCount = precisionMatch && precisionMatch[1] ? precisionMatch[1].length : 0;
+      
+      const formatPrice = (price) => parseFloat((Math.round(price / tickSize) * tickSize).toFixed(precisionCount));
+
+      decision.nativeSL = String(formatPrice(rawSL));
+      decision.nativeTP = String(formatPrice(rawTP));
+
+      // [FIX] Set leverage on Bybit before placing order to ensure correct position sizing
+      try {
+        await bybit.makeBybitRequest('POST', '/v5/position/set-leverage', {
+          category: 'linear',
+          symbol: decision.symbol || bot.symbol,
+          buyLeverage: String(bot.leverage),
+          sellLeverage: String(bot.leverage),
+        }, creds.apiKey, creds.apiSecret);
+      } catch (leverageErr) {
+        console.warn(`[Signal:${botId.slice(0, 8)}] Could not set leverage: ${leverageErr.message}`);
       }
 
       // Place order
@@ -306,13 +468,18 @@ async function runSignalCycle(botId, botSnapshot, creds) {
         side: decision.action === 'BUY' ? 'Buy' : 'Sell',
         orderType: 'Market',
         qty: decision.qty,
-        price: decision.price || String(parseFloat(klines[klines.length - 1]?.[4] || 0)),
+        price: decision.price || (() => {
+          const priceKlines = (bot.symbol === 'ALL_MARKETS' && scannerKlinesMap[decision.symbol])
+            ? scannerKlinesMap[decision.symbol]
+            : latestKlines;
+          return String(parseFloat(priceKlines[priceKlines.length - 1]?.[4] || 0));
+        })(),
         takeProfit: decision.tp,
         stopLoss: decision.sl,
         orderId: orderResult?.result?.orderId,
         orderStatus: orderResult?.retCode === 0 ? 'filled' : 'rejected',
         aiReasoning: decision.reasoning,
-        marketSnapshot: { equity, klineCount: klines.length },
+        marketSnapshot: { equity, klineCount: latestKlines.length },
         errorDetails: orderResult?.retCode !== 0 ? orderResult?.retMsg : null,
       });
 
@@ -323,11 +490,27 @@ async function runSignalCycle(botId, botSnapshot, creds) {
           totalTrades: bot.totalTrades + 1,
           updatedAt: new Date(),
         }).where(eq(deployedBots.id, botId));
+      } else {
+        // Terminal error check
+        const msg = (orderResult?.retMsg || '').toLowerCase();
+        if (msg.includes('permission') || msg.includes('unauthorized') || msg.includes('invalid api key')) {
+          await markBotError(botId, `API Error: ${orderResult?.retMsg}`);
+          return;
+        }
       }
     }
 
     if (decision.action === 'CLOSE') {
-      await closeAllPositions(creds, bot, positions, decision.reasoning, botId);
+      // Only close the specific symbol mentioned by AI, NOT all positions
+      const targetSymbol = decision.symbol || bot.symbol;
+      const targetPositions = positions.filter(p => p.symbol === targetSymbol);
+      
+      if (targetPositions.length > 0) {
+        console.log(`[Signal:${botId.slice(0, 8)}] AI ordered CLOSE on ${targetSymbol}. Closing ${targetPositions.length} position(s). Other positions untouched.`);
+        await closeAllPositions(creds, bot, targetPositions, decision.reasoning, botId, 'signal_engine');
+      } else {
+        console.log(`[Signal:${botId.slice(0, 8)}] AI ordered CLOSE on ${targetSymbol}, but no matching open position found. Ignoring.`);
+      }
     }
 
   } catch (err) {
@@ -338,6 +521,11 @@ async function runSignalCycle(botId, botSnapshot, creds) {
       symbol: bot.symbol,
       errorDetails: err.message,
     });
+    
+    // Mark as error if it's a terminal exception
+    if (err.message.toLowerCase().includes('permission') || err.message.toLowerCase().includes('auth') || err.message.toLowerCase().includes('api')) {
+      await markBotError(botId, err.message);
+    }
   }
 }
 
@@ -358,12 +546,28 @@ async function runSignalCycle(botId, botSnapshot, creds) {
  * CRITICAL: This function NEVER calls AI. Pure math only.
  */
 async function runRiskCycle(botId, botSnapshot, creds) {
-  const [bot] = await db.select().from(deployedBots).where(eq(deployedBots.id, botId));
-  if (!bot || bot.status !== 'running') return;
+  // MUTEX GUARD: Prevent overlapping cycles for the same bot
+  if (riskLocks.has(botId)) return;
+  riskLocks.add(botId);
 
   try {
+    const [bot] = await db.select().from(deployedBots).where(eq(deployedBots.id, botId));
+    if (!bot || bot.status !== 'running') return;
     // 1. Fetch wallet
     const walletData = await bybit.getWalletBalance(creds.apiKey, creds.apiSecret);
+    
+    if (walletData.retCode !== 0) {
+      console.warn(`[Risk:${botId.slice(0, 8)}] API Error:`, walletData);
+      // We log to UI so user visibly sees the API key error instead of silent failure
+      await logTrade(botId, bot.userId, {
+        action: 'ERROR',
+        source: 'risk_engine',
+        symbol: bot.symbol,
+        aiReasoning: `Bybit API Validation Failed: ${walletData.retMsg} (Code: ${walletData.retCode}). Engine halted temporarily, retrying next cycle...`,
+      });
+      return; 
+    }
+
     const wallet = walletData.result?.list?.[0];
     const equity = parseFloat(wallet?.totalEquity || 0);
 
@@ -371,16 +575,133 @@ async function runRiskCycle(botId, botSnapshot, creds) {
     const closedPnlData = await bybit.getClosedPnl(creds.apiKey, creds.apiSecret, 'linear', 50);
     const todayStart = new Date();
     todayStart.setUTCHours(0, 0, 0, 0);
+
+    // If a manual reset has been triggered, use it as the start time instead of 00:00 UTC
+    const pnlStartTime = (bot.pnlResetAt && new Date(bot.pnlResetAt) > todayStart)
+      ? new Date(bot.pnlResetAt).getTime()
+      : todayStart.getTime();
+
     const todayPnl = (closedPnlData.result?.list || [])
-      .filter(p => parseInt(p.createdTime) >= todayStart.getTime())
+      .filter(p => parseInt(p.createdTime) >= pnlStartTime)
       .reduce((sum, p) => sum + parseFloat(p.closedPnl || 0), 0);
 
-    // Update daily P&L in DB
-    await db.update(deployedBots).set({
+    // ── Daily Reset Logic ──────────────────────────────────────────
+    // If it's a new calendar day (UTC), reset dailyTradeCount and dailyPnl
+    const now = new Date();
+    const startOfToday = new Date();
+    startOfToday.setUTCHours(0, 0, 0, 0);
+
+    const lastUpdate = bot.updatedAt ? new Date(bot.updatedAt) : null;
+    const isNewDay = !lastUpdate || lastUpdate < startOfToday;
+
+    // ── Win/Loss & History Sync ────────────────────────────────────
+    const closedList = (closedPnlData.result?.list || []);
+
+    // Optimization & Deduplication: Fetch all CLOSE logs from the last 24 hours into memory
+    // This allows us to perform accurate float comparisons and reduce DB queries.
+    const recentDbCloses = await db.select().from(tradeLogs).where(and(
+      eq(tradeLogs.botId, botId),
+      eq(tradeLogs.action, 'CLOSE'),
+      gt(tradeLogs.createdAt, new Date(Date.now() - 86400000))
+    ));
+    
+    // 1. Sync missing CLOSE logs (for trades closed by Bybit native SL/TP)
+    for (const p of closedList) {
+      const pnlTime = new Date(parseInt(p.updatedTime || p.createdTime));
+      
+      // CRITICAL FIX: Do not ingest global exchange logs that occurred BEFORE this bot was even created!
+      if (pnlTime < new Date(bot.createdAt)) continue;
+
+      const pnlValue = parseFloat(p.closedPnl || 0);
+
+      // Check if we already logged this close
+      let existing = null;
+
+      // Primary check: Strict Order ID matching
+      if (p.orderId) {
+        existing = recentDbCloses.find(log => log.orderId === p.orderId);
+      }
+
+      // Fallback check: 5-minute window + Symbol + Exact PnL matching
+      if (!existing) {
+        existing = recentDbCloses.find(log => {
+          const timeDiff = Math.abs(new Date(log.createdAt).getTime() - pnlTime.getTime());
+          return timeDiff <= 300000 && 
+                 log.symbol === p.symbol && 
+                 Math.abs((parseFloat(log.pnl) || 0) - pnlValue) < 0.0001; 
+        });
+      }
+
+      if (!existing) {
+        // This trade was closed on Bybit (SL/TP) but not logged in our DB
+        console.log(`[Risk:${botId.slice(0, 8)}] 🔄 Syncing missing CLOSE log for ${p.symbol} (PnL: ${p.closedPnl})`);
+        
+        const newLog = {
+          action: 'CLOSE',
+          source: 'risk_engine',
+          symbol: p.symbol,
+          side: p.side === 'Buy' ? 'Sell' : 'Buy', // Closing side
+          qty: p.qty,
+          pnl: pnlValue,
+          orderId: p.orderId, // Store orderId for future dedup!
+          orderStatus: 'filled',
+          aiReasoning: 'Position closed via Bybit native StopLoss/TakeProfit or manual close.',
+          createdAt: pnlTime
+        };
+        
+        await logTrade(botId, bot.userId, newLog);
+        
+        // Push to memory array to prevent duplicates in the very same loop
+        recentDbCloses.push(newLog);
+      }
+    }
+
+    // 2. Fetch logged CLOSE actions from OUR DB for Win/Loss counting
+    const executedLogs = await db
+      .select()
+      .from(tradeLogs)
+      .where(and(
+        eq(tradeLogs.botId, botId),
+        eq(tradeLogs.action, 'CLOSE'),
+      ));
+
+    const newWinCount = executedLogs.filter(l => (l.pnl ?? 0) > 0).length;
+    const newLossCount = executedLogs.filter(l => (l.pnl ?? 0) < 0).length;
+
+    // Also count opened trades (BUY/SELL filled) as the totalTrades denominator
+    const openedLogs = await db
+      .select()
+      .from(tradeLogs)
+      .where(and(
+        eq(tradeLogs.botId, botId),
+        eq(tradeLogs.orderStatus, 'filled'),
+      ));
+
+    // Only count actions that represent opening a trade
+    const openedTradeCount = openedLogs.filter(l => l.action === 'BUY' || l.action === 'SELL').length;
+
+    // Daily trades = filled orders placed today
+    const dailyOpenedCount = openedLogs.filter(l => {
+      const logTime = new Date(l.createdAt).getTime();
+      return (l.action === 'BUY' || l.action === 'SELL') && logTime >= startOfToday.getTime();
+    }).length;
+
+    const updatePayload = {
       dailyPnl: todayPnl,
-      lastRiskCheckAt: new Date(),
-      updatedAt: new Date(),
-    }).where(eq(deployedBots.id, botId));
+      winCount: newWinCount,
+      lossCount: newLossCount,
+      totalTrades: openedTradeCount,
+      dailyTradeCount: isNewDay ? dailyOpenedCount : bot.dailyTradeCount,
+      lastRiskCheckAt: now,
+      updatedAt: now,
+    };
+
+    if (isNewDay) {
+      console.log(`[Risk:${botId.slice(0, 8)}] 🌅 New day detected — resetting daily PnL.`);
+      updatePayload.dailyPnl = 0;
+    }
+
+    await db.update(deployedBots).set(updatePayload).where(eq(deployedBots.id, botId));
 
     // 3. KILL-SWITCH: Max daily loss
     const maxDailyLossUsd = equity * (bot.maxDailyLossPct / 100);
@@ -388,10 +709,11 @@ async function runRiskCycle(botId, botSnapshot, creds) {
       console.error(`[Risk:${botId.slice(0, 8)}] ⛔ KILL-SWITCH TRIGGERED! Daily PnL: $${todayPnl.toFixed(2)} exceeds max loss -$${maxDailyLossUsd.toFixed(2)}`);
 
       // Close all positions immediately
-      const positionData = await bybit.getPositions(creds.apiKey, creds.apiSecret, 'linear', bot.symbol);
+      const positionQuerySymbol = bot.symbol === 'ALL_MARKETS' ? undefined : bot.symbol;
+      const positionData = await bybit.getPositions(creds.apiKey, creds.apiSecret, 'linear', positionQuerySymbol);
       const positions = (positionData.result?.list || []).filter(p => parseFloat(p.size) > 0);
       if (positions.length > 0) {
-        await closeAllPositions(creds, bot, positions, 'KILL-SWITCH: Max daily loss exceeded', botId);
+        await closeAllPositions(creds, bot, positions, 'KILL-SWITCH: Max daily loss exceeded', botId, 'risk_engine');
       }
 
       // Kill the bot
@@ -409,7 +731,8 @@ async function runRiskCycle(botId, botSnapshot, creds) {
     }
 
     // 4. Fetch active positions
-    const positionData = await bybit.getPositions(creds.apiKey, creds.apiSecret, 'linear', bot.symbol);
+    const positionQuerySymbol = bot.symbol === 'ALL_MARKETS' ? undefined : bot.symbol;
+    const positionData = await bybit.getPositions(creds.apiKey, creds.apiSecret, 'linear', positionQuerySymbol);
     const positions = (positionData.result?.list || []).filter(p => parseFloat(p.size) > 0);
 
     if (positions.length === 0) return; // No positions to manage
@@ -422,6 +745,12 @@ async function runRiskCycle(botId, botSnapshot, creds) {
   } catch (err) {
     // Risk engine errors should not crash silently
     console.error(`[Risk:${botId.slice(0, 8)}] Error:`, err.message);
+    if (err.message.toLowerCase().includes('permission') || err.message.toLowerCase().includes('auth') || err.message.toLowerCase().includes('api')) {
+      await markBotError(botId, err.message);
+    }
+  } finally {
+    // ALWAYS release the lock
+    riskLocks.delete(botId);
   }
 }
 
@@ -444,7 +773,7 @@ async function manageDynamicTrailingStop(creds, bot, position, botId) {
 
   if (!entryPrice || !markPrice || !size) return;
 
-  // Calculate profit %
+  // Calculate profit % from entry
   let profitPct;
   if (side === 'Buy') {
     profitPct = ((markPrice - entryPrice) / entryPrice) * 100;
@@ -452,40 +781,58 @@ async function manageDynamicTrailingStop(creds, bot, position, botId) {
     profitPct = ((entryPrice - markPrice) / entryPrice) * 100;
   }
 
+  // [FIX] Leverage-adjusted activation: trailing stop activates when the *leveraged* profit
+  // equals the configured activation%. E.g. trailingStopActivationPct=1%, leverage=10x means
+  // we only need 0.1% price movement. Convert back to raw price % for comparison.
+  const leverage = parseFloat(position.leverage || bot.leverage || 1);
+  const rawPriceActivationPct = bot.trailingStopActivationPct / leverage;
+
   // Check if trailing stop should be activated
-  if (profitPct < bot.trailingStopActivationPct) return; // Not yet in profit enough
+  if (profitPct < rawPriceActivationPct) return; // Not yet in profit enough
+
+  // [BUG FIX]: Do NOT continuously update. If Bybit already has a trailing stop natively,
+  // we must let it handle the high-water mark tracking! Continuously updating the distance
+  // resets the active trigger price to the *current* market price, ruining the trail
+  // and causing premature close.
+  if (currentTrailingStop > 0) return;
 
   // Calculate the trailing distance in price terms
-  // Bybit's trailingStop is the callback distance, not the price level
-  const trailingDistance = markPrice * (bot.trailingStopCallbackPct / 100);
-  const roundedDistance = Math.round(trailingDistance * 100) / 100; // Round to 2 decimals
-
-  // Only update if there's no trailing stop or the new value differs significantly
-  if (currentTrailingStop > 0 && Math.abs(currentTrailingStop - roundedDistance) < 0.01) return;
+  // Leverage-adjusted callback: The user expects CallbackPct as a % of their ROE (margin).
+  const rawPriceCallbackPct = bot.trailingStopCallbackPct / leverage;
+  const trailingDistance = markPrice * (rawPriceCallbackPct / 100);
+  
+  // Format the distance safely dynamically to avoid rounding small altcoins to 0.
+  // We use max 6 decimals to satisfy most exchanges.
+  const distanceStr = Math.max(trailingDistance, 0.000001).toFixed(6).replace(/\.?0+$/, '');
 
   try {
     // Use Bybit's native trading stop API to set/update trailing stop
     const result = await bybit.makeBybitRequest('POST', '/v5/position/trading-stop', {
       category: 'linear',
-      symbol: bot.symbol,
-      trailingStop: String(roundedDistance),
+      symbol: position.symbol, // use position.symbol, NOT bot.symbol (which may be 'ALL_MARKETS')
+      trailingStop: distanceStr,
       positionIdx: position.positionIdx || 0,
     }, creds.apiKey, creds.apiSecret);
 
     if (result.retCode === 0) {
-      console.log(`[Risk:${botId.slice(0, 8)}] 📐 Trailing stop updated: ${side} ${bot.symbol} | Profit: ${profitPct.toFixed(2)}% | Trail: $${roundedDistance}`);
+      console.log(`[Risk:${botId.slice(0, 8)}] 📐 Trailing stop activated: ${side} ${position.symbol} | Profit: ${profitPct.toFixed(2)}% | Trail: $${distanceStr}`);
 
       await logTrade(botId, bot.userId, {
         action: 'TRAILING_STOP',
         source: 'risk_engine',
-        symbol: bot.symbol,
+        symbol: position.symbol,
         side,
         price: String(markPrice),
-        trailingStop: String(roundedDistance),
-        aiReasoning: `Dynamic trailing stop adjusted. Position profit: ${profitPct.toFixed(2)}%. Callback: ${bot.trailingStopCallbackPct}%. Trail distance: $${roundedDistance}`,
+        trailingStop: distanceStr,
+        aiReasoning: `Dynamic trailing stop activated. Position profit: ${profitPct.toFixed(2)}%. Callback configured: ${bot.trailingStopCallbackPct}% (ROE). Trail distance: $${distanceStr}`,
         marketSnapshot: { entryPrice, markPrice, profitPct, size },
       });
     } else {
+      // Bybit returns "not modified" if the value exists and is identical. 
+      // We suppress this warning to keep logs clean.
+      if (result.retMsg && result.retMsg.toLowerCase().includes('not modified')) {
+         return;
+      }
       console.warn(`[Risk:${botId.slice(0, 8)}] Trailing stop update failed: ${result.retMsg}`);
     }
   } catch (err) {
@@ -501,7 +848,12 @@ async function manageDynamicTrailingStop(creds, bot, position, botId) {
 /**
  * Build the AI signal prompt.
  */
-function buildSignalPrompt({ strategyScript, equity, positionsJson, dailyTrades, maxTradesPerDay, dailyPnl, maxDailyLoss, symbol, signalInterval, klinesFormatted }) {
+function buildSignalPrompt({ strategyScript, equity, positionsJson, recentHistory, dailyTrades, maxTradesPerDay, dailyPnl, maxDailyLoss, symbol, signalInterval, klinesFormatted }) {
+  const isScanner = symbol === 'ALL_MARKETS';
+  const instruction = isScanner 
+    ? `1. Analyze the provided Top 5 markets independently against the strategy. Select EXACTLY ONE strongest setup out of all candidates.\n2. Respond with ONLY valid JSON: {"action":"BUY|SELL|HOLD|CLOSE","symbol":"<THE_WINNING_SYMBOL>","reasoning":"<1-2 sentences>"}`
+    : `1. Respond with ONLY valid JSON: {"action":"BUY|SELL|HOLD|CLOSE","symbol":"${symbol}","reasoning":"<1-2 sentences>"}`;
+
   return `You are AlphaNode AI, an autonomous institutional trading agent.
 
 ACTIVE STRATEGY:
@@ -513,15 +865,21 @@ CURRENT STATE:
 - Today's Trades: ${dailyTrades}/${maxTradesPerDay} (max ${maxTradesPerDay})
 - Today's P&L: $${dailyPnl.toFixed(2)} (max loss limit: -$${maxDailyLoss.toFixed(2)})
 
+RECENT TRADE MEMORY:
+${recentHistory}
+
 MARKET DATA (last 100 candles, timeframe: ${signalInterval}):
 ${klinesFormatted}
 
 RULES:
-1. Respond with ONLY valid JSON: {"action":"BUY|SELL|HOLD|CLOSE","symbol":"${symbol}","qty":"<amount>","sl":"<price>","tp":"<price>","reasoning":"<1-2 sentences>"}
-2. If HOLD, set qty/sl/tp to null.
-3. Provide baseline SL/TP. The dynamic Trailing Stop will be managed independently by the Hardcoded Risk Engine once the trade is active.
-4. NEVER exceed max daily trades or max daily loss.
-5. Position size must respect the 1% risk-per-trade rule.`;
+${instruction}
+3. DO NOT output qty. The execution engine will automatically calculate the optimal position size based on available equity and risk parameters.
+4. DO NOT provide baseline SL/TP. The dynamic Trailing Stop will be managed independently by the Hardcoded Risk Engine once the trade is active.
+5. NEVER exceed max daily trades or max daily loss.
+6. Position size must respect the 1% risk-per-trade rule.
+7. CRITICAL: Do NOT issue CLOSE on a position that has unrealized profit > $1.00. Let the Trailing Stop manage profitable exits. Only CLOSE if the position is losing money or the setup has fundamentally invalidated.
+8. When issuing CLOSE, you are ONLY closing the specific symbol you mention. Other positions remain unaffected.
+9. ANTI-REVENGE GUARD: Analyze the RECENT TRADE MEMORY. Do not reopen the exact same position immediately after a StopLoss hit unless the market structure drastically changed in a higher timeframe. Avoid rapid Whipsaws (reversing direction continuously) on the same asset.`;
 }
 
 /**
@@ -583,7 +941,7 @@ async function callAI(userId, prompt) {
           'GroupId': fields.group_id,
         },
         body: JSON.stringify({
-          model: 'MiniMax-M2.5',
+          model: 'MiniMax-M2.7-highspeed',
           messages,
           tokens_to_generate: 1024,
           temperature: 0.3, // Low temp for deterministic trading decisions
@@ -648,17 +1006,70 @@ async function placeSignalOrder(creds, bot, decision) {
     orderType: 'Market',
     qty: decision.qty,
   };
-  if (decision.sl) orderParams.stopLoss = decision.sl;
-  if (decision.tp) orderParams.takeProfit = decision.tp;
+  
+  if (decision.nativeSL) orderParams.stopLoss = decision.nativeSL;
+  if (decision.nativeTP) orderParams.takeProfit = decision.nativeTP;
+
+  // The AI hallucination bug is bypassed. Native backend engine dictates exact step-sized SL/TP.
 
   console.log(`[Signal] Placing order:`, JSON.stringify(orderParams));
   return bybit.placeOrder(creds.apiKey, creds.apiSecret, orderParams);
 }
 
 /**
+ * Calculate Bybit-compliant order quantity natively based on Risk % and minimum exchange limits.
+ * Fetches the instruments-info to align with `qtyStep` precision.
+ */
+async function calculateValidOrderQty(symbol, equity, riskPct, leverage, currentPrice, creds) {
+  try {
+    if (!currentPrice || currentPrice <= 0) return null;
+
+    // 1. Fetch lot size filter from Bybit
+    const infoData = await bybit.makeBybitRequest('GET', '/v5/market/instruments-info', { category: 'linear', symbol }, creds.apiKey, creds.apiSecret);
+    const instrument = infoData?.result?.list?.[0];
+    if (!instrument) return null;
+
+    const qtyStep = parseFloat(instrument.lotSizeFilter?.qtyStep || '1');
+    const minOrderQty = parseFloat(instrument.lotSizeFilter?.minOrderQty || '0.001');
+    const tickSize = parseFloat(instrument.priceFilter?.tickSize || '0.001');
+
+    // 2. Calculate raw Target USDT position
+    // Margin used = equity * riskPct. Total leverage size = margin * leverage.
+    let targetUsdtValue = (equity * (riskPct / 100)) * leverage;
+
+    // 3. Bybit linear pairs minimum order value is strictly > 5 USDT. We enforce 10 USDT for buffer.
+    if (targetUsdtValue < 10) {
+      targetUsdtValue = 10;
+    }
+
+    // 4. Calculate raw quantity
+    const rawQty = targetUsdtValue / currentPrice;
+
+    // 5. Floor to the nearest qtyStep to satisfy Bybit tick size rules
+    // Because JS float math is messy, dividing by step, flooring, then multiplying back is best.
+    let finalQty = Math.floor(rawQty / qtyStep) * qtyStep;
+
+    // JS floating point correction
+    const precisionMatch = qtyStep.toString().match(/(?:\.(\d+))?$/);
+    const precisionCount = precisionMatch && precisionMatch[1] ? precisionMatch[1].length : 0;
+    finalQty = parseFloat(finalQty.toFixed(precisionCount));
+
+    // Fallback if formatting went beneath minimums
+    if (finalQty < minOrderQty) {
+      finalQty = minOrderQty;
+    }
+
+    return { qty: finalQty, tickSize };
+  } catch (err) {
+    console.error(`[RiskMath] Failed to calculate quantity for ${symbol}:`, err);
+    return null;
+  }
+}
+
+/**
  * Emergency close all positions for a bot.
  */
-async function closeAllPositions(creds, bot, positions, reason, botId) {
+async function closeAllPositions(creds, bot, positions, reason, botId, source = 'risk_engine') {
   for (const pos of positions) {
     const closeSide = pos.side === 'Buy' ? 'Sell' : 'Buy';
     try {
@@ -671,13 +1082,31 @@ async function closeAllPositions(creds, bot, positions, reason, botId) {
         reduceOnly: true,
       });
       console.log(`[BotEngine] Closed ${pos.side} ${pos.symbol} x${pos.size}: ${result.retMsg}`);
+
+      // Fetch realized PnL from Bybit for this closed position to store in logs
+      let realizedPnl = null;
+      if (result.retCode === 0) {
+        try {
+          // Small delay to allow Bybit to settle the closed trade
+          await new Promise(r => setTimeout(r, 1500));
+          const pnlData = await bybit.getClosedPnl(creds.apiKey, creds.apiSecret, 'linear', 5);
+          const matchedClose = (pnlData.result?.list || []).find(p => p.symbol === pos.symbol);
+          if (matchedClose) {
+            realizedPnl = parseFloat(matchedClose.closedPnl || 0);
+          }
+        } catch (pnlErr) {
+          console.warn(`[BotEngine] Could not fetch realized PnL for ${pos.symbol}:`, pnlErr.message);
+        }
+      }
+
       await logTrade(botId, bot.userId, {
         action: 'CLOSE',
-        source: 'risk_engine',
+        source,
         symbol: pos.symbol,
         side: closeSide,
         orderType: 'Market',
         qty: pos.size,
+        pnl: realizedPnl,  // Now populated!
         orderId: result.result?.orderId,
         orderStatus: result.retCode === 0 ? 'filled' : 'rejected',
         aiReasoning: reason,
@@ -716,6 +1145,7 @@ async function updateBotStatus(botId, status, errorMessage = null) {
  * Insert a trade log entry.
  */
 async function logTrade(botId, userId, data) {
+  const createdAt = data.createdAt || new Date();
   try {
     await db.insert(tradeLogs).values({
       id: generateId(),
@@ -739,6 +1169,7 @@ async function logTrade(botId, userId, data) {
       aiReasoning: data.aiReasoning,
       marketSnapshot: data.marketSnapshot,
       errorDetails: data.errorDetails,
+      createdAt: createdAt
     });
   } catch (err) {
     console.error(`[BotEngine] Failed to log trade:`, err.message);

@@ -16,7 +16,7 @@ function signRequest(apiKey, apiSecret, timestamp, recvWindow, params = '') {
  */
 export async function makeBybitRequest(method, path, params, apiKey, apiSecret) {
   const timestamp = Date.now().toString();
-  const recvWindow = '5000';
+  const recvWindow = '5000'; // 5 seconds max as recommended by Bybit docs
 
   let url = `${BYBIT_BASE}${path}`;
   let body = '';

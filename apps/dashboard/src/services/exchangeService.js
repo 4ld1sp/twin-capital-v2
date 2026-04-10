@@ -7,31 +7,27 @@
 const API_URLS = {
   bybit: {
     mainnet: 'https://api.bybit.com',
-    testnet: 'https://api-testnet.bybit.com',
   },
   binance: {
     mainnet: 'https://api.binance.com',
-    testnet: 'https://testnet.binance.vision',
   },
 };
 
 const WS_URLS = {
   bybit: {
     mainnet: 'wss://stream.bybit.com/v5/public/spot',
-    testnet: 'wss://stream-testnet.bybit.com/v5/public/spot',
   },
   binance: {
     mainnet: 'wss://stream.binance.com:9443/ws',
-    testnet: 'wss://testnet.binance.vision/ws',
   },
 };
 
-function getBaseUrl(exchange = 'bybit', mode = 'testnet') {
-  return API_URLS[exchange]?.[mode] || API_URLS.bybit.testnet;
+function getBaseUrl(exchange = 'bybit', mode = 'mainnet') {
+  return API_URLS[exchange]?.mainnet || API_URLS.bybit.mainnet;
 }
 
-function getWsUrl(exchange = 'bybit', mode = 'testnet') {
-  return WS_URLS[exchange]?.[mode] || WS_URLS.bybit.testnet;
+function getWsUrl(exchange = 'bybit', mode = 'mainnet') {
+  return WS_URLS[exchange]?.mainnet || WS_URLS.bybit.mainnet;
 }
 
 // ─── Public REST API ───────────────────────────────────────────

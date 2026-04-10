@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/requireAuth.js';
+import { operatorAuth } from '../middleware/operatorAuth.js';
 import { getDecryptedKey } from '../services/apiKeyService.js';
 
 // Exchange services
@@ -8,7 +8,7 @@ import * as binance from '../services/binanceService.js';
 import * as okx from '../services/okxService.js';
 
 const router = Router();
-router.use(requireAuth);
+router.use(operatorAuth);
 
 // ─── Rate Limiting (simple in-memory) ───────────────────
 const rateLimits = new Map();

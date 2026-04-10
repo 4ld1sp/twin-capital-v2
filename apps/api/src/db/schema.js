@@ -178,8 +178,8 @@ export const deployedBots = pgTable('deployed_bots', {
   leverage: integer('leverage').notNull().default(5),
   leverageType: text('leverage_type').notNull().default('isolated'),  // 'isolated' | 'cross'
   maxDailyLossPct: real('max_daily_loss_pct').notNull().default(5),   // % of equity
-  maxPositions: integer('max_positions').notNull().default(1),
-  maxTradesPerDay: integer('max_trades_per_day').notNull().default(3),
+  maxPositions: integer('max_positions').notNull().default(10),
+  maxTradesPerDay: integer('max_trades_per_day').notNull().default(10),
   riskPerTradePct: real('risk_per_trade_pct').notNull().default(1),   // % of equity per trade
 
   // ─── Dynamic Trailing Stop Config ───
@@ -202,6 +202,7 @@ export const deployedBots = pgTable('deployed_bots', {
 
   // ─── Lifecycle ───
   errorMessage: text('error_message'),
+  pnlResetAt: timestamp('pnl_reset_at'),                 // Manual reset for drawdown
   startedAt: timestamp('started_at'),
   stoppedAt: timestamp('stopped_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -246,5 +247,57 @@ export const tradeLogs = pgTable('trade_logs', {
   marketSnapshot: jsonb('market_snapshot'),   // { price, rsi, ema50, ema200, volume, bid, ask, ... }
   errorDetails: text('error_details'),
 
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/**
+ * Saved Strategies
+ * Storing AI generated strategies before deployment.
+ */
+export const savedStrategies = pgTable('saved_strategies', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  symbol: text('symbol').notNull(),
+  interval: text('interval').notNull().default('30m'), // timeframe
+  script: text('script').notNull(),
+  prompt: text('prompt'),
+  backtestResults: jsonb('backtest_results'), // { winrate, totalPnl, maxDrawdown, trades: [] }
+  aiReasoning: text('ai_reasoning'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/**
+ * Agent Chats
+ * Saving conversation context with the Quant Agent.
+ */
+export const agentChats = pgTable('agent_chats', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  role: text('role').notNull(), // 'user' or 'ai'
+  message: text('message').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// OPERATOR KEYS — External Agent Auth (OpenClaw, etc.)
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Operator Keys
+ * Bearer token authentication for external AI agents (e.g., OpenClaw).
+ * The raw key is shown ONCE at creation, only the SHA-256 hash is stored.
+ * Supports permission scoping and expiration.
+ */
+export const operatorKeys = pgTable('operator_keys', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),                        // e.g., "OpenClaw VPS Sumopod"
+  keyHash: text('key_hash').notNull().unique(),        // SHA-256 hash of the actual key
+  permissions: jsonb('permissions').default(["*"]),     // ["*"] = full access, or ["bots:read", "bots:write", ...]
+  lastUsedAt: timestamp('last_used_at'),
+  expiresAt: timestamp('expires_at'),                  // null = never expires
+  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

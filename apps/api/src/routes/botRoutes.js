@@ -4,14 +4,14 @@
  */
 import { Router } from 'express';
 import crypto from 'crypto';
-import { requireAuth } from '../middleware/requireAuth.js';
+import { operatorAuth } from '../middleware/operatorAuth.js';
 import { db } from '../db/index.js';
 import { deployedBots, tradeLogs } from '../db/schema.js';
 import { eq, and, desc } from 'drizzle-orm';
 import { startBot, stopBot, pauseBot, resumeBot, getActiveBotIds } from '../services/botEngine.js';
 
 const router = Router();
-router.use(requireAuth);
+router.use(operatorAuth);
 
 // ─── Deploy a new bot ────────────────────────────────────────
 router.post('/deploy', async (req, res) => {
@@ -38,6 +38,28 @@ router.post('/deploy', async (req, res) => {
 
     if (!strategyName || !strategyScript) {
       return res.status(400).json({ error: 'strategyName and strategyScript are required' });
+    }
+
+    // [CRITICAL FIX] Prevent multiple bots on the same symbol from clashing
+    // If there is an active bot for this symbol, stop it and mark it as replaced.
+    const existingBots = await db.select().from(deployedBots)
+      .where(
+        and(
+          eq(deployedBots.userId, userId),
+          eq(deployedBots.symbol, symbol)
+        )
+      );
+
+    let replacedCount = 0;
+    const activeConflicts = existingBots.filter(b => ['running', 'paused', 'error'].includes(b.status));
+    
+    for (const conflictBot of activeConflicts) {
+      console.log(`[BotRoutes] Auto-stopping existing bot ${conflictBot.id} for symbol ${symbol}`);
+      await stopBot(conflictBot.id).catch(e => console.error('Failed to stop conflicting bot:', e));
+      await db.update(deployedBots)
+        .set({ status: 'replaced', updatedAt: new Date() })
+        .where(eq(deployedBots.id, conflictBot.id));
+      replacedCount++;
     }
 
     const botId = crypto.randomUUID();
@@ -67,7 +89,11 @@ router.post('/deploy', async (req, res) => {
     // Auto-start the bot
     await startBot(botId);
 
-    res.json({ botId, status: 'running', message: 'Bot deployed and started successfully' });
+    const successMsg = replacedCount > 0 
+      ? `Bot deployed successfully. ${replacedCount} previous active bot(s) on ${symbol} were cleanly disabled and replaced.`
+      : 'Bot deployed and started successfully.';
+
+    res.json({ botId, status: 'running', message: successMsg });
   } catch (err) {
     console.error('[BotRoutes] Deploy error:', err.message);
     res.status(500).json({ error: err.message });
@@ -85,7 +111,7 @@ router.get('/', async (req, res) => {
     const enriched = bots.map(b => ({
       ...b,
       isLive: activeIds.includes(b.id),
-      winRate: b.totalTrades > 0 ? ((b.winCount / b.totalTrades) * 100).toFixed(1) : '0.0',
+      winRate: (b.winCount + b.lossCount) > 0 ? ((b.winCount / (b.winCount + b.lossCount)) * 100).toFixed(1) : '0.0',
     }));
 
     res.json(enriched);
@@ -175,6 +201,68 @@ router.post('/:id/resume', async (req, res) => {
     res.json({ status: 'running', message: 'Bot resumed' });
   } catch (err) {
     console.error('[BotRoutes] Resume error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── Reset a bot's drawdown ──────────────────────────────────
+router.post('/:id/reset-drawdown', async (req, res) => {
+  try {
+    const [bot] = await db.select().from(deployedBots)
+      .where(and(eq(deployedBots.id, req.params.id), eq(deployedBots.userId, req.user.id)));
+    if (!bot) return res.status(404).json({ error: 'Bot not found' });
+
+    await db.update(deployedBots)
+      .set({ 
+        pnlResetAt: new Date(), 
+        dailyPnl: 0, 
+        errorMessage: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(deployedBots.id, bot.id));
+
+    res.json({ message: 'Daily drawdown reset successfully' });
+  } catch (err) {
+    console.error('[BotRoutes] Reset error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── Update a bot's settings ─────────────────────────────────
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { signalInterval, riskInterval, maxTradesPerDay, riskPerTradePct } = req.body;
+
+    const [bot] = await db.select().from(deployedBots)
+      .where(and(eq(deployedBots.id, id), eq(deployedBots.userId, userId)));
+    
+    if (!bot) return res.status(404).json({ error: 'Bot not found' });
+
+    // Update DB
+    await db.update(deployedBots)
+      .set({
+        ...(signalInterval && { signalInterval }),
+        ...(riskInterval && { riskInterval }),
+        ...(maxTradesPerDay && { maxTradesPerDay }),
+        ...(riskPerTradePct && { riskPerTradePct }),
+        updatedAt: new Date()
+      })
+      .where(eq(deployedBots.id, id));
+
+    // If signalInterval changed and bot is active, restart loops
+    if (signalInterval && signalInterval !== bot.signalInterval) {
+      if (['running', 'paused'].includes(bot.status)) {
+        console.log(`[BotRoutes] Restarting bot ${id} to apply new signalInterval: ${signalInterval}`);
+        await stopBot(id);
+        await resumeBot(id);
+      }
+    }
+
+    res.json({ message: 'Bot updated successfully', signalInterval });
+  } catch (err) {
+    console.error('[BotRoutes] Update error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

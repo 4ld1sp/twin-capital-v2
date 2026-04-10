@@ -4,13 +4,13 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState({
     symbol: strategy?.symbol || 'BTCUSDT',
-    networkMode: 'testnet',
+    networkMode: 'mainnet',
     signalInterval: '30m',
     riskInterval: '10s',
     leverage: 5,
     maxDailyLossPct: 5,
-    maxPositions: 1,
-    maxTradesPerDay: 3,
+    maxPositions: 10,
+    maxTradesPerDay: 10,
     riskPerTradePct: 1,
     trailingStopActivationPct: 1.0,
     trailingStopCallbackPct: 0.5,
@@ -66,27 +66,25 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">Symbol</label>
-                  <input
-                    type="text"
+                  <select
                     name="symbol"
                     value={config.symbol}
                     onChange={handleChange}
-                    className="w-full bg-black/20 border border-glass rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all"
-                    placeholder="e.g. BTCUSDT"
-                    required
-                  />
+                    className="w-full bg-black/20 border border-glass rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
+                  >
+                    <option value="ALL_MARKETS">ALL MARKETS (Auto Scanner)</option>
+                    <option value="BTCUSDT">BTCUSDT (Targeted)</option>
+                    <option value="ETHUSDT">ETHUSDT (Targeted)</option>
+                    <option value="SOLUSDT">SOLUSDT (Targeted)</option>
+                    <option value="XRPUSDT">XRPUSDT (Targeted)</option>
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">Network</label>
-                  <select
-                    name="networkMode"
-                    value={config.networkMode}
-                    onChange={handleChange}
-                    className="w-full bg-black/20 border border-glass rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
-                  >
-                    <option value="testnet">Testnet (Paper Trading)</option>
-                    <option value="mainnet">Mainnet (Live Funds)</option>
-                  </select>
+                  <div className="w-full bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-500 flex items-center justify-between">
+                    <span>Mainnet (Live Funds)</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">AI Signal Cadence</label>

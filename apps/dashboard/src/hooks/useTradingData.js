@@ -94,19 +94,27 @@ export function useTradingData(interval = 10000) {
   ).length;
   const winrate = totalTrades > 0 ? (winningTrades / totalTrades) * 100 : 0;
 
-  // Max Drawdown — computed from the cumulative P&L curve
+  // Max Drawdown — computed from the cumulative P&L curve relative to Account Equity
   let maxDrawdown = 0;
-  let peak = 0;
   let runningPnl = 0;
+  
+  const startingEquity = totalEquity > 0 ? Math.max(totalEquity - totalRealizedPnl, 1) : 0;
+  let peakEquity = startingEquity;
+
   // Sort by time ascending for correct curve
   const sortedPnl = [...closedPnl].sort(
     (a, b) => (a.updatedTime || 0) - (b.updatedTime || 0)
   );
-  for (const trade of sortedPnl) {
-    runningPnl += parseFloat(trade.closedPnl || 0);
-    if (runningPnl > peak) peak = runningPnl;
-    const drawdown = peak > 0 ? ((peak - runningPnl) / peak) * 100 : 0;
-    if (drawdown > maxDrawdown) maxDrawdown = drawdown;
+
+  if (startingEquity > 0) {
+    for (const trade of sortedPnl) {
+      runningPnl += parseFloat(trade.closedPnl || 0);
+      const currentEquity = startingEquity + runningPnl;
+      if (currentEquity > peakEquity) peakEquity = currentEquity;
+      
+      const drawdown = peakEquity > 0 ? ((peakEquity - currentEquity) / peakEquity) * 100 : 0;
+      if (drawdown > maxDrawdown) maxDrawdown = drawdown;
+    }
   }
 
   // P&L timeseries for charts (grouped by day)

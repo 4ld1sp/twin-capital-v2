@@ -39,7 +39,7 @@ export function TradingProvider({ children }) {
     const saved = localStorage.getItem(EXCHANGE_KEY);
     return saved || 'bybit';
   });
-  const [networkMode, setNetworkMode] = useState('testnet'); // 'testnet' | 'mainnet'
+  const [networkMode, setNetworkMode] = useState('mainnet'); // defaults to mainnet
   const [activeSymbol, setActiveSymbol] = useState('BTCUSDT');
   const [activeTimeframe, setActiveTimeframe] = useState('15');
   const [livePrice, setLivePrice] = useState(null);

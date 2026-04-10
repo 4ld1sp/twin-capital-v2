@@ -84,10 +84,10 @@ const StrategyManager = () => {
                     <button
                       onClick={(e) => { e.stopPropagation(); deployStrategy(strategy); }}
                       disabled={isDeployed}
-                      className={`flex-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg ${
                         isDeployed
                           ? 'bg-primary/10 text-primary border border-primary/20 cursor-default'
-                          : 'bg-primary text-black hover:brightness-110 shadow-lg shadow-primary/20'
+                          : 'bg-primary text-black hover:brightness-110 shadow-primary/25'
                       }`}
                     >
                       <span className="material-symbols-outlined text-sm">{isDeployed ? 'check' : 'rocket_launch'}</span>

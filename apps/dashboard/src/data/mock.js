@@ -77,7 +77,6 @@ export const activityLog = [
   { id: 5, type: 'teal', icon: '✓', title: 'Grid Bot Cycle', desc: 'Completed 3 grid trades, net +0.34%', time: '2 hours ago' },
   { id: 6, type: 'red', icon: '!', title: 'Drawdown Alert', desc: 'Drawdown reached 7.2% (limit: 15%)', time: '3 hours ago' },
   { id: 7, type: 'purple', icon: '📱', title: 'Content Published', desc: 'TikTok video scheduled and posted successfully', time: '4 hours ago' },
-  { id: 8, type: 'amber', icon: '⟳', title: 'Parameter Update', desc: 'RSI period adjusted from 14 to 12', time: '5 hours ago' },
 ];
 
 // ---- Content Pipeline (Kanban) ----
@@ -147,15 +146,6 @@ export const backtestResults = Array.from({ length: 90 }, (_, i) => {
     benchmark: +(100 + i * 0.3 + Math.sin(i * 0.2) * 2).toFixed(1),
   };
 });
-
-// ---- Parameter Optimization Logs ----
-export const parameterLogs = [
-  { id: 1, param: 'RSI Period', from: 14, to: 12, impact: '+0.8% winrate', date: '2 days ago' },
-  { id: 2, param: 'Stop Loss %', from: -5, to: -3, impact: '-2.1% max DD', date: '4 days ago' },
-  { id: 3, param: 'Grid Spacing', from: '2.0%', to: '1.5%', impact: '+12 trades/week', date: '1 week ago' },
-  { id: 4, param: 'EMA Fast', from: 9, to: 8, impact: '+0.3% return', date: '1 week ago' },
-  { id: 5, param: 'Position Size', from: '2%', to: '1.5%', impact: 'Risk reduction', date: '2 weeks ago' },
-];
 
 // ---- Market Regime ----
 export const marketRegime = {

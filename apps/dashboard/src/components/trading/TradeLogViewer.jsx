@@ -5,6 +5,10 @@ const TradeLogViewer = ({ botId, onClose }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Clear old logs Immediately when botId changes to prevent ghosting
+    setLogs([]);
+    setLoading(true);
+
     const fetchLogs = async () => {
       try {
         const res = await fetch(`/api/bots/${botId}/logs`);

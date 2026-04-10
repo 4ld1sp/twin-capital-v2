@@ -167,8 +167,8 @@ const BacktestResults = ({ onClear, strategyData }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          strategyName: config.name,
-          strategyScript: config.script,
+          strategyName: config.strategyName || config.name || "Custom Strategy",
+          strategyScript: config.script || `// Auto-generated script for ${config.symbol}\nstrategy("Auto", overlay=true)\nif close > open\n    strategy.entry("Long", strategy.long)\n`,
           symbol: config.symbol,
           exchange: activeExchange,
           networkMode: config.networkMode,
@@ -186,7 +186,8 @@ const BacktestResults = ({ onClear, strategyData }) => {
       if (!res.ok) throw new Error(data.error || 'Failed to deploy bot');
       
       // Navigate to Bot Status Matrix or show success toast
-      alert('Bot Deployed Successfully!');
+      alert(data.message || 'Bot Deployed Successfully!');
+      setShowDeployModal(false);
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -220,7 +221,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
               </p>
             </div>
             <div className="flex gap-3 flex-wrap">
-              <button onClick={() => setShowDeployModal(true)} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-500 text-black text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] hover:bg-orange-400 hover:scale-105 transition-all">
+              <button onClick={() => setShowDeployModal(true)} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-black text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/25 hover:brightness-110 hover:scale-105 transition-all">
                 <span className="material-symbols-outlined text-sm">rocket_launch</span>
                 Deploy to Live
               </button>

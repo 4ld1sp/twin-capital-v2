@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTrading } from '../../context/TradingContext';
 import { getAccountBalance, getPositions, getActiveOrders, getOrderHistory, getClosedPnl, placeOrder, cancelOrder, getSymbols } from '../../services/exchangeService';
 import GlassSelect from '../ui/GlassSelect';
+import DeployBotModal from './DeployBotModal';
 
 const TradingTerminal = () => {
   const { activeExchange, networkMode, activeSymbol, setActiveSymbol, livePrice, liveTicker, isConnected, activeStrategy } = useTrading();
@@ -37,6 +38,7 @@ const TradingTerminal = () => {
   const [orderResult, setOrderResult] = useState(null);
   const consecutiveFailures = React.useRef(0);
   const [activeBot, setActiveBot] = useState(null);
+  const [showDeployModal, setShowDeployModal] = useState(false);
 
   // Load exchange data and active bots
   useEffect(() => {
@@ -46,9 +48,20 @@ const TradingTerminal = () => {
         const botsRes = await fetch('/api/bots');
         if (botsRes.ok) {
           const botsData = await botsRes.json();
-          // Find if there's a running bot for the active symbol
-          const currentBot = botsData.find(b => b.status === 'running' && b.symbol === activeSymbol);
-          setActiveBot(currentBot || null);
+          // Select most relevant bot for the active symbol (exclude permanently terminal states)
+          const symbolBots = botsData.filter(b => b.symbol === activeSymbol && ['running', 'paused', 'error', 'stopped'].includes(b.status));
+          if (symbolBots.length > 0) {
+            const priority = ['running', 'paused', 'error', 'stopped'];
+            symbolBots.sort((a, b) => {
+              const statusDiff = priority.indexOf(a.status) - priority.indexOf(b.status);
+              if (statusDiff !== 0) return statusDiff;
+              // If same status, newest first
+              return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            setActiveBot(symbolBots[0]);
+          } else {
+            setActiveBot(null);
+          }
         }
       } catch (err) {
         console.error('Failed to load bots:', err);
@@ -174,6 +187,46 @@ const TradingTerminal = () => {
     }
   };
 
+  const handleDeployAIStrategy = async (config) => {
+    try {
+      const res = await fetch('/api/bots/deploy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          strategyName: config.strategyName || config.name || "Custom Strategy",
+          strategyScript: config.script || `// Auto-generated script for ${config.symbol}\nstrategy("Auto", overlay=true)\nif close > open\n    strategy.entry("Long", strategy.long)\n`,
+          symbol: config.symbol,
+          exchange: activeExchange,
+          networkMode: config.networkMode,
+          signalInterval: config.signalInterval,
+          riskInterval: config.riskInterval,
+          leverage: config.leverage,
+          maxDailyLossPct: config.maxDailyLossPct,
+          maxPositions: config.maxPositions,
+          maxTradesPerDay: config.maxTradesPerDay,
+          trailingStopActivationPct: config.trailingStopActivationPct,
+          trailingStopCallbackPct: config.trailingStopCallbackPct,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to deploy bot');
+      
+      alert(data.message || 'Bot Deployed Successfully!');
+      setShowDeployModal(false);
+      
+      // Auto reload bots list immediately to show the newly deployed bot
+      const botsRes = await fetch('/api/bots');
+      if (botsRes.ok) {
+        const botsData = await botsRes.json();
+        const symbolBots = botsData.filter(b => b.symbol === activeSymbol && ['running', 'paused', 'error'].includes(b.status));
+        if (symbolBots.length > 0) setActiveBot(symbolBots[0]);
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+
   const displayPrice = livePrice
     ? '$' + Number(livePrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : '—';
@@ -249,47 +302,119 @@ const TradingTerminal = () => {
           />
         </div>
       </div>      {/* AI Trading Mode Banner */}
-      {activeBot && (
-        <div className="glass-card border border-emerald-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between bg-emerald-500/5 gap-4 shadow-[0_0_20px_rgba(16,185,129,0.1)] relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] rounded-full pointer-events-none"></div>
+      {activeBot ? (
+        <div className={`glass-card border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden ${
+          activeBot.status === 'running' 
+            ? 'border-emerald-500/30 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.1)]' 
+            : activeBot.status === 'paused'
+            ? 'border-amber-500/30 bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.1)]'
+            : activeBot.status === 'error' || activeBot.status === 'killed'
+            ? 'border-rose-500/30 bg-rose-500/5 shadow-[0_0_20px_rgba(244,63,94,0.1)]'
+            : 'border-glass bg-black/5 dark:bg-white/5'
+        }`}>
+          <div className={`absolute top-0 right-0 w-32 h-32 blur-[50px] rounded-full pointer-events-none ${
+             activeBot.status === 'running' ? 'bg-emerald-500/10' :
+             activeBot.status === 'paused' ? 'bg-amber-500/10' :
+             activeBot.status === 'error' || activeBot.status === 'killed' ? 'bg-rose-500/10' : 'bg-white/5'
+          }`}></div>
           
           <div className="flex items-center gap-4 relative z-10">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-sm relative">
-              <span className="material-symbols-outlined text-emerald-500 text-xl">smart_toy</span>
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-ping"></span>
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-black"></span>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-sm relative ${
+               activeBot.status === 'running' ? 'bg-emerald-500/10 border-emerald-500/20' :
+               activeBot.status === 'paused' ? 'bg-amber-500/10 border-amber-500/20' :
+               activeBot.status === 'error' || activeBot.status === 'killed' ? 'bg-rose-500/10 border-rose-500/20' : 'bg-black/10 border-glass'
+            }`}>
+              <span className={`material-symbols-outlined text-xl ${
+                 activeBot.status === 'running' ? 'text-emerald-500' :
+                 activeBot.status === 'paused' ? 'text-amber-500' :
+                 activeBot.status === 'error' || activeBot.status === 'killed' ? 'text-rose-500' : 'text-secondary'
+              }`}>
+                {activeBot.status === 'error' || activeBot.status === 'killed' ? 'warning' : 'smart_toy'}
+              </span>
+              {activeBot.status === 'running' && (
+                <>
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-ping"></span>
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-black"></span>
+                </>
+              )}
             </div>
             <div>
               <p className="text-main text-sm font-black tracking-tight">{activeBot.strategyName}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-emerald-500 text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded">Running</span>
-                <span className="text-secondary/60 text-[10px]">•</span>
-                <span className="text-secondary text-[10px] font-bold font-mono">Max Loss: {activeBot.maxDailyLossPct}%</span>
-                <span className="text-secondary/60 text-[10px]">•</span>
-                <span className="text-secondary text-[10px] font-bold font-mono">Trades: {activeBot.dailyTradeCount}/{activeBot.maxTradesPerDay}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
+                <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded w-fit ${
+                   activeBot.status === 'running' ? 'text-emerald-500 bg-emerald-500/10' :
+                   activeBot.status === 'paused' ? 'text-amber-500 bg-amber-500/10' :
+                   activeBot.status === 'error' ? 'text-rose-500 bg-rose-500/10' :
+                   activeBot.status === 'killed' ? 'text-rose-500 bg-rose-500/10' :
+                   'text-secondary bg-black/10'
+                }`}>
+                  {activeBot.status}
+                </span>
+
+                {(activeBot.status === 'error' || activeBot.status === 'killed') && activeBot.errorMessage && (
+                  <span className="text-rose-500/80 text-[10px] font-bold truncate max-w-[200px]" title={activeBot.errorMessage}>
+                    {activeBot.errorMessage}
+                  </span>
+                )}
+                
+                {activeBot.status !== 'error' && activeBot.status !== 'killed' && (
+                  <>
+                    <span className="text-secondary/60 text-[10px] hidden sm:block">•</span>
+                    <span className="text-secondary text-[10px] font-bold font-mono">Max Loss: {activeBot.maxDailyLossPct}%</span>
+                    <span className="text-secondary/60 text-[10px] hidden sm:block">•</span>
+                    <span className="text-secondary text-[10px] font-bold font-mono">Trades: {activeBot.dailyTradeCount}/{activeBot.maxTradesPerDay}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0 relative z-10">
-            <a href="/bots" className="w-full md:w-auto px-5 py-2.5 rounded-xl border border-glass text-secondary text-[10px] font-black uppercase tracking-widest hover:text-main hover:bg-white/5 transition-all text-center">
+          <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0 relative z-10 flex-wrap">
+            <a href="/bots" className="flex-1 md:flex-none px-5 py-2.5 rounded-xl border border-glass text-secondary text-[10px] font-black uppercase tracking-widest hover:text-main hover:bg-white/5 transition-all text-center">
               View Logs
             </a>
-            <button
-              onClick={async () => {
-                if (confirm('Are you sure you want to stop this bot?')) {
-                  await fetch(`/api/bots/${activeBot.id}/stop`, { method: 'POST' });
-                  setActiveBot(null);
-                }
-              }}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-rose-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-all flex justify-center items-center gap-2"
-            >
-              <span className="material-symbols-outlined text-sm">cancel</span>
-              Stop Engine
-            </button>
+            {activeBot.status === 'running' ? (
+              <button
+                onClick={async () => {
+                  if (confirm('Are you sure you want to stop this bot?')) {
+                    await fetch(`/api/bots/${activeBot.id}/stop`, { method: 'POST' });
+                  }
+                }}
+                className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-rose-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-all flex justify-center items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">cancel</span>
+                Stop
+              </button>
+            ) : activeBot.status === 'paused' ? (
+              <button
+                onClick={async () => {
+                  await fetch(`/api/bots/${activeBot.id}/resume`, { method: 'POST' });
+                }}
+                className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all flex justify-center items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">play_arrow</span>
+                Resume
+              </button>
+            ) : null}
           </div>
         </div>
-      )}
+      ) : activeStrategy ? (
+         <div className="glass-card border border-primary/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between bg-primary/5 gap-4">
+           <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+              <span className="material-symbols-outlined text-primary text-xl">model_training</span>
+            </div>
+            <div>
+              <p className="text-main text-sm font-black tracking-tight">{activeStrategy.name}</p>
+              <p className="text-secondary text-[10px] font-bold">Ready to deploy on {activeSymbol}</p>
+            </div>
+           </div>
+           <button onClick={() => setShowDeployModal(true)} className="px-5 py-2.5 rounded-xl bg-primary text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-primary/20 transition-all flex justify-center items-center gap-2">
+              <span className="material-symbols-outlined text-sm">rocket_launch</span>
+              Deploy Strategy
+           </button>
+         </div>
+      ) : null}
 
       {/* Main Layout */}
       <div className="flex flex-col xl:flex-row gap-6 items-start">
@@ -767,6 +892,13 @@ const TradingTerminal = () => {
             </div>
           </div>
         </div>
+      )}
+      {showDeployModal && activeStrategy && (
+        <DeployBotModal
+          strategy={activeStrategy}
+          onClose={() => setShowDeployModal(false)}
+          onDeploy={handleDeployAIStrategy}
+        />
       )}
     </div>
   );

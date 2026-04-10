@@ -47,7 +47,7 @@ router.post('/chat', async (req, res) => {
         const url = `https://api.minimax.io/v1/text/chatcompletion_v2?GroupId=${fields.group_id}`;
         
         const reqBody = {
-          model: model || 'MiniMax-M2.5',
+          model: model || 'MiniMax-M2.7-highspeed',
           messages,
           tokens_to_generate: maxTokens,
           temperature: 0.7,
@@ -85,7 +85,7 @@ router.post('/chat', async (req, res) => {
 
         aiResponse = {
           content: data.choices?.[0]?.message?.content || data.reply || '',
-          model: data.model || 'MiniMax-M2.5',
+          model: data.model || 'MiniMax-M2.7-highspeed',
           platform: 'minimax',
           usage: data.usage || {},
         };

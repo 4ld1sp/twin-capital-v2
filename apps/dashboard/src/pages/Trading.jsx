@@ -8,15 +8,6 @@ import GlassSelect from '../components/ui/GlassSelect';
 import DrawdownTracker from '../components/DrawdownTracker';
 import BotStatusMatrix from '../components/BotStatusMatrix';
 
-// Optimization Components
-import OptimizationHeader from '../components/trading/OptimizationHeader';
-import BacktestEquityChart from '../components/trading/BacktestEquityChart';
-import OptimizationMetricsRow from '../components/trading/OptimizationMetricsRow';
-import OptimizationLogsTable from '../components/trading/OptimizationLogsTable';
-import ABTestingResults from '../components/trading/ABTestingResults';
-import CurrentParametersList from '../components/trading/CurrentParametersList';
-import AutomatedExecutionControl from '../components/trading/AutomatedExecutionControl';
-
 // Backtests Components
 import BacktestsHeader from '../components/trading/BacktestsHeader';
 import BacktestsEquityCurve from '../components/trading/BacktestsEquityCurve';
@@ -26,10 +17,9 @@ import RunNewTestModal from '../components/trading/RunNewTestModal';
 // Modal Component
 import NewStrategyModal from '../components/trading/NewStrategyModal';
 import ExportReportModal from '../components/trading/ExportReportModal';
-import RunOptimizationModal from '../components/trading/RunOptimizationModal';
-
-// Phase 9 Optimization Components
-import OptimizationCorrelations from '../components/trading/OptimizationCorrelations';
+// Hybrid Bot Engine UI
+import BotEngineDashboard from '../components/trading/bot-engine/BotEngineDashboard';
+import AgentWorkspace from '../components/trading/bot-engine/AgentWorkspace';
 
 // Live Trading Terminal
 import TradingTerminal from '../components/trading/TradingTerminal';
@@ -38,15 +28,11 @@ import TradingTerminal from '../components/trading/TradingTerminal';
 import StrategyManager from '../components/trading/StrategyManager';
 
 const Trading = () => {
-  const { activeExchange, setActiveExchange, networkMode, setNetworkMode, activeSymbol, livePrice, isConnected, liveTicker } = useTrading();
+  const { activeExchange, setActiveExchange, activeSymbol, livePrice, isConnected, liveTicker } = useTrading();
   const { userConnections } = useApp();
   const tradingConnections = userConnections?.trading || [];
   const [activeTab, setActiveTab] = useState('overview');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Optimization UI State
-  const [isExportOpen, setIsExportOpen] = useState(false);
-  const [isRunOptOpen, setIsRunOptOpen] = useState(false);
 
   // Backtest State
   const [isRunTestOpen, setIsRunTestOpen] = useState(false);
@@ -137,29 +123,6 @@ const Trading = () => {
     </>
   );
 
-  const renderOptimization = () => (
-    <div className="w-full flex flex-col pt-4">
-      <OptimizationHeader
-        onExportClick={() => setIsExportOpen(true)}
-        onRunClick={() => setIsRunOptOpen(true)}
-      />
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 flex flex-col gap-6">
-          <BacktestEquityChart />
-          <OptimizationMetricsRow />
-          <OptimizationLogsTable />
-          <OptimizationCorrelations />
-        </div>
-        <div className="flex flex-col gap-6">
-          <ABTestingResults />
-          <CurrentParametersList />
-          <AutomatedExecutionControl />
-        </div>
-      </div>
-    </div>
-  );
-
   const renderBacktests = () => (
     <div className="w-full flex flex-col">
       <BacktestsHeader onRunTestClick={() => setIsRunTestOpen(true)} />
@@ -191,10 +154,17 @@ const Trading = () => {
             Overview
           </button>
           <button
-            onClick={() => setActiveTab('optimization')}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'optimization' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+            onClick={() => setActiveTab('bot-engine')}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'bot-engine' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
-            Optimization
+            Bot Engine
+          </button>
+          <button
+            onClick={() => setActiveTab('quant-agent')}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === 'quant-agent' ? 'bg-primary text-black' : 'text-secondary hover:text-main hover:bg-black/5 dark:hover:bg-white/5'}`}
+          >
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Quant Agent
           </button>
           <button
             onClick={() => setActiveTab('backtests')}
@@ -233,24 +203,16 @@ const Trading = () => {
             className="w-32"
             searchable={false}
           />
-          {/* Network Mode */}
-          <button
-            onClick={() => setNetworkMode(prev => prev === 'testnet' ? 'mainnet' : 'testnet')}
-            className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${networkMode === 'testnet' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}
-          >
-            {networkMode}
-          </button>
         </div>
       </div>
 
       {activeTab === 'overview' && renderOverview()}
-      {activeTab === 'optimization' && renderOptimization()}
+      {activeTab === 'bot-engine' && <BotEngineDashboard />}
+      {activeTab === 'quant-agent' && <AgentWorkspace />}
       {activeTab === 'backtests' && renderBacktests()}
       {activeTab === 'terminal' && renderTerminal()}
 
       <NewStrategyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <ExportReportModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
-      <RunOptimizationModal isOpen={isRunOptOpen} onClose={() => setIsRunOptOpen(false)} />
       <RunNewTestModal 
         isOpen={isRunTestOpen} 
         onClose={() => setIsRunTestOpen(false)} 
