@@ -78,7 +78,7 @@ const ContentPipeline = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold text-main">Content Pipeline</h3>
+        <h3 className="text-xl font-bold text-[var(--text-primary)]">Content Pipeline</h3>
         <button onClick={openCreateModal} className="flex items-center gap-1.5 text-xs font-black text-black bg-primary hover:brightness-110 transition-all px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 uppercase tracking-widest">
           <span className="material-symbols-outlined text-[18px]">add</span>
           Add Task
@@ -91,7 +91,7 @@ const ContentPipeline = () => {
           return (
             <div
               key={column.id}
-              className="bg-black/5 dark:bg-white/5 p-4 rounded-2xl border border-glass flex flex-col transition-all min-h-[400px]"
+              className="p-4 rounded-2xl border border-[var(--border)] flex flex-col transition-all min-h-[400px]"
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, column.id)}
             >
@@ -110,22 +110,22 @@ const ContentPipeline = () => {
                     onDragStart={(e) => handleDragStart(e, task.id)}
                     onDragEnd={handleDragEnd}
                     onClick={() => openEditModal(task)}
-                    className={`glass-card p-4 rounded-xl shadow-sm border border-glass cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all group ${column.borderHighlight || ''} ${draggedTaskId === task.id ? 'ring-2 ring-primary border-transparent opacity-50 relative z-50' : ''}`}
+                    className={`bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-4 rounded-xl shadow-sm border border-[var(--border)] cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all group ${column.borderHighlight || ''} ${draggedTaskId === task.id ? 'ring-2 ring-primary border-transparent opacity-50 relative z-50' : ''}`}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <p className="text-sm font-bold text-main flex-1 pr-2 leading-tight">{task.title}</p>
-                      <span className="material-symbols-outlined text-[16px] text-secondary opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+                      <p className="text-sm font-bold text-[var(--text-primary)] flex-1 pr-2 leading-tight">{task.title}</p>
+                      <span className="material-symbols-outlined text-[16px] text-[var(--text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
                     </div>
 
                     {task.targetTime && (
-                      <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider mb-3 p-1.5 rounded-lg border ${isOverdue(task.targetTime) && task.status !== 'go_live' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-black/5 dark:bg-white/5 text-secondary border-glass'}`}>
+                      <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider mb-3 p-1.5 rounded-lg border ${isOverdue(task.targetTime) && task.status !== 'go_live' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'text-[var(--text-secondary)] border-[var(--border)]'}`}>
                         <span className="material-symbols-outlined text-[14px]">{isOverdue(task.targetTime) && task.status !== 'go_live' ? 'warning' : 'schedule'}</span>
                         {new Date(task.targetTime).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                       </div>
                     )}
 
                     {task.media && task.media.length > 0 && (
-                      <div className="mb-3 rounded-lg overflow-hidden border border-glass relative aspect-video bg-black/5 dark:bg-white/5 group-hover:border-primary/30 transition-all">
+                      <div className="mb-3 rounded-lg overflow-hidden border border-[var(--border)] relative aspect-video group-hover:border-primary/30 transition-all">
                         {task.media[0].type === 'video' ? (
                           <div className="w-full h-full flex items-center justify-center relative">
                             <img src={task.media[0].url} alt="" className="w-full h-full object-cover opacity-60" />
@@ -145,7 +145,7 @@ const ContentPipeline = () => {
                     )}
 
                     <div className="flex justify-between items-center">
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-glass shadow-sm ${task.platformColor}`}>{task.platform}</span>
+                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-[var(--border)] shadow-sm ${task.platformColor}`}>{task.platform}</span>
                       <div className="w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-[10px] font-black shadow-sm">A</div>
                     </div>
                   </div>
@@ -157,7 +157,7 @@ const ContentPipeline = () => {
                   </div>
                 )}
                 {columnTasks.length === 0 && !draggedTaskId && (
-                  <div className="text-secondary opacity-40 text-[10px] font-black uppercase tracking-widest text-center py-12 border-2 border-dashed border-glass rounded-2xl flex-1 flex items-center justify-center">
+                  <div className="text-[var(--text-secondary)] opacity-40 text-[10px] font-black uppercase tracking-widest text-center py-12 border-2 border-dashed border-[var(--border)] rounded-2xl flex-1 flex items-center justify-center">
                     No tasks
                   </div>
                 )}

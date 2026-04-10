@@ -42,13 +42,13 @@ const FollowersGrowthChart = () => {
   }, []);
 
   return (
-    <div className="glass-card p-6 rounded-3xl border border-glass h-full flex flex-col shadow-sm relative overflow-hidden group/card">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-6 rounded-3xl border border-[var(--border)] h-full flex flex-col shadow-sm relative overflow-hidden group/card">
       {/* Background Decorative Gradient */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -mr-16 -mt-16 rounded-full group-hover/card:bg-primary/10 transition-all duration-700"></div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 relative z-10">
         <div className="space-y-1">
-          <h3 className="text-sm font-black text-main uppercase tracking-widest flex items-center gap-2">
+          <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-xl">insights</span>
             Growth Performance
           </h3>
@@ -69,7 +69,7 @@ const FollowersGrowthChart = () => {
         <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => setSelectedPlatform('all')}
-            className={`text-[9px] font-black uppercase tracking-tighter px-3 py-1.5 rounded-full border transition-all ${selectedPlatform === 'all' ? 'bg-primary text-black border-primary shadow-lg shadow-primary/20' : 'bg-black/5 dark:bg-white/5 text-secondary border-glass hover:bg-black/10 dark:hover:bg-white/10'}`}
+            className={`text-[9px] font-black uppercase tracking-tighter px-3 py-1.5 rounded-full border transition-all ${selectedPlatform === 'all' ? 'bg-primary text-black border-primary shadow-lg shadow-primary/20' : 'text-[var(--text-secondary)] border-[var(--border)] hover: '}`}
           >
             All
           </button>
@@ -81,7 +81,7 @@ const FollowersGrowthChart = () => {
                 key={conn.id}
                 onClick={() => setSelectedPlatform(conn.platformId)}
                 className={`text-[9px] font-black uppercase tracking-tighter px-3 py-1.5 rounded-full border flex items-center gap-1.5 transition-all
-                  ${isSelected ? 'bg-main text-black dark:text-inverse border-main shadow-lg shadow-main/10' : 'bg-black/5 dark:bg-white/5 text-secondary border-glass hover:bg-black/10 dark:hover:bg-white/10'}
+                  ${isSelected ? 'bg-[var(--bg-main)] text-black dark:text-inverse border-main shadow-lg shadow-main/10' : 'text-[var(--text-secondary)] border-[var(--border)] hover: '}
                 `}
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${meta.color?.split(' ')[0] || 'bg-slate-400'}`}></span>
@@ -136,7 +136,7 @@ const FollowersGrowthChart = () => {
                   }}
                 >
                   {/* Tooltip on Hover */}
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-main text-[8px] font-black uppercase text-black dark:text-inverse px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-xl">
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--bg-main)] text-[8px] font-black uppercase text-black dark:text-inverse px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-xl">
                     {conn.name}: {displayVal}%
                   </div>
                 </div>

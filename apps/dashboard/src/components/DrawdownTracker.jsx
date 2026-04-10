@@ -26,15 +26,15 @@ const DrawdownTracker = ({ currentDrawdown = 0, maxDrawdown = 0, pnlTimeseries =
   const hasData = pnlTimeseries.length > 0;
 
   return (
-    <div className="glass-card rounded-2xl p-6 shadow-sm flex flex-col h-full transition-all duration-300">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl p-6 shadow-sm flex flex-col h-full transition-all duration-300">
       <div className="mb-6">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-black text-main uppercase tracking-tight">Drawdown Tracker</h3>
+          <h3 className="text-lg font-black text-[var(--text-primary)] uppercase tracking-tight">Drawdown Tracker</h3>
           {hasData && (
             <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest">Live</span>
           )}
         </div>
-        <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-70">Risk exposure from closed trades</p>
+        <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest opacity-70">Risk exposure from closed trades</p>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-6">
         <div className="relative h-44 w-full bg-rose-500/5 rounded-2xl border border-rose-500/20 overflow-hidden shadow-inner">
@@ -55,13 +55,13 @@ const DrawdownTracker = ({ currentDrawdown = 0, maxDrawdown = 0, pnlTimeseries =
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-glass transition-all hover:bg-black/10 dark:hover:bg-white/10">
-            <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">Current</p>
+          <div className="p-4 rounded-xl border border-[var(--border)] transition-all hover: ">
+            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1">Current</p>
             <p className="text-2xl font-black text-rose-500">-{currentDrawdown.toFixed(1)}%</p>
           </div>
-          <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-glass transition-all hover:bg-black/10 dark:hover:bg-white/10">
-            <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">Worst Case</p>
-            <p className="text-2xl font-black text-main">-{maxDrawdown.toFixed(1)}%</p>
+          <div className="p-4 rounded-xl border border-[var(--border)] transition-all hover: ">
+            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1">Worst Case</p>
+            <p className="text-2xl font-black text-[var(--text-primary)]">-{maxDrawdown.toFixed(1)}%</p>
           </div>
         </div>
       </div>

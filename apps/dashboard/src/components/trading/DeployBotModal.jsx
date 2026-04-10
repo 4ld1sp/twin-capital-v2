@@ -36,19 +36,19 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm shadow-2xl">
-      <div className="glass-card border border-glass rounded-[2rem] w-full max-w-2xl bg-black/80 shadow-[0_0_100px_rgba(0,184,217,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-[2rem] w-full max-w-2xl bg-black/80 shadow-[0_0_100px_rgba(0,184,217,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="p-6 border-b border-glass flex items-center justify-between shrink-0">
+        <div className="p-6 border-b border-[var(--border)] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shadow-[inset_0_2px_10px_rgba(0,184,217,0.2)]">
               <span className="material-symbols-outlined text-primary text-2xl">rocket_launch</span>
             </div>
             <div>
-              <h2 className="text-xl font-black text-main tracking-tight">Deploy Auto-Trading Bot</h2>
-              <p className="text-secondary text-xs font-bold">{strategy.name || strategy.strategyName}</p>
+              <h2 className="text-xl font-black text-[var(--text-primary)] tracking-tight">Deploy Auto-Trading Bot</h2>
+              <p className="text-[var(--text-secondary)] text-xs font-bold">{strategy.name || strategy.strategyName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 text-secondary hover:text-main transition-colors">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -59,18 +59,18 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
             
             {/* 1. Core Config */}
             <div>
-              <h3 className="text-sm font-black text-main uppercase tracking-widest mb-4 flex items-center gap-2">
+              <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-lg">settings</span>
                 Core Configuration
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">Symbol</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] ml-1">Symbol</label>
                   <select
                     name="symbol"
                     value={config.symbol}
                     onChange={handleChange}
-                    className="w-full bg-black/20 border border-glass rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
+                    className="w-full bg-black/20 border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
                   >
                     <option value="ALL_MARKETS">ALL MARKETS (Auto Scanner)</option>
                     <option value="BTCUSDT">BTCUSDT (Targeted)</option>
@@ -80,19 +80,19 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">Network</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] ml-1">Network</label>
                   <div className="w-full bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-500 flex items-center justify-between">
                     <span>Mainnet (Live Funds)</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">AI Signal Cadence</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] ml-1">AI Signal Cadence</label>
                   <select
                     name="signalInterval"
                     value={config.signalInterval}
                     onChange={handleChange}
-                    className="w-full bg-black/20 border border-glass rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
+                    className="w-full bg-black/20 border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
                   >
                     <option value="1m">1 Minute (Ultra Fast)</option>
                     <option value="5m">5 Minutes (Fast)</option>
@@ -102,12 +102,12 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">Risk Check Cadence</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] ml-1">Risk Check Cadence</label>
                   <select
                     name="riskInterval"
                     value={config.riskInterval}
                     onChange={handleChange}
-                    className="w-full bg-black/20 border border-glass rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
+                    className="w-full bg-black/20 border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none"
                   >
                     <option value="10s">10 Seconds (Recommended)</option>
                     <option value="30s">30 Seconds</option>
@@ -136,10 +136,10 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                         name="maxDailyLossPct"
                         value={config.maxDailyLossPct}
                         onChange={handleChange}
-                        className="w-full bg-black/20 border border-rose-500/30 rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500 transition-all"
+                        className="w-full bg-black/20 border border-rose-500/30 rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500 transition-all"
                         min="0" max="100" step="0.1"
                       />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm font-bold">%</span>
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-sm font-bold">%</span>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -149,7 +149,7 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                       name="maxTradesPerDay"
                       value={config.maxTradesPerDay}
                       onChange={handleChange}
-                      className="w-full bg-black/20 border border-rose-500/30 rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500 transition-all"
+                      className="w-full bg-black/20 border border-rose-500/30 rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500 transition-all"
                       min="1" max="100"
                     />
                   </div>
@@ -171,7 +171,7 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                     name="leverage"
                     value={config.leverage}
                     onChange={handleChange}
-                    className="w-full bg-black/20 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="w-full bg-black/20 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
                     min="1" max="100"
                   />
                 </div>
@@ -183,10 +183,10 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                       name="trailingStopActivationPct"
                       value={config.trailingStopActivationPct}
                       onChange={handleChange}
-                      className="w-full bg-black/20 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full bg-black/20 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
                       min="0.1" max="50" step="0.1"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm font-bold">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -197,10 +197,10 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
                       name="trailingStopCallbackPct"
                       value={config.trailingStopCallbackPct}
                       onChange={handleChange}
-                      className="w-full bg-black/20 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-main focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full bg-black/20 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
                       min="0.1" max="20" step="0.1"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm font-bold">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-sm font-bold">%</span>
                   </div>
                 </div>
               </div>
@@ -210,8 +210,8 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-glass bg-black/50 shrink-0 flex items-center justify-between">
-          <p className="text-[11px] text-secondary font-bold flex items-center gap-2">
+        <div className="p-6 border-t border-[var(--border)] bg-black/50 shrink-0 flex items-center justify-between">
+          <p className="text-[11px] text-[var(--text-secondary)] font-bold flex items-center gap-2">
             <span className="material-symbols-outlined text-sm text-primary">psychology</span>
             Bot consumes AI compute per signal cycle.
           </p>
@@ -220,7 +220,7 @@ const DeployBotModal = ({ strategy, onClose, onDeploy }) => {
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-6 py-3 rounded-xl border border-glass text-secondary text-xs font-black uppercase tracking-widest hover:text-main hover:bg-white/5 transition-all"
+              className="px-6 py-3 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] text-xs font-black uppercase tracking-widest hover:text-[var(--text-primary)] hover:bg-white/5 transition-all"
             >
               Cancel
             </button>

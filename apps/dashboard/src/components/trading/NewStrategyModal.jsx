@@ -8,13 +8,13 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dim">
-      <div className="glass-card border border-glass w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-sm font-black text-main uppercase tracking-widest">New Strategy</h2>
+            <h2 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest">New Strategy</h2>
             <button 
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 text-secondary hover:text-main transition-all border border-glass"
+              className="w-8 h-8 flex items-center justify-center rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all border border-[var(--border)]"
             >
               <span className="material-symbols-outlined text-lg">close</span>
             </button>
@@ -22,9 +22,9 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
           <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onClose(); }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Strategy Name</label>
+                <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Strategy Name</label>
                 <input 
-                  className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-main text-xs font-bold placeholder:text-secondary/30 placeholder:uppercase placeholder:tracking-widest" 
+                  className="w-full border border-[var(--border)] rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-[var(--text-primary)] text-xs font-bold placeholder:text-secondary/30 placeholder:uppercase placeholder:tracking-widest" 
                   placeholder="e.g. Alpha Momentum" 
                   type="text" 
                   required
@@ -44,9 +44,9 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-300">Initial Capital</label>
               <div className="relative">
-                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-secondary opacity-40 text-xs font-black">$</span>
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-40 text-xs font-black">$</span>
                 <input 
-                  className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl pl-10 pr-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-main text-xs font-bold placeholder:text-secondary/30" 
+                  className="w-full border border-[var(--border)] rounded-xl pl-10 pr-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-[var(--text-primary)] text-xs font-bold placeholder:text-secondary/30" 
                   placeholder="5,000" 
                   type="number" 
                   min="0"
@@ -57,23 +57,23 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Risk Level</label>
+              <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Risk Level</label>
               <div className="grid grid-cols-3 gap-3">
                 <label className="cursor-pointer">
                   <input defaultChecked className="peer sr-only" name="risk" type="radio" value="low" />
-                  <div className="p-3 text-center border border-glass rounded-xl bg-black/5 dark:bg-white/5 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-black transition-all">
+                  <div className="p-3 text-center border border-[var(--border)] rounded-xl peer-checked:bg-primary peer-checked:border-primary peer-checked:text-black transition-all">
                     <p className="text-[10px] font-black uppercase tracking-widest">Low</p>
                   </div>
                 </label>
                 <label className="cursor-pointer">
                   <input className="peer sr-only" name="risk" type="radio" value="medium" />
-                  <div className="p-3 text-center border border-glass rounded-xl bg-black/5 dark:bg-white/5 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-black transition-all">
+                  <div className="p-3 text-center border border-[var(--border)] rounded-xl peer-checked:bg-primary peer-checked:border-primary peer-checked:text-black transition-all">
                     <p className="text-[10px] font-black uppercase tracking-widest">Medium</p>
                   </div>
                 </label>
                 <label className="cursor-pointer">
                   <input className="peer sr-only" name="risk" type="radio" value="high" />
-                  <div className="p-3 text-center border border-glass rounded-xl bg-black/5 dark:bg-white/5 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-black transition-all">
+                  <div className="p-3 text-center border border-[var(--border)] rounded-xl peer-checked:bg-primary peer-checked:border-primary peer-checked:text-black transition-all">
                     <p className="text-[10px] font-black uppercase tracking-widest">High</p>
                   </div>
                 </label>
@@ -84,7 +84,7 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-300">Max Drawdown Limit (%)</label>
                 <input 
-                  className="w-full bg-black/5 dark:bg-white/5 border border-glass rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-main text-xs font-bold placeholder:text-secondary/30" 
+                  className="w-full border border-[var(--border)] rounded-xl px-5 py-3 focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-[var(--text-primary)] text-xs font-bold placeholder:text-secondary/30" 
                   placeholder="10" 
                   type="number" 
                   min="0"
@@ -107,11 +107,11 @@ const NewStrategyModal = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 pt-6 mt-2 border-t border-glass">
+            <div className="flex items-center gap-4 pt-6 mt-2 border-t border-[var(--border)]">
               <button 
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3.5 px-6 rounded-2xl font-black text-[11px] uppercase tracking-widest text-secondary hover:bg-black/5 dark:hover:bg-white/5 transition-all border border-glass"
+                className="flex-1 py-3.5 px-6 rounded-2xl font-black text-[11px] uppercase tracking-widest text-[var(--text-secondary)] hover: transition-all border border-[var(--border)]"
               >
                 Cancel
               </button>

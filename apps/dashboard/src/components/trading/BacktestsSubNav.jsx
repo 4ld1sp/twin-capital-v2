@@ -7,7 +7,7 @@ const BacktestsSubNav = ({ activeTab = 'performance', onChange }) => {
   ];
 
   return (
-    <div className="flex gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass mb-8 overflow-x-auto w-fit">
+    <div className="flex gap-2 p-1.5 rounded-2xl border border-[var(--border)] mb-8 overflow-x-auto w-fit">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -15,7 +15,7 @@ const BacktestsSubNav = ({ activeTab = 'performance', onChange }) => {
           className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
             activeTab === tab.id
               ? 'bg-primary text-black shadow-lg shadow-primary/20'
-              : 'text-secondary hover:text-main'
+              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
           {tab.label}

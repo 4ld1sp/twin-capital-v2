@@ -21,16 +21,16 @@ export default function ForgotPassword({ onNavigate }) {
             <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary border border-primary/20">
               <Mail className="w-6 h-6" />
             </div>
-            <h2 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight">Twin Capital</h2>
+            <h2 className="text-slate-900  text-2xl font-bold tracking-tight">Twin Capital</h2>
           </div>
         </header>
 
         <main className="flex-1 flex flex-col items-center justify-center w-full">
-          <div className="glass-card w-full max-w-[480px] rounded-3xl p-10 shadow-2xl relative border border-white/10 overflow-hidden">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl w-full max-w-[480px] rounded-3xl p-10 shadow-2xl relative border border-white/10 overflow-hidden">
             {!isSent ? (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="mb-8 text-center">
-                  <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2 uppercase italic tracking-tight">Recover Access</h1>
+                  <h1 className="text-3xl font-black text-slate-900  mb-2 uppercase italic tracking-tight">Recover Access</h1>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed">Enter your corporate email to receive security recovery instructions</p>
                 </div>
 

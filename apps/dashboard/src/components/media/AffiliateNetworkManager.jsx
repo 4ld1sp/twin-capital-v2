@@ -14,8 +14,8 @@ const AffiliateNetworkManager = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-xl font-black text-main tracking-tight">Affiliate Network Management</h3>
-          <p className="text-secondary text-sm font-bold">Manage and monitor your partner API connections</p>
+          <h3 className="text-xl font-black text-[var(--text-primary)] tracking-tight">Affiliate Network Management</h3>
+          <p className="text-[var(--text-secondary)] text-sm font-bold">Manage and monitor your partner API connections</p>
         </div>
         <button 
           onClick={() => setModalOpen(true)}
@@ -27,33 +27,33 @@ const AffiliateNetworkManager = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {networks.map((network) => (
-          <div key={network.id} className="glass-card rounded-3xl border border-glass p-6 hover:border-primary/30 transition-all group shadow-sm">
+          <div key={network.id} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)] p-6 hover:border-primary/30 transition-all group shadow-sm">
             <div className="flex justify-between items-start mb-4">
-              <div className={`p-3 rounded-2xl ${network.status === 'Active' ? 'bg-primary/10 text-primary' : 'bg-amber-500/10 text-amber-500'} border border-glass`}>
+              <div className={`p-3 rounded-2xl ${network.status === 'Active' ? 'bg-primary/10 text-primary' : 'bg-amber-500/10 text-amber-500'} border border-[var(--border)]`}>
                 <span className="material-symbols-outlined">{network.type === 'Exchange Partner' ? 'handshake' : 'shopping_cart'}</span>
               </div>
               <div className="flex gap-2">
-                <button className="p-2 text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
+                <button className="p-2 text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
                   <Trash2 className="w-4 h-4" />
                 </button>
-                <a href={network.link} target="_blank" rel="noopener noreferrer" className="p-2 text-secondary hover:text-primary hover:bg-primary/10 rounded-xl transition-all">
+                <a href={network.link} target="_blank" rel="noopener noreferrer" className="p-2 text-[var(--text-secondary)] hover:text-primary hover:bg-primary/10 rounded-xl transition-all">
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </div>
 
             <div className="space-y-1 mb-6">
-              <h4 className="text-main font-black text-lg tracking-tight">{network.name}</h4>
-              <p className="text-secondary text-xs font-bold uppercase tracking-wider">{network.type}</p>
+              <h4 className="text-[var(--text-primary)] font-black text-lg tracking-tight">{network.name}</h4>
+              <p className="text-[var(--text-secondary)] text-xs font-bold uppercase tracking-wider">{network.type}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-glass">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--border)]">
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-secondary font-black mb-1">Total Revenue</p>
-                <p className="text-main font-black text-lg">{network.revenue}</p>
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-black mb-1">Total Revenue</p>
+                <p className="text-[var(--text-primary)] font-black text-lg">{network.revenue}</p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-secondary font-black mb-1">Status</p>
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-black mb-1">Status</p>
                 <div className="flex items-center gap-1.5">
                   {network.status === 'Active' ? (
                     <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
@@ -73,22 +73,22 @@ const AffiliateNetworkManager = () => {
       {/* Modal Placeholder */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl border border-glass shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 border-b border-glass flex justify-between items-center">
-              <h3 className="text-xl font-black text-main tracking-tight">Connect New Network</h3>
-              <button onClick={() => setModalOpen(false)} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
-                <Plus className="w-5 h-5 text-secondary rotate-45" />
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center">
+              <h3 className="text-xl font-black text-[var(--text-primary)] tracking-tight">Connect New Network</h3>
+              <button onClick={() => setModalOpen(false)} className="p-2 hover: rounded-full transition-colors">
+                <Plus className="w-5 h-5 text-[var(--text-secondary)] rotate-45" />
               </button>
             </div>
             <div className="p-12 text-center space-y-4">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/20">
                 <span className="material-symbols-outlined text-primary text-3xl animate-pulse">api</span>
               </div>
-              <p className="text-main font-bold">API Integration in Progress</p>
-              <p className="text-secondary text-xs font-medium">To connect a new affiliate network, please reach out to the developer team to verify the partner's API documentation.</p>
+              <p className="text-[var(--text-primary)] font-bold">API Integration in Progress</p>
+              <p className="text-[var(--text-secondary)] text-xs font-medium">To connect a new affiliate network, please reach out to the developer team to verify the partner's API documentation.</p>
               <button 
                 onClick={() => setModalOpen(false)}
-                className="w-full mt-6 px-4 py-3 bg-slate-100 dark:bg-white/5 text-main rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all border border-glass"
+                className="w-full mt-6 px-4 py-3 bg-slate-100 text-[var(--text-primary)] rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200  transition-all border border-[var(--border)]"
               >
                 Close
               </button>

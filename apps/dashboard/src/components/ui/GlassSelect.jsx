@@ -37,36 +37,36 @@ const GlassSelect = ({
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       {label && (
-        <label className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1.5 block">
+        <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1.5 block">
           {label}
         </label>
       )}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-main text-sm font-bold outline-none focus:border-primary transition-all hover:bg-white/10"
+        className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-[var(--border)] text-[var(--text-primary)] text-sm font-bold outline-none focus:border-primary transition-all hover:bg-white/10"
       >
         <div className="flex items-center gap-2">
           {icon && <span className="material-symbols-outlined text-lg text-primary">{icon}</span>}
-          <span className={!value ? 'text-secondary/50' : 'text-main'}>
+          <span className={!value ? 'text-secondary/50' : 'text-[var(--text-primary)]'}>
             {displayLabel || placeholder}
           </span>
         </div>
-        <span className={`material-symbols-outlined text-secondary transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+        <span className={`material-symbols-outlined text-[var(--text-secondary)] transition-transform ${isOpen ? 'rotate-180' : ''}`}>
           expand_more
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d0d14] border border-glass rounded-xl shadow-2xl z-[150] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d0d14] border border-[var(--border)] rounded-xl shadow-2xl z-[150] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           {searchable && (
-            <div className="p-2 border-b border-glass">
+            <div className="p-2 border-b border-[var(--border)]">
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-glass text-main text-xs outline-none focus:border-primary/30 placeholder:text-secondary/50"
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-[var(--border)] text-[var(--text-primary)] text-xs outline-none focus:border-primary/30 placeholder:text-secondary/50"
                 autoFocus
               />
             </div>
@@ -88,7 +88,7 @@ const GlassSelect = ({
                       setSearch('');
                     }}
                     className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-white/5 transition-all ${
-                      isSelected ? 'bg-primary/10 text-primary' : 'text-main'
+                      isSelected ? 'bg-primary/10 text-primary' : 'text-[var(--text-primary)]'
                     }`}
                   >
                     <span className="text-xs font-bold">{optLabel}</span>
@@ -99,7 +99,7 @@ const GlassSelect = ({
                 );
               })
             ) : (
-              <p className="px-4 py-3 text-secondary text-xs">No options found</p>
+              <p className="px-4 py-3 text-[var(--text-secondary)] text-xs">No options found</p>
             )}
           </div>
         </div>

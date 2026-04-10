@@ -238,20 +238,20 @@ const TradingTerminal = () => {
   return (
     <div className="w-full flex flex-col gap-6 pt-4">
       {/* Top Bar */}
-      <div className="glass-card border border-glass rounded-3xl p-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 relative z-[100] !overflow-visible">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 relative z-[100] !overflow-visible">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-2xl">currency_bitcoin</span>
             <div>
-              <h2 className="text-main text-xl font-black tracking-tight">{activeSymbol}</h2>
-              <p className="text-secondary text-[10px] font-black uppercase tracking-widest">{activeExchange} {networkMode === 'testnet' ? '(Testnet)' : 'Unified Trading'}</p>
+              <h2 className="text-[var(--text-primary)] text-xl font-black tracking-tight">{activeSymbol}</h2>
+              <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest">{activeExchange} {networkMode === 'testnet' ? '(Testnet)' : 'Unified Trading'}</p>
             </div>
           </div>
-          <div className="h-10 w-px bg-glass mx-2"></div>
+          <div className="h-10 w-px bg-[var(--bg-surface)] mx-2"></div>
           <div>
-            <p className="text-[10px] text-secondary font-black uppercase tracking-widest">Mark Price</p>
+            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">Mark Price</p>
             <div className="flex items-center gap-2">
-              <p className="text-main text-xl font-black tracking-tight">{displayPrice}</p>
+              <p className="text-[var(--text-primary)] text-xl font-black tracking-tight">{displayPrice}</p>
               {change24h && (
                 <span className={`text-xs font-black ${parseFloat(change24h) >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                   {parseFloat(change24h) >= 0 ? '+' : ''}{change24h}
@@ -261,19 +261,19 @@ const TradingTerminal = () => {
           </div>
           {liveTicker?.highPrice24h && (
             <>
-              <div className="h-10 w-px bg-glass mx-2 hidden lg:block"></div>
+              <div className="h-10 w-px bg-[var(--bg-surface)] mx-2 hidden lg:block"></div>
               <div className="hidden lg:flex gap-4">
                 <div>
-                  <p className="text-[9px] text-secondary font-black uppercase tracking-widest">24h High</p>
+                  <p className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-widest">24h High</p>
                   <p className="text-emerald-500 text-sm font-black">{formatPrice(liveTicker.highPrice24h)}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] text-secondary font-black uppercase tracking-widest">24h Low</p>
+                  <p className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-widest">24h Low</p>
                   <p className="text-rose-500 text-sm font-black">{formatPrice(liveTicker.lowPrice24h)}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] text-secondary font-black uppercase tracking-widest">24h Vol</p>
-                  <p className="text-main text-sm font-black">{parseFloat(liveTicker.volume24h || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
+                  <p className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-widest">24h Vol</p>
+                  <p className="text-[var(--text-primary)] text-sm font-black">{parseFloat(liveTicker.volume24h || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
                 </div>
               </div>
             </>
@@ -303,14 +303,14 @@ const TradingTerminal = () => {
         </div>
       </div>      {/* AI Trading Mode Banner */}
       {activeBot ? (
-        <div className={`glass-card border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden ${
+        <div className={`bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden ${
           activeBot.status === 'running' 
             ? 'border-emerald-500/30 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.1)]' 
             : activeBot.status === 'paused'
             ? 'border-amber-500/30 bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.1)]'
             : activeBot.status === 'error' || activeBot.status === 'killed'
             ? 'border-rose-500/30 bg-rose-500/5 shadow-[0_0_20px_rgba(244,63,94,0.1)]'
-            : 'border-glass bg-black/5 dark:bg-white/5'
+            : 'border-[var(--border)] '
         }`}>
           <div className={`absolute top-0 right-0 w-32 h-32 blur-[50px] rounded-full pointer-events-none ${
              activeBot.status === 'running' ? 'bg-emerald-500/10' :
@@ -322,12 +322,12 @@ const TradingTerminal = () => {
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-sm relative ${
                activeBot.status === 'running' ? 'bg-emerald-500/10 border-emerald-500/20' :
                activeBot.status === 'paused' ? 'bg-amber-500/10 border-amber-500/20' :
-               activeBot.status === 'error' || activeBot.status === 'killed' ? 'bg-rose-500/10 border-rose-500/20' : 'bg-black/10 border-glass'
+               activeBot.status === 'error' || activeBot.status === 'killed' ? 'bg-rose-500/10 border-rose-500/20' : ' border-[var(--border)]'
             }`}>
               <span className={`material-symbols-outlined text-xl ${
                  activeBot.status === 'running' ? 'text-emerald-500' :
                  activeBot.status === 'paused' ? 'text-amber-500' :
-                 activeBot.status === 'error' || activeBot.status === 'killed' ? 'text-rose-500' : 'text-secondary'
+                 activeBot.status === 'error' || activeBot.status === 'killed' ? 'text-rose-500' : 'text-[var(--text-secondary)]'
               }`}>
                 {activeBot.status === 'error' || activeBot.status === 'killed' ? 'warning' : 'smart_toy'}
               </span>
@@ -339,14 +339,14 @@ const TradingTerminal = () => {
               )}
             </div>
             <div>
-              <p className="text-main text-sm font-black tracking-tight">{activeBot.strategyName}</p>
+              <p className="text-[var(--text-primary)] text-sm font-black tracking-tight">{activeBot.strategyName}</p>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
                 <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded w-fit ${
                    activeBot.status === 'running' ? 'text-emerald-500 bg-emerald-500/10' :
                    activeBot.status === 'paused' ? 'text-amber-500 bg-amber-500/10' :
                    activeBot.status === 'error' ? 'text-rose-500 bg-rose-500/10' :
                    activeBot.status === 'killed' ? 'text-rose-500 bg-rose-500/10' :
-                   'text-secondary bg-black/10'
+                   'text-[var(--text-secondary)] '
                 }`}>
                   {activeBot.status}
                 </span>
@@ -360,9 +360,9 @@ const TradingTerminal = () => {
                 {activeBot.status !== 'error' && activeBot.status !== 'killed' && (
                   <>
                     <span className="text-secondary/60 text-[10px] hidden sm:block">•</span>
-                    <span className="text-secondary text-[10px] font-bold font-mono">Max Loss: {activeBot.maxDailyLossPct}%</span>
+                    <span className="text-[var(--text-secondary)] text-[10px] font-bold font-mono">Max Loss: {activeBot.maxDailyLossPct}%</span>
                     <span className="text-secondary/60 text-[10px] hidden sm:block">•</span>
-                    <span className="text-secondary text-[10px] font-bold font-mono">Trades: {activeBot.dailyTradeCount}/{activeBot.maxTradesPerDay}</span>
+                    <span className="text-[var(--text-secondary)] text-[10px] font-bold font-mono">Trades: {activeBot.dailyTradeCount}/{activeBot.maxTradesPerDay}</span>
                   </>
                 )}
               </div>
@@ -370,7 +370,7 @@ const TradingTerminal = () => {
           </div>
           
           <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0 relative z-10 flex-wrap">
-            <a href="/bots" className="flex-1 md:flex-none px-5 py-2.5 rounded-xl border border-glass text-secondary text-[10px] font-black uppercase tracking-widest hover:text-main hover:bg-white/5 transition-all text-center">
+            <a href="/bots" className="flex-1 md:flex-none px-5 py-2.5 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest hover:text-[var(--text-primary)] hover:bg-white/5 transition-all text-center">
               View Logs
             </a>
             {activeBot.status === 'running' ? (
@@ -399,14 +399,14 @@ const TradingTerminal = () => {
           </div>
         </div>
       ) : activeStrategy ? (
-         <div className="glass-card border border-primary/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between bg-primary/5 gap-4">
+         <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-primary/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between bg-primary/5 gap-4">
            <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
               <span className="material-symbols-outlined text-primary text-xl">model_training</span>
             </div>
             <div>
-              <p className="text-main text-sm font-black tracking-tight">{activeStrategy.name}</p>
-              <p className="text-secondary text-[10px] font-bold">Ready to deploy on {activeSymbol}</p>
+              <p className="text-[var(--text-primary)] text-sm font-black tracking-tight">{activeStrategy.name}</p>
+              <p className="text-[var(--text-secondary)] text-[10px] font-bold">Ready to deploy on {activeSymbol}</p>
             </div>
            </div>
            <button onClick={() => setShowDeployModal(true)} className="px-5 py-2.5 rounded-xl bg-primary text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-primary/20 transition-all flex justify-center items-center gap-2">
@@ -420,29 +420,29 @@ const TradingTerminal = () => {
       <div className="flex flex-col xl:flex-row gap-6 items-start">
         {/* Order Entry Panel (Sticky Left) */}
         <div className="w-full xl:w-[380px] shrink-0 sticky top-24">
-          <div className="glass-card border border-glass rounded-3xl p-6">
-          <h3 className="text-main text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
+          <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-lg">order_play</span>
             Order Entry
           </h3>
 
-          <div className="flex items-center gap-1 p-1 bg-black/5 dark:bg-white/5 rounded-xl border border-glass mb-4">
+          <div className="flex items-center gap-1 p-1 rounded-xl border border-[var(--border)] mb-4">
             {['market', 'limit', 'conditional'].map(t => (
               <button key={t} onClick={() => setOrderType(t)}
-                className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${orderType === t ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}
+                className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${orderType === t ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
               >{t}</button>
             ))}
           </div>
 
           <div className="flex gap-2 mb-5">
             <button onClick={() => setOrderSide('buy')}
-              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${orderSide === 'buy' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-emerald-500'}`}>
+              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${orderSide === 'buy' ? 'bg-emerald-500 text-white shadow-sm' : 'border border-[var(--border)] text-[var(--text-secondary)] hover:text-emerald-500'}`}>
               <span className="flex items-center justify-center gap-2">
                 <span className="material-symbols-outlined text-sm">arrow_upward</span>Buy / Long
               </span>
             </button>
             <button onClick={() => setOrderSide('sell')}
-              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${orderSide === 'sell' ? 'bg-rose-500 text-white shadow-sm' : 'bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-rose-500'}`}>
+              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${orderSide === 'sell' ? 'bg-rose-500 text-white shadow-sm' : 'border border-[var(--border)] text-[var(--text-secondary)] hover:text-rose-500'}`}>
               <span className="flex items-center justify-center gap-2">
                 <span className="material-symbols-outlined text-sm">arrow_downward</span>Sell / Short
               </span>
@@ -452,81 +452,81 @@ const TradingTerminal = () => {
           <div className="space-y-4">
             {orderType !== 'market' && (
               <div>
-                <label className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1.5 block">Price (USDT)</label>
+                <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1.5 block">Price (USDT)</label>
                 <input type="text" value={price} onChange={(e) => setPrice(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-main text-sm font-bold outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all" />
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-[var(--text-primary)] text-sm font-bold outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all" />
               </div>
             )}
             <div>
-              <label className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1.5 block">Quantity</label>
+              <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1.5 block">Quantity</label>
               <input type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-main text-sm font-bold outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all" />
+                className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-[var(--text-primary)] text-sm font-bold outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all" />
               <div className="flex gap-2 mt-2">
                 {['25%', '50%', '75%', '100%'].map(pct => (
-                  <button key={pct} className="flex-1 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-[10px] font-black text-secondary uppercase tracking-widest hover:text-primary hover:border-primary/30 transition-all">{pct}</button>
+                  <button key={pct} className="flex-1 py-1.5 rounded-lg border border-[var(--border)] text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest hover:text-primary hover:border-primary/30 transition-all">{pct}</button>
                 ))}
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="text-[10px] text-secondary font-black uppercase tracking-widest">Leverage</label>
+                <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">Leverage</label>
                 <span className="text-primary text-xs font-black">{leverage}x</span>
               </div>
               <input type="range" min="1" max="100" value={leverage} onChange={(e) => setLeverage(Number(e.target.value))}
-                className="w-full h-1.5 rounded-full appearance-none bg-black/10 dark:bg-white/10 accent-primary" />
-              <div className="flex justify-between text-[9px] text-secondary font-bold mt-1">
+                className="w-full h-1.5 rounded-full appearance-none  accent-primary" />
+              <div className="flex justify-between text-[9px] text-[var(--text-secondary)] font-bold mt-1">
                 <span>1x</span><span>25x</span><span>50x</span><span>75x</span><span>100x</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1.5 block">Take Profit</label>
+                <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1.5 block">Take Profit</label>
                 <input type="text" value={tpPrice} onChange={(e) => setTpPrice(e.target.value)} placeholder="TP Price"
-                  className="w-full px-3 py-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-main text-xs font-bold outline-none focus:border-emerald-500 transition-all placeholder:text-secondary/40" />
+                  className="w-full px-3 py-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-[var(--text-primary)] text-xs font-bold outline-none focus:border-emerald-500 transition-all placeholder:text-secondary/40" />
               </div>
               <div>
-                <label className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1.5 block">Stop Loss</label>
+                <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1.5 block">Stop Loss</label>
                 <input type="text" value={slPrice} onChange={(e) => setSlPrice(e.target.value)} placeholder="SL Price"
-                  className="w-full px-3 py-2.5 rounded-xl bg-rose-500/5 border border-rose-500/20 text-main text-xs font-bold outline-none focus:border-rose-500 transition-all placeholder:text-secondary/40" />
+                  className="w-full px-3 py-2.5 rounded-xl bg-rose-500/5 border border-rose-500/20 text-[var(--text-primary)] text-xs font-bold outline-none focus:border-rose-500 transition-all placeholder:text-secondary/40" />
               </div>
             </div>
 
             <button
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-secondary text-[10px] font-black uppercase tracking-widest hover:text-main transition-all"
+              className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest hover:text-[var(--text-primary)] transition-all"
             >
               <span>Advanced Trade Management</span>
               <span className={`material-symbols-outlined text-sm transition-transform ${showAdvanced ? 'rotate-180' : ''}`}>expand_more</span>
             </button>
 
             {showAdvanced && (
-              <div className="space-y-4 p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-glass">
+              <div className="space-y-4 p-4 rounded-xl border border-[var(--border)]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-black text-main">Trailing Stop</p>
-                    <p className="text-[10px] text-secondary font-bold">Auto-adjust SL with price</p>
+                    <p className="text-xs font-black text-[var(--text-primary)]">Trailing Stop</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] font-bold">Auto-adjust SL with price</p>
                   </div>
                   <button onClick={() => setTrailingStop(!trailingStop)}
-                    className={`w-12 h-6 rounded-full transition-all relative ${trailingStop ? 'bg-primary' : 'bg-black/10 dark:bg-white/10'}`}>
+                    className={`w-12 h-6 rounded-full transition-all relative ${trailingStop ? 'bg-primary' : ' dark:bg-white/10'}`}>
                     <div className={`w-5 h-5 rounded-full bg-white shadow-md absolute top-0.5 transition-all ${trailingStop ? 'left-6' : 'left-0.5'}`}></div>
                   </button>
                 </div>
                 {trailingStop && (
                   <div>
-                    <label className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1.5 block">Trail Distance (%)</label>
+                    <label className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1.5 block">Trail Distance (%)</label>
                     <input type="text" value={trailingDistance} onChange={(e) => setTrailingDistance(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-main text-xs font-bold outline-none" />
+                      className="w-full px-3 py-2.5 rounded-xl border border-[var(--border)] text-[var(--text-primary)] text-xs font-bold outline-none" />
                   </div>
                 )}
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-black text-main">Partial Take Profit</p>
-                    <p className="text-[10px] text-secondary font-bold">Multi-level exit</p>
+                    <p className="text-xs font-black text-[var(--text-primary)]">Partial Take Profit</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] font-bold">Multi-level exit</p>
                   </div>
                   <button onClick={() => setPartialTp(!partialTp)}
-                    className={`w-12 h-6 rounded-full transition-all relative ${partialTp ? 'bg-primary' : 'bg-black/10 dark:bg-white/10'}`}>
+                    className={`w-12 h-6 rounded-full transition-all relative ${partialTp ? 'bg-primary' : ' dark:bg-white/10'}`}>
                     <div className={`w-5 h-5 rounded-full bg-white shadow-md absolute top-0.5 transition-all ${partialTp ? 'left-6' : 'left-0.5'}`}></div>
                   </button>
                 </div>
@@ -554,19 +554,19 @@ const TradingTerminal = () => {
         <div className="flex-1 min-w-0 flex flex-col gap-6 w-full">
           {/* Account Balance */}
           {exchangeError && (
-            <div className="glass-card border border-amber-500/20 rounded-3xl p-6 bg-amber-500/5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-amber-500/20 rounded-3xl p-6 bg-amber-500/5">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-amber-500 text-xl">warning</span>
                 <div>
-                  <p className="text-main text-xs font-black">Exchange Not Connected</p>
-                  <p className="text-secondary text-[10px] font-bold">{exchangeError}</p>
+                  <p className="text-[var(--text-primary)] text-xs font-black">Exchange Not Connected</p>
+                  <p className="text-[var(--text-secondary)] text-[10px] font-bold">{exchangeError}</p>
                 </div>
               </div>
             </div>
           )}
           {balance && (
-            <div className="glass-card border border-glass rounded-3xl p-6">
-              <h3 className="text-main text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
+              <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-lg">account_balance_wallet</span>
                 Account Balance
               </h3>
@@ -578,13 +578,13 @@ const TradingTerminal = () => {
                   { label: 'Unrealized P&L', value: (parseFloat(balance.unrealizedPnL) >= 0 ? '+' : '') + formatPrice(balance.unrealizedPnL), color: parseFloat(balance.unrealizedPnL) >= 0 ? 'emerald' : 'rose' },
                   { label: 'Margin Ratio', value: balance.marginRatio + '%', color: 'blue' },
                 ].map((m, i) => (
-                  <div key={i} className={`p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-glass transition-all hover:bg-black/10 dark:hover:bg-white/10 ${m.color === 'emerald' ? 'shadow-[0_0_20px_-10px_rgba(16,185,129,0.3)]' : m.color === 'rose' ? 'shadow-[0_0_20px_-10px_rgba(244,63,94,0.3)]' : ''}`}>
-                    <p className="text-[9px] text-secondary font-black uppercase tracking-[0.1em] mb-1.5 opacity-60">{m.label}</p>
+                  <div key={i} className={`p-4 rounded-2xl border border-[var(--border)] transition-all hover:  ${m.color === 'emerald' ? 'shadow-[0_0_20px_-10px_rgba(16,185,129,0.3)]' : m.color === 'rose' ? 'shadow-[0_0_20px_-10px_rgba(244,63,94,0.3)]' : ''}`}>
+                    <p className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.1em] mb-1.5 opacity-60">{m.label}</p>
                     <p className={`text-base font-black tracking-tight ${
                       m.color === 'emerald' ? 'text-emerald-500' : 
                       m.color === 'rose' ? 'text-rose-500' : 
                       m.color === 'blue' ? 'text-blue-400' : 
-                      m.color === 'secondary' ? 'text-main/80' : 'text-main'
+                      m.color === 'secondary' ? 'text-main/80' : 'text-[var(--text-primary)]'
                     }`}>{m.value}</p>
                   </div>
                 ))}
@@ -592,17 +592,17 @@ const TradingTerminal = () => {
               <div className="overflow-x-auto max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-glass/30">
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Coin</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Balance</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Equity</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Unrealized P&L</th>
+                    <tr className="border-b border-[var(--border)]/30">
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Coin</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Balance</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Equity</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Unrealized P&L</th>
                     </tr>
                   </thead>
                   <tbody>
                     {balance.assets.map((a, i) => (
-                      <tr key={i} className="border-b border-glass/30 last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
-                        <td className="py-4 text-xs font-black text-main">
+                      <tr key={i} className="border-b border-[var(--border)]/30 last:border-0 hover: transition-colors group">
+                        <td className="py-4 text-xs font-black text-[var(--text-primary)]">
                           <div className="flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-all"></span>
                             {a.coin}
@@ -622,22 +622,22 @@ const TradingTerminal = () => {
           )}
 
           {/* Positions / Orders */}
-          <div className="glass-card border border-glass rounded-3xl p-6">
-            <div className="flex items-center gap-2 p-1 bg-black/5 dark:bg-white/5 rounded-xl border border-glass mb-5 w-fit">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
+            <div className="flex items-center gap-2 p-1 rounded-xl border border-[var(--border)] mb-5 w-fit">
               <button onClick={() => setActiveSection('positions')}
-                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'positions' ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'positions' ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                 Positions ({positions.length})
               </button>
               <button onClick={() => setActiveSection('orders')}
-                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'orders' ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'orders' ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                 Orders ({orders.length})
               </button>
               <button onClick={() => setActiveSection('history')}
-                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'history' ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'history' ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                 History ({orderHistoryList.length})
               </button>
               <button onClick={() => setActiveSection('pnl')}
-                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'pnl' ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+                className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeSection === 'pnl' ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                 Realized P&L
               </button>
             </div>
@@ -646,30 +646,30 @@ const TradingTerminal = () => {
               {activeSection === 'positions' && (
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-glass/30">
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Symbol</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Side</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Size</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Entry</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Mark</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">P&L</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">TP</th>
-                      <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">SL</th>
+                    <tr className="border-b border-[var(--border)]/30">
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Symbol</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Side</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Size</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Entry</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Mark</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">P&L</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">TP</th>
+                      <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">SL</th>
                     </tr>
                   </thead>
                   <tbody>
                     {positions.map(p => (
-                      <tr key={p.id} className="border-b border-glass/30 last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
-                        <td className="py-4 text-xs font-black text-main">{p.symbol}</td>
+                      <tr key={p.id} className="border-b border-[var(--border)]/30 last:border-0 hover: transition-colors group">
+                        <td className="py-4 text-xs font-black text-[var(--text-primary)]">{p.symbol}</td>
                         <td className="py-4 text-xs pr-4">
                           <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${p.side === 'Long' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                             {p.side}
                           </span>
                         </td>
                         <td className="py-4 text-xs font-bold text-main/90 text-right font-mono">{p.size}</td>
-                        <td className="py-4 text-xs font-bold text-secondary text-right font-mono">{formatPrice(p.entryPrice)}</td>
+                        <td className="py-4 text-xs font-bold text-[var(--text-secondary)] text-right font-mono">{formatPrice(p.entryPrice)}</td>
                         <td className="py-4 text-xs font-bold text-main/90 text-right font-mono">{p.symbol === activeSymbol && livePrice ? formatPrice(livePrice) : formatPrice(p.markPrice) || '—'}</td>
-                        <td className={`py-4 text-xs font-black text-right font-mono ${parseFloat(p.unrealizedPnl || 0) > 0 ? 'text-emerald-500' : parseFloat(p.unrealizedPnl || 0) < 0 ? 'text-rose-500' : 'text-main'}`}>
+                        <td className={`py-4 text-xs font-black text-right font-mono ${parseFloat(p.unrealizedPnl || 0) > 0 ? 'text-emerald-500' : parseFloat(p.unrealizedPnl || 0) < 0 ? 'text-rose-500' : 'text-[var(--text-primary)]'}`}>
                           {parseFloat(p.unrealizedPnl || 0) > 0 ? '+' : ''}{parseFloat(p.unrealizedPnl || 0).toFixed(2)}
                         </td>
                         <td className="py-4 text-xs font-bold text-emerald-500/80 text-right font-mono">{formatPrice(p.tp)}</td>
@@ -684,22 +684,22 @@ const TradingTerminal = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-glass">
+                    <tr className="border-b border-[var(--border)]">
                       {['Symbol', 'Type', 'Side', 'Price', 'Qty', 'Status', ''].map(h => (
-                        <th key={h} className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest whitespace-nowrap pr-4">{h}</th>
+                        <th key={h} className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest whitespace-nowrap pr-4">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {orders.length === 0 ? (
-                      <tr><td colSpan="7" className="py-8 text-center text-xs text-secondary">No active orders</td></tr>
+                      <tr><td colSpan="7" className="py-8 text-center text-xs text-[var(--text-secondary)]">No active orders</td></tr>
                     ) : orders.map(o => (
-                      <tr key={o.id} className="border-b border-glass/50 last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                        <td className="py-3 text-xs font-black text-main pr-4">{o.symbol}</td>
-                        <td className="py-3 text-xs font-bold text-secondary pr-4">{o.type}</td>
+                      <tr key={o.id} className="border-b border-[var(--border)]/50 last:border-0 hover: transition-colors">
+                        <td className="py-3 text-xs font-black text-[var(--text-primary)] pr-4">{o.symbol}</td>
+                        <td className="py-3 text-xs font-bold text-[var(--text-secondary)] pr-4">{o.type}</td>
                         <td className={`py-3 text-xs font-black pr-4 ${o.side === 'Buy' ? 'text-emerald-500' : 'text-rose-500'}`}>{o.side}</td>
-                        <td className="py-3 text-xs font-bold text-main pr-4">{formatPrice(o.price)}</td>
-                        <td className="py-3 text-xs font-bold text-main pr-4">{o.qty}</td>
+                        <td className="py-3 text-xs font-bold text-[var(--text-primary)] pr-4">{formatPrice(o.price)}</td>
+                        <td className="py-3 text-xs font-bold text-[var(--text-primary)] pr-4">{o.qty}</td>
                         <td className="py-3 pr-4">
                           <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
                             o.status === 'Filled' ? 'bg-emerald-500/10 text-emerald-500' :
@@ -722,23 +722,23 @@ const TradingTerminal = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="border-b border-glass/30">
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Symbol</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Type</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Side</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Price</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Qty</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left pl-4">Status</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Time</th>
+                      <tr className="border-b border-[var(--border)]/30">
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Symbol</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Type</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Side</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Price</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Qty</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left pl-4">Status</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Time</th>
                       </tr>
                     </thead>
                     <tbody>
                       {orderHistoryList.length === 0 ? (
-                        <tr><td colSpan="7" className="py-8 text-center text-xs text-secondary">No order history yet</td></tr>
+                        <tr><td colSpan="7" className="py-8 text-center text-xs text-[var(--text-secondary)]">No order history yet</td></tr>
                       ) : orderHistoryList.slice((currentPage - 1) * historyPerPage, currentPage * historyPerPage).map(o => (
-                        <tr key={o.id} className="border-b border-glass/30 last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
-                          <td className="py-4 text-xs font-black text-main">{o.symbol}</td>
-                          <td className="py-4 text-xs font-bold text-secondary">{o.type}</td>
+                        <tr key={o.id} className="border-b border-[var(--border)]/30 last:border-0 hover: transition-colors group">
+                          <td className="py-4 text-xs font-black text-[var(--text-primary)]">{o.symbol}</td>
+                          <td className="py-4 text-xs font-bold text-[var(--text-secondary)]">{o.type}</td>
                           <td className="py-4 text-xs pr-4">
                             <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${o.side === 'Buy' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                               {o.side}
@@ -754,7 +754,7 @@ const TradingTerminal = () => {
                               'bg-primary/10 text-primary'
                             }`}>{o.status}</span>
                           </td>
-                          <td className="py-4 text-xs font-bold text-secondary text-right font-mono">{o.created ? new Date(o.created).toLocaleString() : '—'}</td>
+                          <td className="py-4 text-xs font-bold text-[var(--text-secondary)] text-right font-mono">{o.created ? new Date(o.created).toLocaleString() : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -763,22 +763,22 @@ const TradingTerminal = () => {
 
                 {/* Pagination UI */}
                 {orderHistoryList.length > historyPerPage && (
-                  <div className="flex items-center justify-between pt-4 border-t border-glass/30">
-                    <p className="text-[10px] text-secondary font-black uppercase tracking-widest">
+                  <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]/30">
+                    <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">
                       Page {currentPage} of {Math.ceil(orderHistoryList.length / historyPerPage)}
                     </p>
                     <div className="flex gap-2">
                       <button 
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-main disabled:opacity-30 transition-all"
+                        className="p-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 transition-all"
                       >
                         <span className="material-symbols-outlined text-sm">chevron_left</span>
                       </button>
                       <button 
                         disabled={currentPage >= Math.ceil(orderHistoryList.length / historyPerPage)}
                         onClick={() => setCurrentPage(p => p + 1)}
-                        className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-main disabled:opacity-30 transition-all"
+                        className="p-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 transition-all"
                       >
                         <span className="material-symbols-outlined text-sm">chevron_right</span>
                       </button>
@@ -793,36 +793,36 @@ const TradingTerminal = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="border-b border-glass/30">
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Symbol</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Type</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-left">Side</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Qty</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Entry</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Exit</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Realized P&L</th>
-                        <th className="pb-3 text-[10px] text-secondary font-black uppercase tracking-widest text-right">Time</th>
+                      <tr className="border-b border-[var(--border)]/30">
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Symbol</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Type</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-left">Side</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Qty</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Entry</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Exit</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Realized P&L</th>
+                        <th className="pb-3 text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest text-right">Time</th>
                       </tr>
                     </thead>
                     <tbody>
                       {closedPnlList.length === 0 ? (
-                        <tr><td colSpan="8" className="py-8 text-center text-xs text-secondary">No realized P&L data yet</td></tr>
+                        <tr><td colSpan="8" className="py-8 text-center text-xs text-[var(--text-secondary)]">No realized P&L data yet</td></tr>
                       ) : closedPnlList.slice((pnlPage - 1) * historyPerPage, pnlPage * historyPerPage).map(p => (
-                        <tr key={p.id} className="border-b border-glass/30 last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
-                          <td className="py-4 text-xs font-black text-main">{p.symbol}</td>
-                          <td className="py-4 text-xs font-bold text-secondary">{p.orderType}</td>
+                        <tr key={p.id} className="border-b border-[var(--border)]/30 last:border-0 hover: transition-colors group">
+                          <td className="py-4 text-xs font-black text-[var(--text-primary)]">{p.symbol}</td>
+                          <td className="py-4 text-xs font-bold text-[var(--text-secondary)]">{p.orderType}</td>
                           <td className="py-4 text-xs pr-4">
                             <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${p.side === 'Long' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                               {p.side}
                             </span>
                           </td>
                           <td className="py-4 text-xs font-bold text-main/90 text-right font-mono">{p.qty}</td>
-                          <td className="py-4 text-xs font-bold text-secondary text-right font-mono">{formatPrice(p.entryPrice)}</td>
-                          <td className="py-4 text-xs font-bold text-secondary text-right font-mono">{formatPrice(p.exitPrice)}</td>
-                          <td className={`py-4 text-xs font-black text-right font-mono ${parseFloat(p.closedPnl || 0) > 0 ? 'text-emerald-500' : parseFloat(p.closedPnl || 0) < 0 ? 'text-rose-500' : 'text-main'}`}>
+                          <td className="py-4 text-xs font-bold text-[var(--text-secondary)] text-right font-mono">{formatPrice(p.entryPrice)}</td>
+                          <td className="py-4 text-xs font-bold text-[var(--text-secondary)] text-right font-mono">{formatPrice(p.exitPrice)}</td>
+                          <td className={`py-4 text-xs font-black text-right font-mono ${parseFloat(p.closedPnl || 0) > 0 ? 'text-emerald-500' : parseFloat(p.closedPnl || 0) < 0 ? 'text-rose-500' : 'text-[var(--text-primary)]'}`}>
                             {parseFloat(p.closedPnl || 0) > 0 ? '+' : ''}{parseFloat(p.closedPnl || 0).toFixed(4)}
                           </td>
-                          <td className="py-4 text-xs font-bold text-secondary text-right font-mono">{p.updatedTime ? new Date(p.updatedTime).toLocaleString() : '—'}</td>
+                          <td className="py-4 text-xs font-bold text-[var(--text-secondary)] text-right font-mono">{p.updatedTime ? new Date(p.updatedTime).toLocaleString() : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -830,22 +830,22 @@ const TradingTerminal = () => {
                 </div>
 
                 {closedPnlList.length > historyPerPage && (
-                  <div className="flex items-center justify-between pt-4 border-t border-glass/30">
-                    <p className="text-[10px] text-secondary font-black uppercase tracking-widest">
+                  <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]/30">
+                    <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">
                       Page {pnlPage} of {Math.ceil(closedPnlList.length / historyPerPage)}
                     </p>
                     <div className="flex gap-2">
                       <button 
                         disabled={pnlPage === 1}
                         onClick={() => setPnlPage(p => Math.max(1, p - 1))}
-                        className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-main disabled:opacity-30 transition-all"
+                        className="p-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 transition-all"
                       >
                         <span className="material-symbols-outlined text-sm">chevron_left</span>
                       </button>
                       <button 
                         disabled={pnlPage >= Math.ceil(closedPnlList.length / historyPerPage)}
                         onClick={() => setPnlPage(p => p + 1)}
-                        className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-secondary hover:text-main disabled:opacity-30 transition-all"
+                        className="p-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 transition-all"
                       >
                         <span className="material-symbols-outlined text-sm">chevron_right</span>
                       </button>
@@ -862,8 +862,8 @@ const TradingTerminal = () => {
       {/* Order Confirmation Modal */}
       {orderConfirm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="glass-card border border-glass rounded-3xl p-6 w-full max-w-sm shadow-2xl">
-            <h3 className="text-main text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-amber-500">warning</span>
               Confirm Order (MAINNET)
             </h3>
@@ -878,14 +878,14 @@ const TradingTerminal = () => {
                 ...(orderConfirm.sl ? [{ label: 'Stop Loss', value: orderConfirm.sl }] : []),
               ].map((item, i) => (
                 <div key={i} className="flex justify-between items-center">
-                  <span className="text-[10px] text-secondary font-black uppercase tracking-widest">{item.label}</span>
-                  <span className={`text-xs font-black ${item.color || 'text-main'}`}>{item.value}</span>
+                  <span className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest">{item.label}</span>
+                  <span className={`text-xs font-black ${item.color || 'text-[var(--text-primary)]'}`}>{item.value}</span>
                 </div>
               ))}
             </div>
             <p className="text-amber-500 text-[10px] font-bold mb-4 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">⚠ This will execute a REAL order on {activeExchange.toUpperCase()} Mainnet using your funds.</p>
             <div className="flex gap-3">
-              <button onClick={() => setOrderConfirm(null)} className="flex-1 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass text-secondary text-xs font-black uppercase tracking-widest hover:text-main transition-all">Cancel</button>
+              <button onClick={() => setOrderConfirm(null)} className="flex-1 py-3 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] text-xs font-black uppercase tracking-widest hover:text-[var(--text-primary)] transition-all">Cancel</button>
               <button onClick={confirmAndPlaceOrder} className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all ${
                 orderConfirm.side === 'buy' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-rose-500 hover:bg-rose-600'
               }`}>Confirm Order</button>

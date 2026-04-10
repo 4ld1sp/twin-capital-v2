@@ -11,7 +11,7 @@ const STATUS_CONFIG = {
   paused:  { dot: 'bg-amber-500',                 text: 'text-amber-500',   bg: 'bg-amber-500/10',   border: 'border-amber-500/20',   label: 'Paused' },
   error:   { dot: 'bg-rose-500',                  text: 'text-rose-500',    bg: 'bg-rose-500/10',    border: 'border-rose-500/20',    label: 'Error' },
   killed:  { dot: 'bg-rose-700',                  text: 'text-rose-700',    bg: 'bg-rose-700/10',    border: 'border-rose-700/20',    label: 'Killed' },
-  stopped: { dot: 'bg-secondary/40',              text: 'text-secondary',   bg: 'bg-glass',          border: 'border-glass',          label: 'Stopped' },
+  stopped: { dot: 'bg-secondary/40',              text: 'text-[var(--text-secondary)]',   bg: 'bg-[var(--bg-surface)]',          border: 'border-[var(--border)]',          label: 'Stopped' },
 };
 
 const BotEngineDashboard = () => {
@@ -73,13 +73,13 @@ const BotEngineDashboard = () => {
     <div className="w-full flex flex-col pt-4 space-y-6">
 
       {/* ── Header + Bot Selector ──────────────────────────── */}
-      <div className="glass-card relative z-50 border border-glass rounded-3xl p-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl relative z-50 border border-[var(--border)] rounded-3xl p-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Zap className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-black text-main tracking-tight uppercase">Hybrid Bot Engine</h2>
+            <h2 className="text-xl font-black text-[var(--text-primary)] tracking-tight uppercase">Hybrid Bot Engine</h2>
           </div>
-          <p className="text-xs text-secondary font-bold max-w-md">
+          <p className="text-xs text-[var(--text-secondary)] font-bold max-w-md">
             Dual-loop architecture: AI Signal Engine (slow) + Hardcoded Risk Engine (fast), running fully independently.
           </p>
         </div>
@@ -87,23 +87,23 @@ const BotEngineDashboard = () => {
         <div className="flex items-center gap-3 w-full lg:w-auto">
           {/* Bot instance selector */}
           <div className="flex flex-col flex-1 lg:flex-none min-w-[200px]">
-            <label className="text-[9px] text-secondary font-black uppercase tracking-widest mb-1 pl-1">
+            <label className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1 pl-1">
               Active Instance
             </label>
             {isLoadingBots ? (
-              <div className="h-10 bg-black/10 dark:bg-white/5 border border-glass rounded-xl animate-pulse" />
+              <div className="h-10  border border-[var(--border)] rounded-xl animate-pulse" />
             ) : bots.length === 0 ? (
-              <div className="flex items-center gap-2 h-10 px-4 bg-black/10 dark:bg-white/5 border border-glass rounded-xl">
+              <div className="flex items-center gap-2 h-10 px-4  border border-[var(--border)] rounded-xl">
                 <AlertCircle className="w-4 h-4 text-secondary/40" />
-                <span className="text-xs text-secondary font-bold">No bots deployed</span>
+                <span className="text-xs text-[var(--text-secondary)] font-bold">No bots deployed</span>
               </div>
             ) : (
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className={`
-                    flex items-center justify-between w-full h-10 px-4 bg-black/10 dark:bg-white/5 border rounded-xl transition-all duration-300
-                    ${isDropdownOpen ? 'border-primary ring-2 ring-primary/20 bg-black/20' : 'border-glass hover:border-primary/50'}
+                    flex items-center justify-between w-full h-10 px-4  border rounded-xl transition-all duration-300
+                    ${isDropdownOpen ? 'border-primary ring-2 ring-primary/20 bg-black/20' : 'border-[var(--border)] hover:border-primary/50'}
                   `}
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
@@ -114,12 +114,12 @@ const BotEngineDashboard = () => {
                       <span className={`w-1.5 h-1.5 rounded-full ${STATUS_CONFIG[bot.status]?.dot}`} />
                     )}
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-secondary transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-[var(--text-secondary)] transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 z-[100] bg-[#0f1118]/90 backdrop-blur-xl border border-glass rounded-2xl shadow-2xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute top-full left-0 right-0 mt-2 z-[100] bg-[#0f1118]/90 backdrop-blur-xl border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="max-h-[250px] overflow-y-auto custom-scrollbar">
                       {bots.map((b) => {
                         const isSelected = b.id === selectedBotId;
@@ -138,7 +138,7 @@ const BotEngineDashboard = () => {
                                 {b.strategyName}
                               </span>
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-secondary font-bold uppercase tracking-widest">{b.symbol}</span>
+                                <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">{b.symbol}</span>
                                 <span className={`text-[8px] font-black uppercase tracking-[0.1em] ${bStatus.text}`}>
                                   {bStatus.label}
                                 </span>
@@ -157,7 +157,7 @@ const BotEngineDashboard = () => {
 
           <button
             onClick={refetch}
-            className="mt-[18px] h-10 aspect-square flex items-center justify-center rounded-xl bg-black/10 dark:bg-white/5 border border-glass hover:bg-black/20 dark:hover:bg-white/10 text-secondary hover:text-main transition-colors"
+            className="mt-[18px] h-10 aspect-square flex items-center justify-center rounded-xl  border border-[var(--border)] hover:bg-black/20  text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           >
             <Settings2 className="w-4 h-4" />
           </button>
@@ -173,9 +173,9 @@ const BotEngineDashboard = () => {
               <span className={`text-sm font-black uppercase tracking-widest ${statusCfg.text}`}>{statusCfg.label}</span>
             </div>
             <span className="text-secondary/40 text-sm">|</span>
-            <span className="text-xs text-secondary font-bold">{bot.strategyName}</span>
+            <span className="text-xs text-[var(--text-secondary)] font-bold">{bot.strategyName}</span>
             <span className="text-secondary/40 text-xs">·</span>
-            <span className="text-xs text-secondary font-bold">{bot.symbol === 'ALL_MARKETS' ? 'GLOBAL SCANNER' : bot.symbol}</span>
+            <span className="text-xs text-[var(--text-secondary)] font-bold">{bot.symbol === 'ALL_MARKETS' ? 'GLOBAL SCANNER' : bot.symbol}</span>
             <span className="text-secondary/40 text-xs">·</span>
             <span className="text-[10px] text-secondary/60 font-bold uppercase">{bot.exchange} {bot.networkMode === 'testnet' ? '· Testnet' : ''}</span>
           </div>

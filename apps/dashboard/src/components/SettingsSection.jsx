@@ -36,44 +36,44 @@ export const AccountSettingsList = () => {
   };
 
   return (
-    <div className="glass-card rounded-3xl border border-glass p-6 shadow-sm">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)] p-6 shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-sm font-black text-main uppercase tracking-widest">Account Information</h2>
+        <h2 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest">Account Information</h2>
       </div>
       
       <div className="flex flex-col gap-2">
         <div 
-          className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
+          className="flex items-start md:items-center justify-between p-4 hover:dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
           onClick={() => setExpandedSection(expandedSection === 'personal' ? null : 'personal')}
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
+            <div className="w-11 h-11 rounded-xl dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-[var(--border)]">
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-main font-bold text-sm">Personal Information</p>
-              <p className="text-secondary text-xs mt-0.5">{user.name}, {user.email}</p>
+              <p className="text-[var(--text-primary)] font-bold text-sm">Personal Information</p>
+              <p className="text-[var(--text-secondary)] text-xs mt-0.5">{user.name}, {user.email}</p>
             </div>
           </div>
-          <div className="shrink-0 ml-4 group-hover:text-primary text-secondary transition-colors">
+          <div className="shrink-0 ml-4 group-hover:text-primary text-[var(--text-secondary)] transition-colors">
             {expandedSection === 'personal' ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
           </div>
         </div>
         
         {expandedSection === 'personal' && (
-          <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-6 dark:bg-white/[0.02] rounded-2xl border border-[var(--border)] mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Full Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
+                <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Full Name</label>
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full rounded-xl border border-[var(--border)] dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Email Address</label>
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
+                <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Email Address</label>
+                <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full rounded-xl border border-[var(--border)] dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Phone Number</label>
-                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
+                <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Phone Number</label>
+                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full rounded-xl border border-[var(--border)] dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               <div className="space-y-1.5 min-w-[140px]">
                 <GlassSelect
@@ -197,21 +197,21 @@ export const SecuritySettingsList = () => {
 
   return (
     <>
-      <div className="glass-card rounded-3xl border border-glass p-6 shadow-sm">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)] p-6 shadow-sm">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-sm font-black text-main uppercase tracking-widest">Security & Access</h2>
+          <h2 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest">Security & Access</h2>
         </div>
 
         <div className="flex flex-col gap-2">
           {/* TFA */}
-          <div className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl transition-colors">
+          <div className="flex items-start md:items-center justify-between p-4 hover:dark:hover:bg-white/[0.03] rounded-2xl transition-colors">
             <div className="flex items-center gap-4">
-               <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
+               <div className="w-11 h-11 rounded-xl dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-[var(--border)]">
                 <Shield className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-main font-bold text-sm">Two-Factor Authentication</p>
-                <p className="text-secondary text-xs mt-0.5">
+                <p className="text-[var(--text-primary)] font-bold text-sm">Two-Factor Authentication</p>
+                <p className="text-[var(--text-secondary)] text-xs mt-0.5">
                   {is2FAEnabled 
                     ? <span className="text-emerald-500 font-bold">Active — Protected by TOTP</span>
                     : 'Adds an extra layer of security'
@@ -221,35 +221,35 @@ export const SecuritySettingsList = () => {
             </div>
             <label className="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
               <input type="checkbox" className="sr-only peer" checked={is2FAEnabled} onChange={handleToggle2FA} />
-              <div className="w-11 h-6 bg-black/10 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              <div className="w-11 h-6  peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
 
           {/* Password */}
           <div 
-            className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
+            className="flex items-start md:items-center justify-between p-4 hover:dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
             onClick={() => toggleAccordion('password')}
           >
             <div className="flex items-center gap-4">
-               <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
+               <div className="w-11 h-11 rounded-xl dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-[var(--border)]">
                 <Key className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-main font-bold text-sm">Password Management</p>
-                <p className="text-secondary text-xs mt-0.5">Update your security credentials</p>
+                <p className="text-[var(--text-primary)] font-bold text-sm">Password Management</p>
+                <p className="text-[var(--text-secondary)] text-xs mt-0.5">Update your security credentials</p>
               </div>
             </div>
-            <div className="shrink-0 ml-4 group-hover:text-primary text-secondary transition-colors">
+            <div className="shrink-0 ml-4 group-hover:text-primary text-[var(--text-secondary)] transition-colors">
               {expandedSection === 'password' ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </div>
           </div>
 
           {expandedSection === 'password' && (
-            <div className="p-6 bg-black/5 dark:bg-white/[0.02] rounded-2xl border border-glass mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="p-6 dark:bg-white/[0.02] rounded-2xl border border-[var(--border)] mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
                <div className="space-y-4">
                  <div>
-                   <label className="text-[10px] font-black text-secondary uppercase tracking-widest">New Password</label>
-                   <input type="password" placeholder="••••••••" className="w-full rounded-xl border border-glass bg-black/5 dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-main outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
+                   <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">New Password</label>
+                   <input type="password" placeholder="••••••••" className="w-full rounded-xl border border-[var(--border)] dark:bg-white/[0.03] px-4 py-2.5 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
                  </div>
                  <button className="w-full py-2.5 bg-primary/20 text-primary font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-primary/30 transition-all">Update Password</button>
                </div>
@@ -258,19 +258,19 @@ export const SecuritySettingsList = () => {
 
           {/* Devices — Real sessions from Better Auth */}
           <div 
-            className="flex items-start md:items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
+            className="flex items-start md:items-center justify-between p-4 hover:dark:hover:bg-white/[0.03] rounded-2xl cursor-pointer group transition-colors"
             onClick={() => toggleAccordion('devices')}
           >
             <div className="flex items-center gap-4">
-               <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-glass">
+               <div className="w-11 h-11 rounded-xl dark:bg-white/[0.03] flex items-center justify-center shrink-0 shadow-sm border border-[var(--border)]">
                 <Laptop className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-main font-bold text-sm">Trusted Devices</p>
-                <p className="text-secondary text-xs mt-0.5">{sessions.length || '...'} active sessions</p>
+                <p className="text-[var(--text-primary)] font-bold text-sm">Trusted Devices</p>
+                <p className="text-[var(--text-secondary)] text-xs mt-0.5">{sessions.length || '...'} active sessions</p>
               </div>
             </div>
-            <div className="shrink-0 ml-4 group-hover:text-primary text-secondary transition-colors">
+            <div className="shrink-0 ml-4 group-hover:text-primary text-[var(--text-secondary)] transition-colors">
               {expandedSection === 'devices' ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </div>
           </div>
@@ -280,18 +280,18 @@ export const SecuritySettingsList = () => {
               {loadingSessions ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                  <span className="ml-2 text-xs text-secondary font-bold">Loading sessions...</span>
+                  <span className="ml-2 text-xs text-[var(--text-secondary)] font-bold">Loading sessions...</span>
                 </div>
               ) : sessions.length === 0 ? (
-                <p className="text-xs text-secondary text-center py-4">No active sessions found</p>
+                <p className="text-xs text-[var(--text-secondary)] text-center py-4">No active sessions found</p>
               ) : (
                 sessions.map((session, index) => (
-                  <div key={session.id || index} className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-glass transition-all hover:border-primary/20">
+                  <div key={session.id || index} className="flex items-center justify-between p-3 rounded-xl border border-[var(--border)] transition-all hover:border-primary/20">
                     <div className="flex items-center gap-3">
                       {getDeviceIcon(session.userAgent)}
                       <div>
-                        <p className="text-xs font-bold text-main">{getDeviceName(session.userAgent)}</p>
-                        <p className="text-[10px] text-secondary">
+                        <p className="text-xs font-bold text-[var(--text-primary)]">{getDeviceName(session.userAgent)}</p>
+                        <p className="text-[10px] text-[var(--text-secondary)]">
                           {session.ipAddress || 'Unknown IP'} • {formatDate(session.createdAt)}
                         </p>
                       </div>
@@ -318,8 +318,8 @@ export const SecuritySettingsList = () => {
       {/* Disable 2FA Modal */}
       {showDisableModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass-card w-full max-w-md rounded-3xl p-8 border border-glass shadow-2xl relative animate-in zoom-in-95 duration-300">
-            <button onClick={() => setShowDisableModal(false)} className="absolute top-4 right-4 text-secondary hover:text-main transition-colors">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl w-full max-w-md rounded-3xl p-8 border border-[var(--border)] shadow-2xl relative animate-in zoom-in-95 duration-300">
+            <button onClick={() => setShowDisableModal(false)} className="absolute top-4 right-4 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
               <X className="w-5 h-5" />
             </button>
             
@@ -327,8 +327,8 @@ export const SecuritySettingsList = () => {
               <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-4">
                 <ShieldOff className="w-8 h-8 text-rose-500" />
               </div>
-              <h3 className="text-xl font-black text-main uppercase tracking-tight">Disable 2FA</h3>
-              <p className="text-secondary text-xs mt-2">Enter your authenticator code to confirm</p>
+              <h3 className="text-xl font-black text-[var(--text-primary)] uppercase tracking-tight">Disable 2FA</h3>
+              <p className="text-[var(--text-secondary)] text-xs mt-2">Enter your authenticator code to confirm</p>
             </div>
             
             <div className="space-y-4">
@@ -339,7 +339,7 @@ export const SecuritySettingsList = () => {
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
                 placeholder="000000"
-                className="w-full h-14 text-center text-2xl font-black tracking-[0.5em] bg-black/5 dark:bg-white/5 border border-glass rounded-xl outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
+                className="w-full h-14 text-center text-2xl font-black tracking-[0.5em] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
                 autoFocus
               />
               

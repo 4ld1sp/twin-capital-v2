@@ -2,14 +2,14 @@ import React from 'react';
 
 const BacktestEquityChart = () => {
   return (
-    <div className="glass-card rounded-2xl p-6 shadow-sm flex flex-col transition-all duration-300">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl p-6 shadow-sm flex flex-col transition-all duration-300">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-sm font-black text-main uppercase tracking-widest">Backtest Equity Curve</h3>
+        <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest">Backtest Equity Curve</h3>
         <div className="flex gap-4">
           <span className="flex items-center gap-1.5 text-[10px] font-black text-primary uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_5px_rgba(202,255,0,0.5)]"></span> Optimized
           </span>
-          <span className="flex items-center gap-1.5 text-[10px] font-black text-secondary uppercase tracking-widest">
+          <span className="flex items-center gap-1.5 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-secondary opacity-40"></span> Baseline
           </span>
         </div>
@@ -26,7 +26,7 @@ const BacktestEquityChart = () => {
           <path d="M0,180 L50,175 L100,160 L150,165 L200,140 L250,145 L300,110 L350,120 L400,90 L450,100 L500,70 L550,60 L600,45 L650,55 L700,30 L750,40 L800,10 L800,200 L0,200 Z" fill="url(#chartFillOptTrading)"></path>
           <path d="M0,180 L100,178 L200,175 L300,165 L400,160 L500,158 L600,150 L700,145 L800,140" fill="none" stroke="var(--text-secondary)" strokeDasharray="6" strokeWidth="2" strokeOpacity="0.3"></path>
         </svg>
-        <div className="absolute bottom-0 left-0 w-full flex justify-between text-[9px] text-secondary font-black uppercase tracking-widest pt-3 border-t border-glass">
+        <div className="absolute bottom-0 left-0 w-full flex justify-between text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-widest pt-3 border-t border-[var(--border)]">
           <span>Jan 01</span>
           <span>Feb 01</span>
           <span>Mar 01</span>

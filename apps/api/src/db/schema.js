@@ -281,6 +281,93 @@ export const agentChats = pgTable('agent_chats', {
 
 
 // ═══════════════════════════════════════════════════════════════
+// MULTI-TENANT — Organizations & Billing
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Organizations
+ * Multi-tenant container. Every user belongs to at least one org.
+ * Free users get a personal org auto-created on first request.
+ */
+export const organizations = pgTable('organizations', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull().unique(),
+  ownerId: text('owner_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  plan: text('plan').notNull().default('free'),           // 'free' | 'pro' | 'enterprise'
+  status: text('status').notNull().default('active'),     // 'active' | 'suspended' | 'canceled'
+  midtransCustomerId: text('midtrans_customer_id'),
+  maxBots: integer('max_bots').notNull().default(1),
+  maxSocialAccounts: integer('max_social_accounts').notNull().default(2),
+  maxTradesPerDay: integer('max_trades_per_day').notNull().default(10),
+  features: jsonb('features').default({}),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * Organization Members
+ * Maps users to organizations with role-based access.
+ */
+export const orgMembers = pgTable('org_members', {
+  id: text('id').primaryKey(),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  role: text('role').notNull().default('member'),         // 'owner' | 'admin' | 'member' | 'viewer'
+  joinedAt: timestamp('joined_at').notNull().defaultNow(),
+});
+
+/**
+ * Subscriptions
+ * Tracks active plan subscriptions per organization.
+ */
+export const subscriptions = pgTable('subscriptions', {
+  id: text('id').primaryKey(),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  plan: text('plan').notNull(),                           // 'free' | 'pro' | 'enterprise'
+  status: text('status').notNull().default('active'),     // 'active' | 'past_due' | 'canceled' | 'trialing'
+  midtransOrderId: text('midtrans_order_id'),
+  currentPeriodStart: timestamp('current_period_start'),
+  currentPeriodEnd: timestamp('current_period_end'),
+  canceledAt: timestamp('canceled_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * Payments
+ * Records every payment transaction from Midtrans.
+ */
+export const payments = pgTable('payments', {
+  id: text('id').primaryKey(),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  subscriptionId: text('subscription_id').references(() => subscriptions.id),
+  midtransTransactionId: text('midtrans_transaction_id'),
+  amount: integer('amount').notNull(),                    // In IDR (smallest unit)
+  currency: text('currency').notNull().default('IDR'),
+  status: text('status').notNull().default('pending'),    // 'pending' | 'settlement' | 'expire' | 'cancel' | 'deny' | 'refund'
+  paymentType: text('payment_type'),                      // 'qris' | 'gopay' | 'bank_transfer' | 'credit_card'
+  metadata: jsonb('metadata').default({}),
+  paidAt: timestamp('paid_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/**
+ * Usage Records
+ * Tracks resource consumption per org per period for plan enforcement.
+ */
+export const usageRecords = pgTable('usage_records', {
+  id: text('id').primaryKey(),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  metric: text('metric').notNull(),                       // 'bots_deployed' | 'trades_executed' | 'social_posts' | 'ai_calls'
+  value: integer('value').notNull().default(0),
+  periodStart: timestamp('period_start').notNull(),
+  periodEnd: timestamp('period_end').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+
+// ═══════════════════════════════════════════════════════════════
 // OPERATOR KEYS — External Agent Auth (OpenClaw, etc.)
 // ═══════════════════════════════════════════════════════════════
 

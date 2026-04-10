@@ -11,6 +11,10 @@ import agentRouter from './routes/agentRoutes.js';
 import operatorRouter from './routes/operatorRoutes.js';
 import stockRouter from './routes/stockRoutes.js';
 import assetSahamRouter from './routes/assetSaham.js';
+import orgRouter from './routes/orgRoutes.js';
+import billingRouter from './routes/billingRoutes.js';
+import { requireAuth } from './middleware/requireAuth.js';
+import { orgContext } from './middleware/orgContext.js';
 
 const app = express();
 const PORT = process.env.PORT || 8001;
@@ -52,6 +56,8 @@ app.use('/api/agent', agentRouter);
 app.use('/api/operator', operatorRouter);
 app.use('/api/stocks', stockRouter);
 app.use('/api/assets-saham', assetSahamRouter);
+app.use('/api/org', requireAuth, orgContext, orgRouter);
+app.use('/api/billing', billingRouter);
 
 // ─── Health Check ──────────────────────────────────────
 app.get('/api/health', (req, res) => {

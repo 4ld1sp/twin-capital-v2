@@ -8,9 +8,9 @@ const StrategyManager = () => {
   if (savedStrategies.length === 0) return null;
 
   return (
-    <div className="glass-card border border-glass rounded-3xl p-6">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
       <div className="flex justify-between items-center mb-5">
-        <h3 className="text-main text-sm font-black uppercase tracking-widest flex items-center gap-2">
+        <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-lg">folder_special</span>
           Saved Strategies ({savedStrategies.length})
         </h3>
@@ -23,7 +23,7 @@ const StrategyManager = () => {
           const r = strategy.results || {};
 
           return (
-            <div key={strategy.id} className={`rounded-2xl border transition-all ${isDeployed ? 'border-primary/40 bg-primary/5' : 'border-glass hover:border-primary/20'}`}>
+            <div key={strategy.id} className={`rounded-2xl border transition-all ${isDeployed ? 'border-primary/40 bg-primary/5' : 'border-[var(--border)] hover:border-primary/20'}`}>
               {/* Strategy Summary Row */}
               <div className="p-4 flex items-center justify-between gap-4 cursor-pointer" onClick={() => setExpandedId(isExpanded ? null : strategy.id)}>
                 <div className="flex items-center gap-3 min-w-0">
@@ -34,15 +34,15 @@ const StrategyManager = () => {
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-main text-xs font-black truncate">{strategy.name}</p>
+                      <p className="text-[var(--text-primary)] text-xs font-black truncate">{strategy.name}</p>
                       {isDeployed && (
                         <span className="px-2 py-0.5 rounded bg-primary/20 text-primary text-[8px] font-black uppercase tracking-widest shrink-0">Active</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-secondary text-[10px] font-bold">{strategy.symbol}</span>
+                      <span className="text-[var(--text-secondary)] text-[10px] font-bold">{strategy.symbol}</span>
                       <span className="text-secondary/40 text-[10px]">•</span>
-                      <span className="text-secondary text-[10px] font-bold">{strategy.timeframe}</span>
+                      <span className="text-[var(--text-secondary)] text-[10px] font-bold">{strategy.timeframe}</span>
                       <span className="text-secondary/40 text-[10px]">•</span>
                       <span className={`text-[10px] font-black ${strategy.language === 'pine' ? 'text-primary' : 'text-blue-500'}`}>
                         {strategy.language === 'pine' ? 'Pine' : 'Python'}
@@ -53,13 +53,13 @@ const StrategyManager = () => {
                 <div className="flex items-center gap-3 shrink-0">
                   {r.totalPnL && <span className="text-emerald-500 text-xs font-black hidden sm:block">{r.totalPnL}</span>}
                   {r.winRate && <span className="text-primary text-xs font-black hidden sm:block">{r.winRate}</span>}
-                  <span className={`material-symbols-outlined text-secondary text-sm transition-transform ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
+                  <span className={`material-symbols-outlined text-[var(--text-secondary)] text-sm transition-transform ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
                 </div>
               </div>
 
               {/* Expanded Details */}
               {isExpanded && (
-                <div className="px-4 pb-4 border-t border-glass pt-4">
+                <div className="px-4 pb-4 border-t border-[var(--border)] pt-4">
                   {r.totalPnL && (
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-4">
                       {[
@@ -70,10 +70,10 @@ const StrategyManager = () => {
                         { label: 'Drawdown', value: r.maxDrawdown, color: 'rose' },
                         { label: 'Trades', value: r.totalTrades, color: 'main' },
                       ].map((m, i) => (
-                        <div key={i} className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-glass text-center">
-                          <p className="text-[9px] text-secondary font-black uppercase tracking-widest mb-0.5">{m.label}</p>
+                        <div key={i} className="p-2 rounded-lg border border-[var(--border)] text-center">
+                          <p className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-0.5">{m.label}</p>
                           <p className={`text-xs font-black ${
-                            m.color === 'emerald' ? 'text-emerald-500' : m.color === 'rose' ? 'text-rose-500' : m.color === 'primary' ? 'text-primary' : 'text-main'
+                            m.color === 'emerald' ? 'text-emerald-500' : m.color === 'rose' ? 'text-rose-500' : m.color === 'primary' ? 'text-primary' : 'text-[var(--text-primary)]'
                           }`}>{m.value}</p>
                         </div>
                       ))}

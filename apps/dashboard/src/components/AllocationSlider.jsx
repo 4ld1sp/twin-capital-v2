@@ -58,7 +58,7 @@ export default function AllocationSlider({ allocation, onChange }) {
             </div>
           ))}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--space-sm)' }}>
-            <span className="text-secondary" style={{ fontSize: 'var(--fs-caption)' }}>Total</span>
+            <span className="text-[var(--text-secondary)]" style={{ fontSize: 'var(--fs-caption)' }}>Total</span>
             <span style={{
               fontWeight: 700,
               color: total === 100 ? 'var(--accent-teal)' : 'var(--accent-red)'
@@ -104,7 +104,7 @@ export default function AllocationSlider({ allocation, onChange }) {
           {sliders.map(s => (
             <div key={s.key} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--fs-caption)' }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: s.color, display: 'inline-block' }} />
-              <span className="text-secondary">{s.label}</span>
+              <span className="text-[var(--text-secondary)]">{s.label}</span>
             </div>
           ))}
         </div>

@@ -105,16 +105,16 @@ const PerformanceAnalytics = ({ pnlTimeseries = [] }) => {
   };
 
   return (
-    <div className="glass-card rounded-2xl p-6 shadow-sm h-full flex flex-col relative transition-all duration-300">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-2xl p-6 shadow-sm h-full flex flex-col relative transition-all duration-300">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
-          <h3 className="text-lg font-bold text-main">Performance Analytics</h3>
+          <h3 className="text-lg font-bold text-[var(--text-primary)]">Performance Analytics</h3>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-xs text-secondary font-bold uppercase tracking-wider">PnL over</p>
-            <div className="flex bg-black/5 dark:bg-white/5 rounded-xl p-1 border border-glass">
+            <p className="text-xs text-[var(--text-secondary)] font-bold uppercase tracking-wider">PnL over</p>
+            <div className="flex rounded-xl p-1 border border-[var(--border)]">
               {['1W', '1M', '3M', '1Y'].map(tf => (
                 <button key={tf} onClick={() => setTimeframe(tf)}
-                  className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${timeframe === tf ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+                  className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${timeframe === tf ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                   {tf}
                 </button>
               ))}
@@ -124,13 +124,13 @@ const PerformanceAnalytics = ({ pnlTimeseries = [] }) => {
             )}
           </div>
         </div>
-        <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-glass">
+        <div className="flex p-1 rounded-xl border border-[var(--border)]">
           <button onClick={() => setChartType('line')}
-            className={`px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${chartType === 'line' ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+            className={`px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${chartType === 'line' ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
             <span className="material-symbols-outlined text-[14px]">show_chart</span> Line
           </button>
           <button onClick={() => setChartType('bar')}
-            className={`px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${chartType === 'bar' ? 'bg-primary text-black shadow-sm' : 'text-secondary hover:text-main'}`}>
+            className={`px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${chartType === 'bar' ? 'bg-primary text-black shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
             <span className="material-symbols-outlined text-[14px]">bar_chart</span> Bar
           </button>
         </div>
@@ -144,7 +144,7 @@ const PerformanceAnalytics = ({ pnlTimeseries = [] }) => {
             <div key={i} className="flex flex-col flex-1 gap-2 items-center group/bar relative h-full justify-end z-20">
               {chartType === 'bar' && (
                 <div
-                  className={`w-full rounded-t-lg transition-all duration-500 ease-out cursor-pointer border border-glass shadow-sm ${d.isLoss
+                  className={`w-full rounded-t-lg transition-all duration-500 ease-out cursor-pointer border border-[var(--border)] shadow-sm ${d.isLoss
                       ? 'bg-rose-500/60 group-hover/bar:bg-rose-500/80 hover:!bg-rose-500 border-rose-500/20'
                       : 'bg-emerald-500/60 group-hover/bar:bg-emerald-500/80 hover:!bg-emerald-500 border-emerald-500/20'
                     }`}
@@ -159,13 +159,13 @@ const PerformanceAnalytics = ({ pnlTimeseries = [] }) => {
                   </div>
                 </div>
               )}
-              <span className={`absolute bottom-0 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${hoverIndex === i ? (d.isLoss ? 'text-rose-500' : 'text-primary scale-110') : 'text-secondary opacity-60'}`}>
+              <span className={`absolute bottom-0 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${hoverIndex === i ? (d.isLoss ? 'text-rose-500' : 'text-primary scale-110') : 'text-[var(--text-secondary)] opacity-60'}`}>
                 {d.label}
               </span>
             </div>
           );
         })}
-        <div className="absolute bottom-6 left-0 right-0 h-px bg-glass z-0 border-b border-dashed border-glass"></div>
+        <div className="absolute bottom-6 left-0 right-0 h-px bg-[var(--bg-surface)] z-0 border-b border-dashed border-[var(--border)]"></div>
       </div>
     </div>
   );

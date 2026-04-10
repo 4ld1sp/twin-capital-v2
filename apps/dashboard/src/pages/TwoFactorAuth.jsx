@@ -47,12 +47,12 @@ export default function TwoFactorAuth({ onNavigate }) {
             <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary border border-primary/20">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h2 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight uppercase tracking-tight">Two-Factor</h2>
+            <h2 className="text-slate-900  text-2xl font-bold tracking-tight uppercase tracking-tight">Two-Factor</h2>
           </div>
         </header>
 
         <main className="flex-1 flex flex-col items-center justify-center w-full">
-          <div className="glass-card w-full max-w-[480px] rounded-3xl p-10 shadow-2xl relative border border-white/10 text-center overflow-hidden">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl w-full max-w-[480px] rounded-3xl p-10 shadow-2xl relative border border-white/10 text-center overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
             
             <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8 shadow-inner shadow-primary/5">

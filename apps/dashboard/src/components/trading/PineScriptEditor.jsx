@@ -34,7 +34,7 @@ const PineScriptEditor = ({
   }
 
   return (
-    <div className={`relative flex rounded-2xl bg-[#0b0b14] border border-glass overflow-hidden ${className}`} style={{ height }}>
+    <div className={`relative flex rounded-2xl bg-[#0b0b14] border border-[var(--border)] overflow-hidden ${className}`} style={{ height }}>
       {/* Line Numbers Gutter */}
       <div 
         ref={lineNumbersRef}
@@ -58,7 +58,7 @@ const PineScriptEditor = ({
       />
 
       {/* Language Badge */}
-      <div className="absolute top-3 right-4 px-2 py-0.5 rounded-lg bg-white/5 border border-glass text-[9px] font-black uppercase tracking-widest text-secondary pointer-events-none">
+      <div className="absolute top-3 right-4 px-2 py-0.5 rounded-lg bg-white/5 border border-[var(--border)] text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)] pointer-events-none">
         {language === 'pine' ? 'Pine v5' : 'Python 3'}
       </div>
     </div>

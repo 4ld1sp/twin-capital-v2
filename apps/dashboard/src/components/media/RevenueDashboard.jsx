@@ -22,9 +22,9 @@ const RevenueDashboard = () => {
           { label: 'Projected Earnings', value: '$12,800', icon: TrendingUp, trend: '+8.1%', color: 'text-emerald-500' },
           { label: 'Conversion Rate', value: '4.8%', icon: PieChart, trend: '-0.4%', color: 'text-rose-500' },
         ].map((metric, i) => (
-          <div key={i} className="glass-card rounded-3xl border border-glass p-6 shadow-sm">
+          <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)] p-6 shadow-sm">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-black/5 dark:bg-white/5 rounded-2xl border border-glass">
+              <div className="p-3 rounded-2xl border border-[var(--border)]">
                 <metric.icon className={`w-5 h-5 ${metric.color}`} />
               </div>
               <div className={`flex items-center gap-1 text-[10px] font-black uppercase tracking-widest ${metric.trend.startsWith('+') ? 'text-primary' : 'text-rose-500'}`}>
@@ -32,24 +32,24 @@ const RevenueDashboard = () => {
                 {metric.trend}
               </div>
             </div>
-            <p className="text-[10px] uppercase tracking-widest text-secondary font-black mb-1">{metric.label}</p>
-            <p className="text-main font-black text-2xl tracking-tighter">{metric.value}</p>
+            <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-black mb-1">{metric.label}</p>
+            <p className="text-[var(--text-primary)] font-black text-2xl tracking-tighter">{metric.value}</p>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}
-        <div className="lg:col-span-2 glass-card rounded-3xl border border-glass p-8 shadow-sm h-[400px] flex flex-col">
+        <div className="lg:col-span-2 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)] p-8 shadow-sm h-[400px] flex flex-col">
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h3 className="text-xl font-black text-main tracking-tight">Revenue Analytics</h3>
-              <p className="text-secondary text-xs font-bold uppercase tracking-wider">Historical performance (Last 6 Months)</p>
+              <h3 className="text-xl font-black text-[var(--text-primary)] tracking-tight">Revenue Analytics</h3>
+              <p className="text-[var(--text-secondary)] text-xs font-bold uppercase tracking-wider">Historical performance (Last 6 Months)</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <span className="text-[10px] font-black text-main uppercase tracking-widest">Revenue</span>
+                <span className="text-[10px] font-black text-[var(--text-primary)] uppercase tracking-widest">Revenue</span>
               </div>
             </div>
           </div>
@@ -95,9 +95,9 @@ const RevenueDashboard = () => {
         </div>
 
         {/* Source Breakdown */}
-        <div className="glass-card rounded-3xl border border-glass p-8 shadow-sm flex flex-col">
-          <h3 className="text-xl font-black text-main tracking-tight mb-2">Source Breakdown</h3>
-          <p className="text-secondary text-xs font-bold uppercase tracking-wider mb-8">Revenue by Channel</p>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl rounded-3xl border border-[var(--border)] p-8 shadow-sm flex flex-col">
+          <h3 className="text-xl font-black text-[var(--text-primary)] tracking-tight mb-2">Source Breakdown</h3>
+          <p className="text-[var(--text-secondary)] text-xs font-bold uppercase tracking-wider mb-8">Revenue by Channel</p>
 
           <div className="space-y-6 flex-1 flex flex-col justify-center">
             {[
@@ -110,14 +110,14 @@ const RevenueDashboard = () => {
                 <div className="flex justify-between items-end">
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                    <span className="text-xs font-black text-main uppercase tracking-widest">{item.source}</span>
+                    <span className="text-xs font-black text-[var(--text-primary)] uppercase tracking-widest">{item.source}</span>
                   </div>
-                  <span className="text-xs font-black text-main">{item.amount}</span>
+                  <span className="text-xs font-black text-[var(--text-primary)]">{item.amount}</span>
                 </div>
-                <div className="w-full h-2 bg-black/10 dark:bg-white/5 rounded-full overflow-hidden">
+                <div className="w-full h-2  rounded-full overflow-hidden">
                   <div className={`h-full ${item.color} rounded-full transition-all duration-1000`} style={{ width: item.share }} />
                 </div>
-                <p className="text-[10px] text-secondary font-bold text-right">{item.share} contribution</p>
+                <p className="text-[10px] text-[var(--text-secondary)] font-bold text-right">{item.share} contribution</p>
               </div>
             ))}
           </div>

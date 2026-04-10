@@ -204,7 +204,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
         />
       )}
       {/* Result Header with Symbol/Timeframe Selectors */}
-      <div className="glass-card border border-glass rounded-[2rem] p-8 relative z-[100] !overflow-visible">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-[2rem] p-8 relative z-[100] !overflow-visible">
         <div className="flex flex-col gap-5">
           {/* Top row: badges + actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -214,8 +214,8 @@ const BacktestResults = ({ onClear, strategyData }) => {
                   {d.language === 'pine' ? 'Pine Script' : 'Python'}
                 </span>
               </div>
-              <h2 className="text-main text-2xl font-black tracking-tight leading-none bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">{d.strategyName}</h2>
-              <p className="text-secondary text-[11px] font-bold mt-2 flex items-center gap-2">
+              <h2 className="text-[var(--text-primary)] text-2xl font-black tracking-tight leading-none bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">{d.strategyName}</h2>
+              <p className="text-[var(--text-secondary)] text-[11px] font-bold mt-2 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[14px]">calendar_today</span>
                 {d.period}
               </p>
@@ -229,7 +229,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
                 <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">save</span>
                 Save Strategy
               </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-glass text-secondary text-[10px] font-black uppercase tracking-widest hover:text-main hover:bg-white/10 transition-all">
+              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest hover:text-[var(--text-primary)] hover:bg-white/10 transition-all">
                 <span className="material-symbols-outlined text-sm">download</span>
                 Export
               </button>
@@ -241,7 +241,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
           </div>
 
           {/* Symbol & Timeframe Selector Row */}
-          <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-glass">
+          <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-[var(--border)]">
             {/* Symbol Selector */}
             <GlassSelect
               value={selectedSymbol}
@@ -254,7 +254,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
             />
 
             {/* Timeframe Selector */}
-            <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 rounded-xl border border-glass p-1">
+            <div className="flex items-center gap-1 rounded-xl border border-[var(--border)] p-1">
               {TIMEFRAMES.map(tf => (
                 <button
                   key={tf.value}
@@ -262,7 +262,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
                   className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                     selectedTimeframe === tf.value
                       ? 'bg-primary text-black shadow-sm'
-                      : 'text-secondary hover:text-main hover:bg-white/5'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5'
                   }`}
                 >
                   {tf.label}
@@ -301,8 +301,8 @@ const BacktestResults = ({ onClear, strategyData }) => {
           { label: 'Profit Factor', value: d.profitFactor.toFixed(2), sub: 'Risk-Adjusted PnL', color: 'primary' },
           { label: 'Sharpe Ratio', value: d.sharpeRatio, sub: 'Return Efficiency', color: 'amber' },
         ].map((m, i) => (
-          <div key={i} className="glass-card border border-glass rounded-[1.5rem] p-6 hover:translate-y-[-4px]">
-            <p className="text-[10px] text-secondary font-black uppercase tracking-[0.1em] mb-4 opacity-70">{m.label}</p>
+          <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-[1.5rem] p-6 hover:translate-y-[-4px]">
+            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.1em] mb-4 opacity-70">{m.label}</p>
             <p className={`text-2xl font-black tracking-tight mb-1 ${
               m.color === 'emerald' ? 'text-emerald-400' : 
               m.color === 'rose' ? 'text-rose-400' : 
@@ -310,15 +310,15 @@ const BacktestResults = ({ onClear, strategyData }) => {
               m.color === 'amber' ? 'text-amber-400' :
               'text-primary'
             }`}>{m.value}</p>
-            <p className="text-[10px] text-secondary font-bold uppercase tracking-widest">{m.sub}</p>
+            <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">{m.sub}</p>
           </div>
         ))}
       </div>
 
       {/* Detailed Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card border border-glass rounded-3xl p-6">
-          <h3 className="text-main text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
+          <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-lg">shield</span>
             Risk & Performance
           </h3>
@@ -333,19 +333,19 @@ const BacktestResults = ({ onClear, strategyData }) => {
               { label: 'Largest Win', value: d.largestWin },
               { label: 'Largest Loss', value: d.largestLoss },
             ].map((item, i) => (
-              <div key={i} className="p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass">
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">{item.label}</p>
+              <div key={i} className="p-3 rounded-xl border border-[var(--border)]">
+                <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1">{item.label}</p>
                 <p className={`text-lg font-black ${
                   String(item.value).startsWith('-') ? 'text-rose-500' :
-                  String(item.value).startsWith('+') || String(item.value).startsWith('$') ? 'text-emerald-500' : 'text-main'
+                  String(item.value).startsWith('+') || String(item.value).startsWith('$') ? 'text-emerald-500' : 'text-[var(--text-primary)]'
                 }`}>{item.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="glass-card border border-glass rounded-3xl p-6">
-          <h3 className="text-main text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
+          <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-lg">bar_chart</span>
             Trade Statistics
           </h3>
@@ -355,7 +355,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
                 <span className="text-emerald-500">Wins {d.profitableTrades}</span>
                 <span className="text-rose-500">Losses {d.lossTrades}</span>
               </div>
-              <div className="w-full h-3 rounded-full overflow-hidden flex bg-black/5 dark:bg-white/5 border border-glass">
+              <div className="w-full h-3 rounded-full overflow-hidden flex border border-[var(--border)]">
                 <div className="bg-emerald-500 h-full rounded-l-full" style={{ width: d.profitablePercent }}></div>
                 <div className="bg-rose-500 h-full rounded-r-full" style={{ width: `${100 - parseFloat(d.profitablePercent)}%` }}></div>
               </div>
@@ -367,10 +367,10 @@ const BacktestResults = ({ onClear, strategyData }) => {
                 { label: 'Consecutive Losses', value: d.consecutiveLosses, color: 'rose' },
                 { label: 'Win Rate', value: d.profitablePercent, color: 'primary' },
               ].map((item, i) => (
-                <div key={i} className="p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-glass">
-                  <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">{item.label}</p>
+                <div key={i} className="p-3 rounded-xl border border-[var(--border)]">
+                  <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1">{item.label}</p>
                   <p className={`text-lg font-black ${
-                    item.color === 'emerald' ? 'text-emerald-500' : item.color === 'rose' ? 'text-rose-500' : item.color === 'primary' ? 'text-primary' : 'text-main'
+                    item.color === 'emerald' ? 'text-emerald-500' : item.color === 'rose' ? 'text-rose-500' : item.color === 'primary' ? 'text-primary' : 'text-[var(--text-primary)]'
                   }`}>{item.value}</p>
                 </div>
               ))}
@@ -380,8 +380,8 @@ const BacktestResults = ({ onClear, strategyData }) => {
       </div>
 
       {/* Monthly Returns */}
-      <div className="glass-card border border-glass rounded-3xl p-6">
-        <h3 className="text-main text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl border border-[var(--border)] rounded-3xl p-6">
+        <h3 className="text-[var(--text-primary)] text-sm font-black uppercase tracking-widest mb-5 flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-lg">calendar_month</span>
           Monthly Returns
         </h3>
@@ -390,7 +390,7 @@ const BacktestResults = ({ onClear, strategyData }) => {
             <div key={i} className={`p-3 rounded-xl border transition-all hover:scale-105 ${
               m.color === 'emerald' ? 'bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40' : 'bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40'
             }`}>
-              <p className="text-[10px] text-secondary font-black uppercase tracking-widest mb-1">{m.month}</p>
+              <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mb-1">{m.month}</p>
               <p className={`text-sm font-black ${m.color === 'emerald' ? 'text-emerald-500' : 'text-rose-500'}`}>{m.pnl}</p>
               <p className={`text-[10px] font-bold ${m.color === 'emerald' ? 'text-emerald-500/60' : 'text-rose-500/60'}`}>{m.pct}</p>
             </div>
