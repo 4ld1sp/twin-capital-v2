@@ -1,0 +1,11 @@
+Node.js >= 22.0.0
+npm >= 10.0.0
+Docker >= 24.0.0
+Docker Compose >= 2.20.0
+PostgreSQL >= 15.0 (dijalankan via Docker)
+Cloudflared (untuk tunnel ke OpenClaw/Agent)
+
+# Eksternal API Services yang Dibutuhkan:
+# - Akun Bybit (Unified Trading Account wajib diaktifkan)
+# - Akses API AI (Minimax API atau OpenAI)
+# - OpenClaw Agent (Opsional jika ingin menjalankan integrasi AI agent lokal menggunakan Python 3.10+)
